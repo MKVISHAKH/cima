@@ -234,7 +234,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                 child: ElevatedButton(
                                   onPressed: () async {
                                     if (_formkey.currentState!.validate()) {
-                                     // await getlogin();
+                                      Navigator.pushReplacement(
+                                      _scaffoldKey.currentContext!, Approutes().homescreen);
                                     }
                                   },
                                   child: Text(

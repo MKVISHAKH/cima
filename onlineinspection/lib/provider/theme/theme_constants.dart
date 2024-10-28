@@ -11,9 +11,9 @@ class MyTheme {
     brightness: Brightness.light,
     primaryColor: primaryColor,
     colorScheme: const ColorScheme.light(
-      primary: Color(0xfff77564),
+      primary: Color(0xfff8d082),
       onPrimary: Colors.white,
-      secondary: Color(0xfff8d082),
+      secondary: Color(0xfff77564),
       onSecondary: Colors.black,
       primaryContainer: Color(0xffe4e2d4),
       /***graph theme***/
@@ -37,7 +37,9 @@ class MyTheme {
       labelSmall: TextStyle(
           color: Colors.white, fontSize: 14, fontFamily: 'Poppins-Medium'),
       bodySmall: TextStyle(
-          color: Colors.black, fontSize: 14, fontFamily: 'Poppins-Medium'),
+          color: Colors.black,
+           fontSize: 14,
+          fontFamily: 'Poppins-Medium'),
       bodyLarge: TextStyle(
           color: Colors.black,
           fontSize: 16,
@@ -48,7 +50,7 @@ class MyTheme {
       titleMedium: TextStyle(
           color: Colors.white, fontSize: 16, fontFamily: 'Poppins-Medium'),
       titleLarge: TextStyle(
-          color: Colors.black, fontSize: 20, fontFamily: 'Poppins-Medium'),
+          color: Colors.black, fontSize: 20, fontFamily: 'Poppins-Medium',letterSpacing: 1,wordSpacing: 2,),
     ),
     checkboxTheme: CheckboxThemeData(
       fillColor: WidgetStateProperty.resolveWith<Color>((states) {
@@ -104,7 +106,7 @@ class MyTheme {
         labelSmall: TextStyle(
             color: Colors.white, fontSize: 14, fontFamily: 'Poppins-Medium'),
         bodySmall: TextStyle(
-            color: Colors.white, fontSize: 14, fontFamily: 'Poppins-Medium'),
+            color: Colors.white, fontSize: 14, fontFamily: 'Poppins-Medium',),
         bodyLarge: TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -115,7 +117,7 @@ class MyTheme {
         titleMedium: TextStyle(
             color: Colors.white, fontSize: 16, fontFamily: 'Poppins-Medium'),
         titleLarge: TextStyle(
-            color: Colors.white, fontSize: 20, fontFamily: 'Poppins-Medium')),
+            color: Colors.white, fontSize: 20, fontFamily: 'Poppins-Medium',letterSpacing: 1,wordSpacing: 2,)),
     checkboxTheme: CheckboxThemeData(
       fillColor: WidgetStateProperty.resolveWith<Color>((states) {
         if (states.contains(WidgetState.selected)) {

@@ -24,7 +24,11 @@ export 'package:onlineinspection/screens/splash/screensplash.dart';
 
 export 'package:onlineinspection/screens/login/screenlogin.dart';
 
+export 'package:onlineinspection/main.dart';
 /**************************************/
 /*route*/
 export 'package:onlineinspection/core/routes/approutes.dart';
+/**************************************/
+/*model*/
+export 'package:onlineinspection/model/sharedpref/sharedpref.dart';
 /**************************************/

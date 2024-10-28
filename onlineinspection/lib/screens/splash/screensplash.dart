@@ -46,7 +46,35 @@ class _ScreenSplashState extends State<ScreenSplash> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return 
+    // Material(
+    //   child: SizedBox(
+    //     width:MediaQuery.of(context).size.width,
+    //     height:MediaQuery.of(context).size.height,
+    //     child: Stack(
+    //       children: [
+    //         Stack(
+    //           key: _scaffoldKey,
+    //           children: [
+    //             Container(
+    //             width:MediaQuery.of(context).size.width,
+    //             height:MediaQuery.of(context).size.height,
+    //             decoration: BoxDecoration(
+    //               // color:Theme.of(context).colorScheme.tertiary,
+    //               image: DecorationImage(
+    //                 image: AssetImage('assets/splash/2527291.jpg'),
+    //                 fit: BoxFit.cover
+    //                 )
+    //             ),
+                
+    //           ),
+    //           ],
+    //         )
+    //     ],),
+    //   )
+    // );
+    
+    Scaffold(
       key: _scaffoldKey,
       body: Container(
         decoration: BoxDecoration(
@@ -60,7 +88,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
         child: Center(
           child:
           Lottie.asset(
-            'assets/animatedsplash/Animation - 1729853904649.json',
+            'assets/animation/splash/Animation - 1729853904649.json',
             width: MediaQuery.of(context).size.width,
             //height: MediaQuery.of(context).size.height/2
           ),
