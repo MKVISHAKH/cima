@@ -1,7 +1,7 @@
 import 'package:onlineinspection/core/hook/hook.dart';
 
-const primaryColor = Colors.purple;
-const secondaryColor = Color.fromARGB(255, 65, 10, 243);
+const primaryColor = Color(0xfff77564);
+const secondaryColor = Color(0xfff8d082);
 
 class MyTheme {
   static final lightTheme = ThemeData(
@@ -11,11 +11,11 @@ class MyTheme {
     brightness: Brightness.light,
     primaryColor: primaryColor,
     colorScheme: const ColorScheme.light(
-      primary: Color(0xff13bc91),
+      primary: Color(0xfff77564),
       onPrimary: Colors.white,
-      secondary: Color(0xff12b2ba),
+      secondary: Color(0xfff8d082),
       onSecondary: Colors.black,
-      primaryContainer: Color(0xFF5FE0BF),
+      primaryContainer: Color(0xffe4e2d4),
       /***graph theme***/
       primaryFixed: Colors.black38,
       /*****************/
@@ -78,11 +78,11 @@ class MyTheme {
     brightness: Brightness.dark,
     primaryColor: secondaryColor,
     colorScheme: const ColorScheme.dark(
-      primary: Color(0xff13bc91),
+      primary: Color(0xfff77564),
       onPrimary: Colors.white,
-      secondary: Color(0xff12b2ba),
+      secondary: Color(0xfff8d082),
       onSecondary: Colors.white,
-      primaryContainer: Color(0xFF5FE0BF),
+      primaryContainer: Color(0xffe4e2d4),
       /***graph theme***/
       primaryFixed: Color(0Xff37434d),
       /*****************/

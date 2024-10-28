@@ -38,6 +38,7 @@ dependencies:
   animated_splash_screen: ^1.3.0
   shared_preferences: ^2.3.1
   page_transition: ^2.1.0
+  geolocator: ^13.0.1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
@@ -69,7 +70,10 @@ flutter:
   assets:
     - assets/animatedsplash/Animation - 1729853904649.json
     
-
+  fonts:
+    - family: Poppins-Medium
+      fonts: 
+        - asset: assets/fonts/Poppins-Medium.ttf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

@@ -54,8 +54,8 @@ class _ScreenSplashState extends State<ScreenSplash> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.secondary
+              Theme.of(context).colorScheme.secondary,
+              Theme.of(context).colorScheme.onPrimary
             ])),
         child: Center(
           child:
