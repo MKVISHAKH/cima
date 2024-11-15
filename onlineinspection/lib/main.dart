@@ -1,8 +1,8 @@
 import 'package:onlineinspection/core/hook/hook.dart';
 
-
-
 const savekeyname = 'UserLoggedIn';
+const savesocinfo = '_userSocIn';
+
 void main() {
   runApp(const MyApp());
 }
@@ -15,6 +15,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => MultiProvider(providers: [
         ChangeNotifierProvider<LoadingProvider>(
             create: (context) => LoadingProvider()),
+        ChangeNotifierProvider<ElevatedBtnProvider>(
+            create: (context) => ElevatedBtnProvider()),
+        ChangeNotifierProvider<LocationMatchProvider>(
+            create: (context) => LocationMatchProvider()),
         ChangeNotifierProvider<ThemeProvider>(
           create: (context) => ThemeProvider(),
           builder: (context, child) {

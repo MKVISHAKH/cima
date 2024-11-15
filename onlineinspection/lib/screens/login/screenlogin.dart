@@ -1,5 +1,5 @@
-
 import 'package:onlineinspection/core/hook/hook.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ScreenLogin extends StatefulWidget {
   const ScreenLogin({super.key});
@@ -9,59 +9,147 @@ class ScreenLogin extends StatefulWidget {
 }
 
 class _ScreenLoginState extends State<ScreenLogin> {
-  String locationMessage='Current Location of the User';
-  late String lat;
-  late String long;
   final _usercontroller = TextEditingController();
 
   final _passcontroller = TextEditingController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formkey = GlobalKey<FormState>();
   bool passtoggle = true;
+  String locationMessage = 'Current Location of the User';
+  String lat = '';
+  String long = '';
+
   @override
   void initState() {
     super.initState();
-    getCurrentLocation().then((value){
-      lat='${value.latitude}';
-      long='${value.longitude}';
-      print('Latitude: $lat,Longitude: $long');
-      setState(() {
-        locationMessage='Latitude: $lat,Longitude: $long';
-      });
-      liveLocation();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      requestLocationPermission();
     });
   }
-  Future<Position>getCurrentLocation()async{
-    bool serviceEnabled=await Geolocator.isLocationServiceEnabled();
-    if(!serviceEnabled){
-      return Future.error('Location services are disabled.');
-    }
-    LocationPermission permission=await Geolocator.checkPermission();
-    if(permission==LocationPermission.denied){
-      permission=await Geolocator.requestPermission();
-      if(permission==LocationPermission.denied){
-        return Future.error('Location permission are denied');
-      }
-    }
-    if(permission==LocationPermission.deniedForever){
-      return Future.error('Location permissions are permanently denied,we cannot request permission');
 
+  Future<void> requestLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
     }
-    return await Geolocator.getCurrentPosition();
+
+    if (permission == LocationPermission.denied) {
+      _showMandatoryPermissionDialog();
+    } else if (permission == LocationPermission.deniedForever) {
+      _showPermissionPermanentlyDeniedDialog();
+    } else {
+      await _getCurrentLocation();
+    }
   }
-  void liveLocation(){
-    LocationSettings locationSettings =const LocationSettings(
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await _showLocationSettingsDialog();
+      return;
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    if (mounted) {
+      lat = '${position.latitude}';
+      long = '${position.longitude}';
+      setState(() {
+        locationMessage = 'Latitude: $lat, Longitude: $long';
+      });
+      liveLocation();
+    }
+  }
+
+  Future<void> _showLocationSettingsDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Enable Location Services"),
+        content: const Text(
+            "Location services are required to proceed. Please enable them in your device settings."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await Geolocator.openLocationSettings();
+            },
+            child: const Text("Open Settings"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showMandatoryPermissionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Location Permission Required"),
+        content: const Text(
+            "Location access is required to proceed. Please enable it in settings."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await Permission.location.request();
+            },
+            child: const Text("Allow"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPermissionPermanentlyDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Location Permission Required"),
+        content: const Text(
+            "Please go to settings and enable location permission manually."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await openAppSettings();
+            },
+            child: const Text("Open Settings"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void liveLocation() {
+    LocationSettings locationSettings = const LocationSettings(
       accuracy: LocationAccuracy.high,
       distanceFilter: 100,
     );
-    Geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position){
-      lat=position.latitude.toString();
-      long=position.longitude.toString();
-      setState(() {
-        locationMessage='Latitude: $lat,Longitude: $long';
-      });
+    Geolocator.getPositionStream(locationSettings: locationSettings)
+        .listen((Position position) {
+      if (mounted) {
+        lat = position.latitude.toString();
+        long = position.longitude.toString();
+        setState(() {
+          locationMessage = 'Latitude: $lat,Longitude: $long';
+        });
+      }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
@@ -83,7 +171,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                         end: Alignment.bottomRight,
                         colors: [
                           Theme.of(context).colorScheme.primary,
-                          Theme.of(context).colorScheme.secondary
+                          Theme.of(context).colorScheme.primary
                         ])),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
@@ -96,12 +184,14 @@ class _ScreenLoginState extends State<ScreenLogin> {
                           // crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(
-                              height: 20
-                              ,
+                              height: 20,
                             ),
-                            Text('LOGIN',style: Theme.of(context).textTheme.titleLarge,),
+                            Text(
+                              'LOGIN',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
                             const SizedBox(
-                              height: 50 ,
+                              height: 50,
                             ),
                             SizedBox(
                               width: MediaQuery.of(context).size.width,
@@ -134,14 +224,14 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                     }),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left:95),
-                              child: TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  'Forgot Username?',
-                                  style: Theme.of(context).textTheme.titleSmall,
-                                ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context, Approutes().forgotusrScreen);
+                              },
+                              child: Text(
+                                'Forgot Username?',
+                                style: Theme.of(context).textTheme.labelSmall,
                               ),
                             ),
                             SizedBox(
@@ -186,18 +276,13 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                     obscureText: passtoggle,
                                     textInputAction: TextInputAction.done,
                                     validator: (value) {
-                                      if (value!.isEmpty) {
+                                      if (value == null || value.isEmpty) {
                                         return 'Enter password';
                                       }
-                                      // else if (_passcontroller.text.length <
-                                      //     8) {
+                                      // else if (value.length < 8) {
                                       //   return 'Please enter atleast 8 characters';
                                       // }
-                                      else if (value.contains(' ')) {
-                                      }
-                                      // else if (_passcontroller.text.length < 8) {
-                                      //   return 'Please enter atleast 8 characters';
-                                      // }
+
                                       else if (value.contains(' ')) {
                                         return 'Remove space from password';
                                       }
@@ -205,37 +290,39 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                     }),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left:97),
-                              child: TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  'Forgot Password?',
-                                  style: Theme.of(context).textTheme.titleSmall,
-                                ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context, Approutes().forgotpswrdScreen);
+                              },
+                              child: Text(
+                                'Forgot Password?',
+                                style: Theme.of(context).textTheme.labelSmall,
                               ),
                             ),
                             const SizedBox(
                               height: 15,
                             ),
                             Container(
-                              height: 35,
+                              height: 45,
                               width: 200,
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(
+                                gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
-                                  colors: [Colors.black54, Colors.black87],
+                                  colors: [
+                                    Theme.of(context).colorScheme.secondary,
+                                    Theme.of(context).colorScheme.secondary
+                                  ],
                                 ),
-                                borderRadius: BorderRadius.circular(18.0),
+                                borderRadius: BorderRadius.circular(12.0),
                               ),
                               child: Theme(
                                 data: MyTheme.buttonStyleTheme,
                                 child: ElevatedButton(
                                   onPressed: () async {
                                     if (_formkey.currentState!.validate()) {
-                                      Navigator.pushReplacement(
-                                      _scaffoldKey.currentContext!, Approutes().homescreen);
+                                      getlogin();
                                     }
                                   },
                                   child: Text(
@@ -246,8 +333,6 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                 ),
                               ),
                             ),
-                            
-                            
                             const SizedBox(height: 10),
                             Consumer<LoadingProvider>(
                                 builder: (context, loadingProvider, child) {
@@ -274,5 +359,77 @@ class _ScreenLoginState extends State<ScreenLogin> {
         ),
       )
     ]);
+  }
+
+  Future getlogin() async {
+    final loadingProvider = context.read<LoadingProvider>();
+
+    loadingProvider.toggleLoading();
+    final username = _usercontroller.text;
+    final password = _passcontroller.text;
+
+    final logreq = Loginreq(pen: username, password: password);
+
+    final loginResponse = await Ciadata().login(logreq);
+    final resultAsjson = jsonDecode(loginResponse.toString());
+    final loginval = Loginresp.fromJson(resultAsjson as Map<String, dynamic>);
+
+    loadingProvider.toggleLoading();
+    if (loginResponse == null) {
+      showLoginerror(_scaffoldKey.currentContext!, 1);
+    } else if (loginResponse.statusCode == 200 &&
+        loginval.status == 'success') {
+      final sharedPrefLogin = Sharedpref.value(
+          userId: loginval.data!.userId,
+          pen: loginval.data!.pen,
+          name: loginval.data!.name,
+          mobile: loginval.data!.mobile,
+          districtid: loginval.data!.districtId,
+          talukid: loginval.data!.talukId,
+          circleid: loginval.data!.circleId,
+          roleid: loginval.data!.roleId,
+          active: loginval.data!.active,
+          accesstoken: loginval.data!.accessToken);
+      addLoginShareddata(sharedPrefLogin);
+      /*wklycollection function */
+
+      /**************************/
+
+      Navigator.pushReplacement(
+          _scaffoldKey.currentContext!, Approutes().homescreen);
+
+      //showLoginerror(_scaffoldKey.currentContext!);
+    } else if (loginval.status == 'failure') {
+      showLoginerror(_scaffoldKey.currentContext!, 2);
+    } else {
+      showLoginerror(_scaffoldKey.currentContext!, 3);
+    }
+  }
+
+  Future showLoginerror(BuildContext? context, stat) async {
+    //print('hi');
+    if (stat == 2) {
+      Fluttertoast.showToast(
+          msg: "Username or password incorrect",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 15.0);
+    } else {
+      Fluttertoast.showToast(
+          msg: "Something went wrong",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 15.0);
+    }
+  }
+
+  addLoginShareddata(Sharedpref value) async {
+    await SharedPrefManager.instance.addSharedData(value);
   }
 }

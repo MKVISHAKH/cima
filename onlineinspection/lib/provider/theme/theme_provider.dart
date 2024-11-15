@@ -1,6 +1,4 @@
-
 import 'package:onlineinspection/core/hook/hook.dart';
-
 
 class ThemeProvider with ChangeNotifier {
   late ThemeMode _themeMode = ThemeMode.system;

@@ -1,5 +1,3 @@
-
-
 import 'package:onlineinspection/core/hook/hook.dart';
 
 class LoadingProvider with ChangeNotifier {
