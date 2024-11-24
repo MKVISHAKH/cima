@@ -20,6 +20,10 @@ SocietyDet _$SocietyDetFromJson(Map<String, dynamic> json) => SocietyDet(
       user: json['user'] == null
           ? null
           : User.fromJson(json['user'] as Map<String, dynamic>),
+      inspStatus: json['inspection_status'] as String?,
+      activity: (json['activity'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
       societyActivity: (json['society_activity'] as List<dynamic>?)
           ?.map((e) => SocietyActivity.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -38,5 +42,7 @@ Map<String, dynamic> _$SocietyDetToJson(SocietyDet instance) =>
       'soc_class': instance.socClass,
       'lastInspectionDate': instance.lastInspectionDate,
       'user': instance.user,
+      'activity': instance.activity,
+      'inspection_status': instance.inspStatus,
       'society_activity': instance.societyActivity,
     };

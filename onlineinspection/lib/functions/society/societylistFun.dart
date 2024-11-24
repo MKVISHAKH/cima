@@ -26,43 +26,57 @@ class SocietyListFunctions {
           Societyresp.fromJson(resultAsJson as Map<String, dynamic>);
       if (sctyListRespVal.status == 'success') {
         //print('sucess');
-        final itemDet = sctyListRespVal.data?.societies??[];
+        final itemDet = sctyListRespVal.data?.societies ?? [];
         //print(item_det.);
         getScietyListNotifier.value.clear();
         getScietyListNotifier.value.addAll(itemDet);
         getScietyListNotifier.notifyListeners();
       } else if (sctyListRespVal.status == 'failure') {
-        final itemDet = sctyListRespVal.data?.societies??[];
+        final itemDet = sctyListRespVal.data?.societies ?? [];
         getScietyListNotifier.value.clear();
         getScietyListNotifier.value.addAll(itemDet);
         getScietyListNotifier.notifyListeners();
       }
+    } else {
+      getScietyListNotifier.value.clear();
+      getScietyListNotifier.value.addAll([]);
+      getScietyListNotifier.notifyListeners();
     }
   }
 
-  Future getSocietyDet(Getbasicinfo val) async {
+  Future<List<SocietyDet>?> getSocietyDet(Getbasicinfo val) async {
     final societylistresp = await Ciadata().getSocietydet(val);
     if (societylistresp == null) {
       getSocietyDetNotifier.value.clear();
       getSocietyDetNotifier.value.addAll([]);
       getSocietyDetNotifier.notifyListeners();
+      return [];
     } else if (societylistresp.statusCode == 200) {
       final resultAsJson = jsonDecode(societylistresp.toString());
-      final BusRouteListRespVal =
+      final busRouteListRespVal =
           Basicinforesp.fromJson(resultAsJson as Map<String, dynamic>);
-      if (BusRouteListRespVal.status == 'success') {
+      if (busRouteListRespVal.status == 'success') {
         //print('sucess');
-        final itemDet = BusRouteListRespVal.data?.societyDet??[];
+        final itemDet = busRouteListRespVal.data?.societyDet ?? [];
         //print(item_det.);
         getSocietyDetNotifier.value.clear();
         getSocietyDetNotifier.value.addAll(itemDet);
         getSocietyDetNotifier.notifyListeners();
-      } else if (BusRouteListRespVal.status == 'failure') {
-        final itemDet = BusRouteListRespVal.data?.societyDet??[];
+        //final inspstat = itemDet.single.inspStatus;
+        return itemDet;
+      } else if (busRouteListRespVal.status == 'failure') {
+        final itemDet = busRouteListRespVal.data?.societyDet ?? [];
         getSocietyDetNotifier.value.clear();
         getSocietyDetNotifier.value.addAll(itemDet);
         getSocietyDetNotifier.notifyListeners();
+        return [];
       }
+    } else {
+      getSocietyDetNotifier.value.clear();
+      getSocietyDetNotifier.value.addAll([]);
+      getSocietyDetNotifier.notifyListeners();
+      return [];
     }
+    return [];
   }
 }

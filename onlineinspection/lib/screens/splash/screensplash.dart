@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:onlineinspection/core/hook/hook.dart';
 
 class ScreenSplash extends StatefulWidget {
@@ -10,9 +12,8 @@ class ScreenSplash extends StatefulWidget {
 class _ScreenSplashState extends State<ScreenSplash> {
   @override
   void initState() {
-    //WidgetsBinding.instance.addPostFrameCallback((_) {
     checkUserLogin();
-    // });
+
     super.initState();
   }
 
@@ -26,7 +27,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
       final value = await SharedPrefManager.instance.getSharedData();
 
       if (value != null && value.userId != 0) {
-        await Future.delayed(const Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 3));
         if (mounted && _scaffoldKey.currentContext != null) {
           Navigator.pushReplacement(
             _scaffoldKey.currentContext!,
@@ -40,12 +41,13 @@ class _ScreenSplashState extends State<ScreenSplash> {
   }
 
   Future<void> gotoLogin() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 3));
     if (mounted && _scaffoldKey.currentContext != null) {
       Navigator.pushReplacement(
         _scaffoldKey.currentContext!,
         Approutes().loginscreen,
       );
+      getdeviceinform();
     }
   }
 
@@ -65,13 +67,50 @@ class _ScreenSplashState extends State<ScreenSplash> {
               Theme.of(context).colorScheme.onPrimary
             ])),
         child: Center(
-          child: Lottie.asset(
-            'assets/animation/splash/Animation - 1729853904649.json',
-            width: MediaQuery.of(context).size.width,
-            //height: MediaQuery.of(context).size.height/2
+          child: Text(
+            'Co-Operative Inspection App',
+            style: Theme.of(context).textTheme.titleMedium,
           ),
+          // Lottie.asset(
+          //   'assets/animation/splash/Animation - 1729853904649.json',
+          //   width: MediaQuery.of(context).size.width,
+          //   //height: MediaQuery.of(context).size.height/2
+          // ),
         ),
       ),
     );
+  }
+
+  Future<void> getdeviceinform() async {
+    try {
+      /*************deviceinfo*****************/
+      final device = await DeviceInformation.getdeviceinfo();
+      log(device);
+      final deviceos = await DeviceInformation.getOSdetails();
+      log(deviceos);
+      final devicescreen = await DeviceInformation.getScreenResolution();
+      log(devicescreen);
+      final deviceversion = await DeviceInformation.getDeviceVersion();
+      log(deviceversion);
+      final packagename = await Appinfo.getpackageName();
+      log(packagename);
+      final appversion = await Appinfo.getappVersion();
+      log(appversion);
+      /*****************************************/
+
+      final shareddevice = Deviceinfo(
+          phone: device,
+          phoneos: deviceos,
+          screenresolution: devicescreen,
+          osversion: deviceversion,
+          packagename: packagename,
+          appversion: appversion);
+      await SharedPrefManager.instance.setdeviceinfo(shareddevice);
+    } catch (e) {
+      Navigator.pushReplacement(
+        _scaffoldKey.currentContext!,
+        Approutes().loginscreen,
+      );
+    }
   }
 }

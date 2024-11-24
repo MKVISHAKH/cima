@@ -17,6 +17,7 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
   bool passtoggle = true;
   String? selectedBusType;
   List<String> busTypeList = [];
+  //final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -46,6 +47,7 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
       },
       child: Scaffold(
         key: _scafoldkey,
+        backgroundColor: Theme.of(context).colorScheme.primaryFixed,
         appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -55,7 +57,7 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
               },
             ),
             title: Text(
-              "Change Password",
+              "",
               style:
                   TextStyle(color: Theme.of(context).colorScheme.onSecondary),
             )),
@@ -64,6 +66,7 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
             Card(
                 margin: const EdgeInsets.all(10),
                 elevation: 3,
+                color:const Color.fromARGB(255, 50, 150, 250) ,
                 child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -78,29 +81,30 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                             key: _formkey,
                             child: Column(
                               children: [
-                                // Text(
-                                //   'Search For Stop Details',
-                                //   style: Theme.of(context).textTheme.titleLarge,
-                                // ),
-                                const SizedBox(height: 10),
-
+                                 Text(
+                                'Change Password',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              const SizedBox(height: 30),
+                                
+                               
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width,
                                   child: TextFormField(
                                     controller: _crntpswrdcontroller,
                                     style:
-                                        Theme.of(context).textTheme.bodySmall,
+                                        Theme.of(context).textTheme.headlineLarge,
                                     decoration: InputDecoration(
-                                      labelText: 'Current Password',
+                                      labelText: 'Old Password',
                                       labelStyle:
-                                          Theme.of(context).textTheme.bodySmall,
-                                      hintText: 'Enter current password',
+                                          Theme.of(context).textTheme.headlineLarge,
+                                      hintText: 'Enter old password',
                                       hintStyle:
-                                          Theme.of(context).textTheme.bodySmall,
+                                          Theme.of(context).textTheme.headlineLarge,
                                     ),
                                     validator: (value) {
                                       if (value!.isEmpty) {
-                                        return 'Enter Current Password';
+                                        return 'Enter old Password';
                                       } else {
                                         return null;
                                       }
@@ -115,12 +119,12 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                                   child: TextFormField(
                                       controller: _newpswrdcontroller,
                                       style:
-                                          Theme.of(context).textTheme.bodySmall,
+                                          Theme.of(context).textTheme.headlineLarge,
                                       decoration: InputDecoration(
                                         labelText: 'New Password',
                                         labelStyle: Theme.of(context)
                                             .textTheme
-                                            .bodySmall,
+                                            .headlineLarge,
                                         prefixIcon: Theme(
                                           data: MyTheme.appIconTheme,
                                           child: const Icon(
@@ -157,11 +161,13 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                                                 r'[!@#$%^&*(),.?":{}|<>]')
                                             .hasMatch(value)) {
                                           return 'Password must contain at least one special character';
+                                        } else if (value ==
+                                            _crntpswrdcontroller.text) {
+                                          return 'New Password should not be same as old password';
                                         }
                                         return null;
                                       }),
                                 ),
-
                                 const SizedBox(
                                   height: 20,
                                 ),
@@ -170,12 +176,12 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                                   child: TextFormField(
                                       controller: _cnfrmpswrdcontroller,
                                       style:
-                                          Theme.of(context).textTheme.bodySmall,
+                                          Theme.of(context).textTheme.headlineLarge,
                                       decoration: InputDecoration(
                                         labelText: 'Confirm Password',
                                         labelStyle: Theme.of(context)
                                             .textTheme
-                                            .bodySmall,
+                                            .headlineLarge,
                                         prefixIcon: Theme(
                                           data: MyTheme.appIconTheme,
                                           child: const Icon(
@@ -232,9 +238,27 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                                     child: ElevatedButton(
                                       onPressed: () async {
                                         if (_formkey.currentState!.validate()) {
-                                          context
-                                              .read<ElevatedBtnProvider>()
-                                              .changeSelectedVal(true);
+                                          // context
+                                          //     .read<ElevatedBtnProvider>()
+                                          //     .changeSelectedVal(true);
+                                          final sharedValue =
+                                              await SharedPrefManager.instance
+                                                  .getSharedData();
+                                          final usrId = sharedValue!.userId;
+                                          final penNo = sharedValue.pen;
+                                          final oldpswrd =
+                                              _crntpswrdcontroller.text;
+                                          final newpswrd =
+                                              _newpswrdcontroller.text;
+                                          final cnfrmpaswrd =
+                                              _cnfrmpswrdcontroller.text;
+                                          final chngreq = ChangeReq(
+                                              pen: penNo.toString(),
+                                              userId: usrId.toString(),
+                                              password: oldpswrd,
+                                              newPassword: newpswrd,
+                                              retypePassword: cnfrmpaswrd);
+                                          changePswrd(chngreq);
                                         }
                                       },
                                       child: Text('RESET',
@@ -248,20 +272,81 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                             ),
                           )),
                     ))),
-            Consumer<ElevatedBtnProvider>(
-              builder: (context, provider, child) {
-                if (provider.selectedVal == false) {
-                  return Container();
-                } else if (provider.selectedVal == true) {
-                  return const OtpFiled();
-                }
-                return Container();
-              },
-            ),
+            Consumer<LoadingProvider>(
+                builder: (context, loadingProvider, child) {
+              return loadingProvider.isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Color.fromARGB(255, 2, 128, 6),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink();
+            }),
+            // Consumer<ElevatedBtnProvider>(
+            //   builder: (context, provider, child) {
+            //     if (provider.selectedVal == false) {
+            //       return Container();
+            //     } else if (provider.selectedVal == true) {
+            //       return const OtpFiled();
+            //     }
+            //     return Container();
+            //   },
+            // ),
           ]),
         ),
       ),
     );
   }
-// Widget buildotp() {}
+
+  Future changePswrd(ChangeReq val) async {
+    final loadingProvider = context.read<LoadingProvider>();
+    loadingProvider.toggleLoading();
+    final chngresp = await Ciadata().changePswd(val);
+    final resultAsjson = jsonDecode(chngresp.toString());
+    final changeval = ChangeResp.fromJson(resultAsjson as Map<String, dynamic>);
+    loadingProvider.toggleLoading();
+    if (chngresp == null) {
+      showLoginerror(_scafoldkey.currentContext!, 1);
+    } else if (chngresp.statusCode == 200 && changeval.status == 'success') {
+      //final msg=changeval.message;
+      Fluttertoast.showToast(
+          msg: "Password Changed Successfully",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 15.0);
+      Navigator.push(_scafoldkey.currentContext!, Approutes().homescreen);
+    } else if (changeval.status == 'failure') {
+      showLoginerror(_scafoldkey.currentContext!, 2);
+    } else {
+      showLoginerror(_scafoldkey.currentContext!, 3);
+    }
+  }
+
+  Future showLoginerror(BuildContext? context, stat) async {
+    //print('hi');
+    if (stat == 2) {
+      Fluttertoast.showToast(
+          msg: "Password can't changed",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 15.0);
+    } else {
+      Fluttertoast.showToast(
+          msg: "Something went wrong",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 15.0);
+    }
+  }
 }

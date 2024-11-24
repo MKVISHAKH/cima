@@ -39,15 +39,39 @@ class MyTheme {
       bodySmall: TextStyle(
           color: Colors.black, fontSize: 12, fontFamily: 'Poppins-Medium'),
       bodyMedium: TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            fontFamily: 'Poppins-Medium',
-            fontWeight: FontWeight.w900),
+          color: Colors.black,
+          fontSize: 16,
+          fontFamily: 'Poppins-Medium',
+          fontWeight: FontWeight.w900),
       bodyLarge: TextStyle(
           color: Color(0xff293241),
           fontSize: 16,
           fontFamily: 'Poppins-Medium',
           fontWeight: FontWeight.w900),
+      headlineSmall: TextStyle(
+          color: Colors.black,
+          fontSize: 12,
+          fontFamily: 'Poppins-Medium',
+          fontWeight: FontWeight.w800),
+      headlineMedium: TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontFamily: 'Poppins-Medium',
+          fontWeight: FontWeight.w800),
+      headlineLarge: TextStyle(
+          color: Colors.black,
+          fontSize: 14,
+          fontFamily: 'Poppins-Medium',
+          fontWeight: FontWeight.w800),
+      displaySmall: TextStyle(
+          color: Colors.black, fontSize: 16, fontFamily: 'Poppins-Medium'),
+      displayMedium: TextStyle(
+          color: Colors.white, fontSize: 16, fontFamily: 'Poppins-Medium'),
+      displayLarge: TextStyle(
+        color: Colors.black,
+        fontSize: 20,
+        fontFamily: 'Poppins-Medium',
+      ),
       titleSmall: TextStyle(
           color: Colors.black, fontSize: 16, fontFamily: 'Poppins-Medium'),
       titleMedium: TextStyle(
@@ -111,6 +135,30 @@ class MyTheme {
             color: Colors.white, fontSize: 14, fontFamily: 'Poppins-Medium'),
         labelSmall: TextStyle(
             color: Colors.white, fontSize: 12, fontFamily: 'Poppins-Medium'),
+        headlineMedium: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontFamily: 'Poppins-Medium',
+            fontWeight: FontWeight.w800),
+        headlineSmall: TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+            fontFamily: 'Poppins-Medium',
+            fontWeight: FontWeight.w800),
+        headlineLarge: TextStyle(
+          color: Colors.black,
+          fontSize: 14,
+          fontFamily: 'Poppins-Medium',
+          fontWeight: FontWeight.w800),
+        displaySmall: TextStyle(
+            color: Colors.black, fontSize: 16, fontFamily: 'Poppins-Medium'),
+        displayMedium: TextStyle(
+            color: Colors.white, fontSize: 16, fontFamily: 'Poppins-Medium'),
+        displayLarge: TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontFamily: 'Poppins-Medium',
+        ),
         bodySmall: TextStyle(
           color: Colors.white,
           fontSize: 14,
@@ -125,7 +173,7 @@ class MyTheme {
             color: Color(0xff293241),
             fontSize: 16,
             fontFamily: 'Poppins-Medium',
-            fontWeight: FontWeight.w900),
+            fontWeight: FontWeight.w900,),
         titleSmall: TextStyle(
             color: Colors.white, fontSize: 16, fontFamily: 'Poppins-Medium'),
         titleMedium: TextStyle(

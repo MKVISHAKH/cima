@@ -43,6 +43,8 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
       },
       child: Scaffold(
         key: _scafoldkey,
+        backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+
         appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -52,7 +54,7 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
               },
             ),
             title: Text(
-              "Forgot Username",
+              "",
               style:
                   TextStyle(color: Theme.of(context).colorScheme.onSecondary),
             )),
@@ -61,6 +63,7 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
             Card(
                 margin: const EdgeInsets.all(10),
                 elevation: 3,
+                color:const Color.fromARGB(255, 50, 150, 250) ,
                 child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -75,10 +78,11 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
                             key: _formkey,
                             child: Column(
                               children: [
-                                // Text(
-                                //   'Search For Stop Details',
-                                //   style: Theme.of(context).textTheme.titleLarge,
-                                // ),
+                                Text(
+                                'Forgot Username',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              const SizedBox(height: 30),
                                 const SizedBox(height: 10),
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width,

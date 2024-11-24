@@ -100,6 +100,12 @@ export 'package:onlineinspection/model/query/questions/questionresp/questionresp
 
 export 'package:onlineinspection/model/query/questions/question_req/question_req.dart';
 
+export 'package:onlineinspection/model/deviceinfo/deviceinfo.dart';
+
+export 'package:onlineinspection/model/change/change_req/change_req.dart';
+
+export 'package:onlineinspection/model/change/change_resp/change_resp.dart';
+
 /**************************************/
 /*widget*/
 export 'package:onlineinspection/widgets/otp/otptimer.dart';
@@ -110,6 +116,9 @@ export 'package:onlineinspection/widgets/checkbox/checkboxwidget.dart';
 
 export 'package:onlineinspection/widgets/radiobtn/radiobtnWidget.dart';
 
+export 'package:onlineinspection/widgets/deviceInfo/appInfo.dart';
+
+export 'package:onlineinspection/widgets/deviceInfo/deviceInfo.dart';
 /**************************************/
 /*function*/
 export 'package:onlineinspection/functions/society/societylistFun.dart';

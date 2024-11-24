@@ -17,6 +17,10 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
   bool passtoggle = true;
   String? selectedBusType;
   List<String> busTypeList = [];
+  String? penNo;
+  String? newpswrd;
+  String? cnfrmpswrd;
+  int? refid;
 
   @override
   void initState() {
@@ -46,6 +50,7 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
       },
       child: Scaffold(
         key: _scafoldkey,
+        backgroundColor: Theme.of(context).colorScheme.primaryFixed,
         appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -55,15 +60,16 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
               },
             ),
             title: Text(
-              "Forgot Password",
+              "",
               style:
                   TextStyle(color: Theme.of(context).colorScheme.onSecondary),
             )),
         body: Center(
           child: ListView(children: [
             Card(
-                margin: const EdgeInsets.all(10),
+                 margin: const EdgeInsets.all(10),
                 elevation: 3,
+              color:const Color.fromARGB(255, 50, 150, 250) ,
                 child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -78,11 +84,11 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
                             key: _formkey,
                             child: Column(
                               children: [
-                                // Text(
-                                //   'Search For Stop Details',
-                                //   style: Theme.of(context).textTheme.titleLarge,
-                                // ),
-                                const SizedBox(height: 10),
+                               Text(
+                                'Forgot Password',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              const SizedBox(height: 30),
 
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width,
@@ -232,9 +238,13 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
                                     child: ElevatedButton(
                                       onPressed: () async {
                                         if (_formkey.currentState!.validate()) {
-                                          context
-                                              .read<ElevatedBtnProvider>()
-                                              .changeSelectedVal(true);
+                                          setState(() {
+                                            penNo = _usernamecontroller.text;
+                                            newpswrd = _newpswrdcontroller.text;
+                                            cnfrmpswrd =
+                                                _cnfrmpswrdcontroller.text;
+                                          });
+                                          userVerify(penNo);
                                         }
                                       },
                                       child: Text('RESET',
@@ -244,6 +254,19 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
                                     ),
                                   ),
                                 ),
+                                Consumer<LoadingProvider>(
+                                    builder: (context, loadingProvider, child) {
+                                  return loadingProvider.isLoading
+                                      ? const Center(
+                                          child: CircularProgressIndicator(
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                              Color.fromARGB(255, 2, 128, 6),
+                                            ),
+                                          ),
+                                        )
+                                      : const SizedBox.shrink();
+                                }),
                               ],
                             ),
                           )),
@@ -253,7 +276,12 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
                 if (provider.selectedVal == false) {
                   return Container();
                 } else if (provider.selectedVal == true) {
-                  return const OtpFiled();
+                  return OtpFiled(
+                    penNO: penNo,
+                    nwpswd: newpswrd,
+                    cnfrmpswrd: cnfrmpswrd,
+                    refId: refid,
+                  );
                 }
                 return Container();
               },
@@ -263,5 +291,61 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
       ),
     );
   }
-// Widget buildotp() {}
+
+  Future userVerify(String? pen) async {
+    final loadingProvider = context.read<LoadingProvider>();
+    loadingProvider.toggleLoading();
+
+    final val = ChangeReq(pen: pen);
+
+    final chngresp = await Ciadata().pswrdVrfy(val);
+    final resultAsjson = jsonDecode(chngresp.toString());
+    final changeval = ChangeResp.fromJson(resultAsjson as Map<String, dynamic>);
+
+    loadingProvider.toggleLoading();
+    if (chngresp == null) {
+      showLoginerror(_scafoldkey.currentContext!, 1);
+    } else if (chngresp.statusCode == 200 && changeval.status == 'success') {
+      refid = changeval.data?.refId ?? 0;
+      Fluttertoast.showToast(
+          msg: "Otp sended on your registered mobile No",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 15.0);
+
+      _scafoldkey.currentContext!
+          .read<ElevatedBtnProvider>()
+          .changeSelectedVal(true);
+    } else if (changeval.status == 'failure') {
+      showLoginerror(_scafoldkey.currentContext!, 2);
+    } else {
+      showLoginerror(_scafoldkey.currentContext!, 3);
+    }
+  }
+
+  Future showLoginerror(BuildContext? context, stat) async {
+    //print('hi');
+    if (stat == 2) {
+      Fluttertoast.showToast(
+          msg: "Password can't changed",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 15.0);
+    } else {
+      Fluttertoast.showToast(
+          msg: "Something went wrong",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 15.0);
+    }
+  }
 }

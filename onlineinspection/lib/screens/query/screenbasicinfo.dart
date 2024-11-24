@@ -14,7 +14,7 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
   String? date;
   String? bankname;
   String? branch;
-  String outputDate='';
+  String outputDate = '';
   @override
   void initState() {
     super.initState();
@@ -22,7 +22,7 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
   }
 
   Future<bool?> popscreen(BuildContext context) async {
-    selectedItems.value={0};
+    selectedItems.value = {0};
     Navigator.push(context, Approutes().assignedscreen);
     return true;
   }
@@ -62,7 +62,7 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  selectedItems.value={0};
+                  selectedItems.value = {0};
                   Navigator.pushReplacement(
                       context, Approutes().assignedscreen);
                 },
@@ -86,17 +86,16 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
                       itemBuilder: (context, index) {
                         final society = newList[index];
                         final lstinspdt = society.lastInspectionDate;
-                        if(lstinspdt==null){
-                          outputDate='';
-                        }else{
+                        if (lstinspdt == null) {
+                          outputDate = '';
+                        } else {
                           DateTime parseDate = DateFormat("yyyy-MM-dd HH:mm:ss")
-                            .parse(lstinspdt);
-                        var inputDate = DateTime.parse(parseDate.toString());
-                        var outputFormat = DateFormat('dd-MM-yyyy');
-                         outputDate = outputFormat.format(inputDate);
-                        print(outputDate);
+                              .parse(lstinspdt);
+                          var inputDate = DateTime.parse(parseDate.toString());
+                          var outputFormat = DateFormat('dd-MM-yyyy');
+                          outputDate = outputFormat.format(inputDate);
+                          print(outputDate);
                         }
-                        
 
                         return Column(
                           children: [
@@ -207,21 +206,32 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
                                   onPressed: () async {
                                     List<int> selectedIds =
                                         getSelectedActivityIds();
-                                    String selectedIdsString =
-                                        "[${selectedIds.join(", ")}]";
-                                    Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (context) => ScreenQuery(
-                                          bankname: society.socName,
-                                          branch: society.branchName,
-                                          regNo: society.regNo,
-                                          lastinspdt: outputDate,
-                                          name: society.user?.name ?? '',
-                                          role: society.user?.roleName ?? '',
-                                          activity: selectedIdsString,
+                                    if (selectedIds.isNotEmpty) {
+                                      String selectedIdsString =
+                                          "[${selectedIds.join(", ")}]";
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                          builder: (context) => ScreenQuery(
+                                            bankname: society.socName,
+                                            branch: society.branchName,
+                                            regNo: society.regNo,
+                                            lastinspdt: outputDate,
+                                            name: society.user?.name ?? '',
+                                            role: society.user?.roleName ?? '',
+                                            activity: selectedIdsString,
+                                          ),
                                         ),
-                                      ),
-                                    );
+                                      );
+                                    } else {
+                                      Fluttertoast.showToast(
+                                          msg: "Please select one option",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor: Colors.white,
+                                          textColor: Colors.black,
+                                          fontSize: 15.0);
+                                    }
                                   },
                                   child: Text(
                                     'START',
@@ -236,23 +246,6 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
                       },
                     );
                   }),
-
-              // Column(
-              //   children: [
-              //     Text(
-              //       "Basic Information",
-              //       style: Theme.of(context).textTheme.titleSmall,
-              //     ),
-              //     const SizedBox(
-              //       height: 10,
-              //     ),
-              //     Text("Society Name : "),
-              //     Text("Reg. No :"),
-              //     Text("Circle :"),
-              //     Text("District :"),
-              //     Text("Branch :"),
-              //   ],
-              // ),
             ],
           )),
     );
@@ -264,7 +257,7 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
       children: [
         Text(
           "Basic Information",
-          style: Theme.of(context).textTheme.titleLarge,
+          style: Theme.of(context).textTheme.displayLarge,
         ),
         const SizedBox(height: 10),
 
@@ -282,10 +275,11 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
           itemCount: society.societyActivity?.length ?? 0,
           itemBuilder: (context, index) {
             final activity = society.societyActivity![index];
+            // final inspstat=society.inspStatus;
             return FormatCheckbox(
               title: activity.activityName ?? 'activity',
               type: activity.activityId ?? 0,
-              txtstyl: Theme.of(context).textTheme.titleSmall,
+              txtstyl: Theme.of(context).textTheme.displaySmall,
               color: Colors.blue,
               selectedItems: selectedItems,
             );

@@ -17,6 +17,19 @@ class _NavbarState extends State<Navbar> {
   @override
   void initState() {
     super.initState();
+    buildversion();
+  }
+
+  void buildversion() async {
+    final value = await SharedPrefManager.instance.getdeviceinfo();
+
+    final devversion = value.appversion;
+    final devicever = devversion!.split('+');
+    final versionval = devicever[0];
+
+    setState(() {
+      version = versionval;
+    });
   }
 
   Future<bool?> popscreen(BuildContext context) async {
@@ -41,15 +54,23 @@ class _NavbarState extends State<Navbar> {
       },
       child: Drawer(
         key: _scaffoldKey,
+        backgroundColor: Theme.of(context).colorScheme.primaryFixed,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text(
-                'OnlineInspection',
-                style: Theme.of(context).textTheme.titleMedium,
+              accountName: Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Text(
+                  'C I A',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               ),
-              accountEmail: Text('Version:$version'),
+              accountEmail: Text(
+                'Version:$version',
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
               currentAccountPicture: CircleAvatar(
                 child: ClipOval(
                   child: Image.asset(
@@ -69,25 +90,25 @@ class _NavbarState extends State<Navbar> {
                     Theme.of(context).colorScheme.primary
                   ])),
             ),
-            ListTile(
-                leading: const Icon(
-                  Icons.report,
-                  color: Color(0xff13bc91),
-                ),
-                title: Text(
-                  "Inspection Report",
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                onTap: () {
-                  Navigator.push(context, Approutes().reportScreen);
-                }),
+            // ListTile(
+            //     leading: const Icon(
+            //       Icons.report,
+            //       color: Color(0xff13bc91),
+            //     ),
+            //     title: Text(
+            //       "Inspection Report",
+            //       style: Theme.of(context).textTheme.bodyMedium,
+            //     ),
+            //     onTap: () {
+            //       Navigator.push(context, Approutes().reportScreen);
+            //     }),
             ListTile(
                 leading: const Icon(
                   Icons.mobile_friendly,
                 ),
                 title: Text(
                   "Change Mobile Number",
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.displaySmall,
                 ),
                 onTap: () {
                   Navigator.push(context, Approutes().changeMobScreen);
@@ -99,7 +120,7 @@ class _NavbarState extends State<Navbar> {
                 ),
                 title: Text(
                   "Change Password",
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.displaySmall,
                 ),
                 onTap: () {
                   Navigator.push(context, Approutes().changepswrdScreen);
@@ -112,7 +133,7 @@ class _NavbarState extends State<Navbar> {
                 ),
                 title: Text(
                   "Sign Out",
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.displaySmall,
                 ),
                 onTap: () {
                   signout(context);

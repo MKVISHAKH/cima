@@ -2,6 +2,7 @@ import 'package:onlineinspection/core/hook/hook.dart';
 
 const savekeyname = 'UserLoggedIn';
 const savesocinfo = '_userSocIn';
+const savedeviceinfo = '_userDeviceIn';
 
 void main() {
   runApp(const MyApp());

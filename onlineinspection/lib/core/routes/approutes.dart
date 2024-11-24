@@ -1,5 +1,7 @@
 import 'package:onlineinspection/core/hook/hook.dart';
 import 'package:onlineinspection/screens/query/screenbasicinfo.dart';
+import 'package:onlineinspection/screens/report/cmpltdRprtScreen.dart';
+import 'package:onlineinspection/screens/scheduled/screenschedule.dart';
 
 class Approutes {
   PageTransition loginscreen = PageTransition(
@@ -60,6 +62,20 @@ class Approutes {
   );
   PageTransition basicInfoScreen = PageTransition(
     child: const ScreenBasicInfo(),
+    type: PageTransitionType.fade,
+    alignment: Alignment.center,
+    curve: Curves.easeInOutBack,
+    duration: const Duration(microseconds: 500),
+  );
+  PageTransition scheduleScreen = PageTransition(
+    child: const ScreenScheduled(),
+    type: PageTransitionType.fade,
+    alignment: Alignment.center,
+    curve: Curves.easeInOutBack,
+    duration: const Duration(microseconds: 500),
+  );
+  PageTransition cmpltRprtScreen = PageTransition(
+    child: const ScreenCmpltdRprt(),
     type: PageTransitionType.fade,
     alignment: Alignment.center,
     curve: Curves.easeInOutBack,

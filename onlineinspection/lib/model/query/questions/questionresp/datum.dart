@@ -1,6 +1,7 @@
 import 'option.dart';
 
 class Datum {
+  bool? questatus;
   int? questionId;
   int? inspId;
   dynamic parent;
@@ -8,7 +9,8 @@ class Datum {
   int? sortOrder;
   List<Option>? option;
   Datum(
-      {this.questionId,
+      {this.questatus,
+      this.questionId,
       this.inspId,
       this.parent,
       this.question,
@@ -18,6 +20,7 @@ class Datum {
     var tklst = ((json["option"] ?? []) as List);
     List<Option> wklylist = tklst.map((e) => Option.fromJson(e)).toList();
     return Datum(
+      questatus: json["que_status"],
       questionId: json["question_id"],
       inspId: json["inspection_id"],
       parent: json["parent"],
@@ -27,8 +30,9 @@ class Datum {
     );
   }
   Map<String, dynamic> toJson() => {
+        "que_status": questatus,
         "question_id": questionId,
-        "inspection_id":inspId,
+        "inspection_id": inspId,
         "parent": parent,
         "question": question,
         "sort_order": sortOrder,

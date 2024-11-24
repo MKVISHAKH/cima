@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:onlineinspection/core/hook/hook.dart';
+import 'package:onlineinspection/model/deviceinfo/deviceinfo.dart';
 
 class SharedPrefManager {
   //---singleton-----
@@ -96,6 +97,40 @@ class SharedPrefManager {
         branchId: brId,
         bName: brName,
         socName: soctyName);
+
+    return infoshared;
+  }
+
+  Future<void> setdeviceinfo(Deviceinfo value) async {
+    final sharedprefes = await SharedPreferences.getInstance();
+    await sharedprefes.setBool(savedeviceinfo, true);
+    await sharedprefes.setString('DEVICE', value.phone ?? '');
+    await sharedprefes.setString('DEVICEOS', value.phoneos ?? '');
+    await sharedprefes.setString(
+        'SCREENRESOLUTION', value.screenresolution ?? '');
+    await sharedprefes.setString('DEVICEVERSION', value.osversion ?? '');
+    await sharedprefes.setString('PACKAGENAME', value.packagename ?? '');
+    await sharedprefes.setString('APPVERSION', value.appversion ?? '');
+  }
+
+  Future<Deviceinfo> getdeviceinfo() async {
+    final sharedprefs = await SharedPreferences.getInstance();
+    bool checkValue = sharedprefs.containsKey('DEVICE');
+    log('$checkValue');
+    final device = sharedprefs.getString('DEVICE') ?? '';
+    final deviceos = sharedprefs.getString('DEVICEOS') ?? '';
+    final screenres = sharedprefs.getString('SCREENRESOLUTION') ?? '';
+    final deviceversion = sharedprefs.getString('DEVICEVERSION') ?? '';
+    final packagename = sharedprefs.getString('PACKAGENAME') ?? '';
+    final appversion = sharedprefs.getString('APPVERSION') ?? '';
+
+    final infoshared = Deviceinfo(
+        phone: device,
+        phoneos: deviceos,
+        screenresolution: screenres,
+        osversion: deviceversion,
+        packagename: packagename,
+        appversion: appversion);
 
     return infoshared;
   }

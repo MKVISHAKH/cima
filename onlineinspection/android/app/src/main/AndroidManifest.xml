@@ -6,7 +6,7 @@
      
     <application
         android:enableOnBackInvokedCallback="true"
-        android:label="onlineinspection"
+        android:label="C I A"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -36,11 +36,13 @@ class _ScreenQueryState extends State<ScreenQuery> {
       requestLocationPermission();
     });
   }
+
   @override
   void dispose() {
-    selectedFormatNotifier.dispose();
+    selectedFormatNotifier.value = '';
     super.dispose();
   }
+
   Future<void> getquestions() async {
     //regNo=sharedValue.
   }
@@ -106,18 +108,33 @@ class _ScreenQueryState extends State<ScreenQuery> {
               longitude: doublelong,
               activity: widget.activity);
           questval = await QuestionsFunctions.instance.fetchQueStrt(queReq);
-                                    if(questval==null){
-
-                                       } else{
-                                        selectedFormatNotifier.value='';
-                                          if (mounted) {
-                                            setState(() {});
-                                          }
-                                       }
+          if (questval == null) {
+            Fluttertoast.showToast(
+                msg: "No Data Found",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.white,
+                textColor: Colors.black,
+                fontSize: 15.0);
+          } else {
+            selectedFormatNotifier.value = '';
+            if (mounted) {
+              setState(() {});
+            }
+          }
         } catch (e) {
           print("Failed to parse coordinates: $e");
         }
       } else {
+        Fluttertoast.showToast(
+            msg: "Location are not ready yet.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.white,
+            textColor: Colors.black,
+            fontSize: 15.0);
         print("Location coordinates are not ready yet.");
       }
 
@@ -219,7 +236,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
   //   // Navigator.push(context, Approutes().homescreen);
   //   return true;
   // }
-
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -234,7 +251,8 @@ class _ScreenQueryState extends State<ScreenQuery> {
             //log('BackButton pressed!');
           },
           child: Scaffold(
-              backgroundColor:Theme.of(context).colorScheme.primaryFixed ,
+              key: _scaffoldKey,
+              backgroundColor: Theme.of(context).colorScheme.primaryFixed,
               appBar: AppBar(
                   leading: IconButton(
                     icon: const Icon(Icons.arrow_back),
@@ -296,7 +314,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                       children: [
                         if (questval != null && questval!.isNotEmpty) ...[
                           Text(
-                            'Q.${questval!.first.questionId}',
+                            'Q.${questval!.first.sortOrder}',
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           const SizedBox(height: 15),
@@ -311,99 +329,127 @@ class _ScreenQueryState extends State<ScreenQuery> {
                               shrinkWrap: true,
                               itemCount: questval!.first.option?.length ?? 0,
                               itemBuilder: (context, index) {
-                                final option = questval!.first.option?[index].option ?? 'activity';
+                                final option =
+                                    questval!.first.option?[index].option ??
+                                        'activity';
                                 return FormatRadioButton(
                                   title: option,
                                   type: option,
-                                  txtstyl: const TextStyle(fontSize: 16),
+                                  txtstyl:
+                                      Theme.of(context).textTheme.displaySmall,
                                   color: const Color.fromARGB(255, 2, 73, 4),
                                 );
                               },
                             ),
                           ),
                           Container(
-                          height: 45,
-                          width: 150,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Theme.of(context).colorScheme.primary,
-                                Theme.of(context).colorScheme.primary
-                              ],
+                            height: 45,
+                            width: 150,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.primary
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(12.0),
                             ),
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: Theme(
-                            data: MyTheme.buttonStyleTheme,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (lat.isNotEmpty && long.isNotEmpty) {
-                                  try {
-                                    String selectedValue = selectedFormatNotifier.value;
-                                    if (selectedValue.isNotEmpty) {
-                                      print("Selected option: $selectedValue");
-                                      double doublelat = double.parse(lat);
-                                    double doublelong = double.parse(long);
+                            child: Theme(
+                              data: MyTheme.buttonStyleTheme,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  if (lat.isNotEmpty && long.isNotEmpty) {
+                                    try {
+                                      String selectedValue =
+                                          selectedFormatNotifier.value;
+                                      if (selectedValue.isNotEmpty) {
+                                        print(
+                                            "Selected option: $selectedValue");
+                                        double doublelat = double.parse(lat);
+                                        double doublelong = double.parse(long);
 
-                                    final sharedValue = await SharedPrefManager
-                                        .instance
-                                        .getSocietyinfo();
-                                    final usrval = await SharedPrefManager
-                                        .instance
-                                        .getSharedData();
-                                    final queReq = QuestionReq(
-                                       questionId:questval?.single.questionId ,
-                                       inspectionId:questval?.single.inspId ,
-                                        userId: usrval!.userId,
-                                        socId: sharedValue.socId,
-                                        branchId: sharedValue.branchId,
-                                        answer: selectedValue,
-                                        lattitude: doublelat,
-                                        longitude: doublelong,
+                                        final sharedValue =
+                                            await SharedPrefManager.instance
+                                                .getSocietyinfo();
+                                        final usrval = await SharedPrefManager
+                                            .instance
+                                            .getSharedData();
+                                        final queReq = QuestionReq(
+                                          questionId:
+                                              questval?.single.questionId,
+                                          inspectionId: questval?.single.inspId,
+                                          userId: usrval!.userId,
+                                          socId: sharedValue.socId,
+                                          branchId: sharedValue.branchId,
+                                          answer: selectedValue,
+                                          lattitude: doublelat,
+                                          longitude: doublelong,
                                         );
-                                    questval = await QuestionsFunctions.instance.fetchQueUpdt(queReq);
-                                       if(questval==null){
-
-                                       } else{
-                                        selectedFormatNotifier.value='';
+                                        questval = await QuestionsFunctions
+                                            .instance
+                                            .fetchQueUpdt(queReq);
+                                        if (questval == null ||
+                                            questval == []) {
+                                          Fluttertoast.showToast(
+                                              msg: "No Data Found",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.CENTER,
+                                              timeInSecForIosWeb: 1,
+                                              backgroundColor: Colors.white,
+                                              textColor: const Color.fromRGBO(
+                                                  0, 0, 0, 1),
+                                              fontSize: 15.0);
+                                        } else if (questval!.single.questatus ==
+                                            true) {
+                                          selectedFormatNotifier.value = '';
+                                          queSubmit(
+                                              _scaffoldKey.currentContext!);
+                                        } else {
+                                          selectedFormatNotifier.value = '';
                                           if (mounted) {
                                             setState(() {});
                                           }
-                                       }
-                                    
-                                    } else {
-                                      Fluttertoast.showToast(
-                                      msg: "Please select one option",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.white,
-                                      textColor: Colors.black,
-                                      fontSize: 15.0);
+                                        }
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg: "Please select one option",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.CENTER,
+                                            timeInSecForIosWeb: 1,
+                                            backgroundColor: Colors.white,
+                                            textColor: Colors.black,
+                                            fontSize: 15.0);
+                                      }
+                                    } catch (e) {
+                                      print("Failed to parse coordinates: $e");
                                     }
-                                    
-                                  } catch (e) {
-                                    print("Failed to parse coordinates: $e");
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: "Location are not ready yet.",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Colors.white,
+                                        textColor: Colors.black,
+                                        fontSize: 15.0);
+
+                                    print(
+                                        "Location coordinates are not ready yet.");
                                   }
-                                } else {
-                                  print(
-                                      "Location coordinates are not ready yet.");
-                                }
-                              },
-                              child: Text(
-                                'NEXT',
-                                style: Theme.of(context).textTheme.titleMedium,
+                                },
+                                child: Text(
+                                  'NEXT',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
                               ),
                             ),
                           ),
-                        ),
                         ] else ...[
-                          
-                          Center(child: CircularProgressIndicator()),
+                          const Center(child: CircularProgressIndicator()),
                         ],
-                        
                       ],
                     ),
                   ),
@@ -428,24 +474,89 @@ class _ScreenQueryState extends State<ScreenQuery> {
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
-                child:
-                    Text('NO', style: Theme.of(context).textTheme.titleSmall),
+                child: Text('NO',
+                    style: Theme.of(context).textTheme.displayMedium),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                 ),
                 onPressed: () {
-                  selectedFormatNotifier.value='';
+                  selectedFormatNotifier.value = '';
+                  selectedItems.value = {0};
                   Navigator.pushReplacement(
                       context, Approutes().assignedscreen);
                 },
-                child:
-                    Text('YES', style: Theme.of(context).textTheme.titleSmall),
+                child: Text('YES',
+                    style: Theme.of(context).textTheme.displayMedium),
               ),
             ],
           ));
-  Widget buildQuestion() {
-    return Center();
-  }
+
+  queSubmit(BuildContext context) async => showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => PopScope(
+          canPop: false,
+          child: AlertDialog(
+            title: Center(
+                child: Text("Inspection completed Successfully",
+                    style: Theme.of(context).textTheme.titleSmall)),
+            actions: [
+              Container(
+                height: 45,
+                width: 130,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.primary
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: Theme(
+                  data: MyTheme.buttonStyleTheme,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (lat.isNotEmpty && long.isNotEmpty) {
+                        try {
+                          double doublelat = double.parse(lat);
+                          double doublelong = double.parse(long);
+
+                          SocietyListFunctions.instance
+                              .getSocietyList(doublelat, doublelong);
+
+                          selectedFormatNotifier.value = '';
+                          selectedItems.value = {0};
+                          Navigator.pushReplacement(
+                              context, Approutes().assignedscreen);
+                        } catch (e) {
+                          // Handle parsing error, e.g., show a message to the user
+                          print("Failed to parse coordinates: $e");
+                        }
+                      } else {
+                        // Show an error message if coordinates are unavailable
+                        Fluttertoast.showToast(
+                            msg: "Location are not ready yet.",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            fontSize: 15.0);
+                        print("Location coordinates are not ready yet.");
+                      }
+                    },
+                    child: Text(
+                      'Submit',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )));
 }

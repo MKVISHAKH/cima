@@ -8,4 +8,10 @@ class Url {
   String sctyDetUrl = '/api/v1/inspection/init';
   String questrtUrl = '/api/v1/inspection/start';
   String queupdtUrl = '/api/v1/inspection/update';
+  String chngPswdUrl = '/api/v1/changePassword';
+  String frgtPswdvrfyUrl = '/api/v1/forgotPasswordVerify';
+  String frgtPswdUrl = '/api/v1/forgotPassword';
+  String scheduleLstUrl = '/api/v1/schedule/list';
+  String schdlrprtUrl='/api/v1/schedule/completed';
+  String dwnldPdfUrl='/api/v1/inspection/generateRegionalPdf';
 }

@@ -19,6 +19,9 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
   String? usrName;
   String? time;
   String? date;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isExpanded = false;
+
   @override
   void initState() {
     super.initState();
@@ -182,7 +185,7 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
   }
 
   Future<bool?> popscreen(BuildContext context) async {
-    SocietyListFunctions.instance.getScietyListNotifier.value=[];
+    SocietyListFunctions.instance.getScietyListNotifier.value = [];
     Navigator.push(context, Approutes().homescreen);
     return true;
   }
@@ -201,12 +204,14 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
             //log('BackButton pressed!');
           },
           child: Scaffold(
+            key: _scaffoldKey,
             backgroundColor: Theme.of(context).colorScheme.primaryFixed,
             appBar: AppBar(
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
-                    SocietyListFunctions.instance.getScietyListNotifier.value=[];
+                    SocietyListFunctions.instance.getScietyListNotifier.value =
+                        [];
                     Navigator.pushReplacement(context, Approutes().homescreen);
                   },
                 ),
@@ -241,264 +246,328 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
                   child: ValueListenableBuilder(
                       valueListenable:
                           SocietyListFunctions.instance.getScietyListNotifier,
-                      builder: (BuildContext context, List<Society> newList,Widget? _) {
-                        return newList.isEmpty?
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: const EdgeInsets.all(5),
-                            child: Column(
-                              //crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 200,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    
-                                      color: Theme.of(context).colorScheme.primaryFixed,
-                                      shape: BoxShape.circle,
-                                      image: const DecorationImage(
-                                        image:
-                                            AssetImage('assets/errror/no_data_found.png'),
-                                        fit: BoxFit.scaleDown,
-                                      )),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ):
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: newList.length,
-                          itemBuilder: (context, index) {
-                            final society = newList[index];
-                            return Theme(
-                              data: Theme.of(context).copyWith(
-                                dividerColor: Colors.transparent,
-                                
-                              ),
-                              child: ExpansionTile(
-                                  title: Text(
-                                    society.societyName ?? ' ',
-                                    style: society.active == true
-                                        ? const TextStyle(
-                                            color:
-                                                Color.fromARGB(255, 3, 99, 54),
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w900,
-                                            fontFamily: 'Poppins-Medium')
-                                        : Theme.of(context)
-                                            .textTheme
-                                            .titleSmall,
+                      builder: (BuildContext context, List<Society> newList,
+                          Widget? _) {
+                        return newList.isEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  margin: const EdgeInsets.all(5),
+                                  child: Column(
+                                    //crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 200,
+                                        height: 200,
+                                        decoration: BoxDecoration(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primaryFixed,
+                                            shape: BoxShape.circle,
+                                            image: const DecorationImage(
+                                              image: AssetImage(
+                                                  'assets/errror/no_data_found.png'),
+                                              fit: BoxFit.scaleDown,
+                                            )),
+                                      ),
+                                    ],
                                   ),
-                                  children: [
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height /
-                                              3,
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          children:
-                                              society.branches!.map((subItem) {
-                                            String? schDt = subItem.schDate;
-                                            DateTime parseDate =
-                                                DateFormat("yyyy-MM-dd")
-                                                    .parse(schDt ?? '');
-                                            var inputDate = DateTime.parse(
-                                                parseDate.toString());
-                                            var outputFormat =
-                                                DateFormat('dd-MM-yyyy');
-                                            var schdldt =
-                                                outputFormat.format(inputDate);
-                                            print(schdldt);
-                                            final now = DateTime.now();
-                                            DateFormat dateFormat = DateFormat("dd-MM-yyyy");
-                                            date = dateFormat.format(now);
-                                            print(date);
-                                            double? dist = subItem.distance;
-                                            
-                                            String distance = '';
-                                            if (dist == null) {
-                                              dist = 0;
-                                              distance = '0';
-                                              isButtonEnabled = false;
-                                            } else if (dist >= 1000) {
-                                              double dist1 = dist / 1000;
-                                              String myString =
-                                                  dist1.toStringAsFixed(1);
-                                              distance = "${myString}km";
-                                              isButtonEnabled = false;
-                                            } else {
-                                              if (dist < 20 && schdldt==date) {
-                                                isButtonEnabled = true;
-                                                String myString =
-                                                    dist.toStringAsFixed(1);
-                                                distance = "${myString}m";
-                                              } else {
-                                                isButtonEnabled = false;
-                                                String myString =
-                                                    dist.toStringAsFixed(1);
-                                                distance = "${myString}m";
-                                              }
-                                            }
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8.0,
-                                                      horizontal: 16.0),
-                                              child: Card(
-                                                // elevation: 3,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8)),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .onSecondary),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12),
-                                                  ),
-                                                  child: ListTile(
-                                                    // Main title and subtitle
-                                                    title: Text(
-                                                      subItem.branchName ?? '',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .titleSmall,
-                                                    ),
-                                                    subtitle: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        // Text(items[index].title),
-                                                        const SizedBox(
-                                                            height: 10),
-                                                        Text(
-                                                          'Schedule Date: $schdldt',
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .labelLarge,
-                                                        ),
-                                                      ],
-                                                    ),
+                                ),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: newList.length,
+                                itemBuilder: (context, index) {
+                                  final society = newList[index];
+                                  return Theme(
+                                    data: Theme.of(context).copyWith(
+                                      dividerColor: Colors.transparent,
+                                      // highlightColor: Colors.blue.withOpacity(0.2),
+                                      // splashColor: Colors.blue.withOpacity(0.1),
+                                    ),
+                                    child: Card(
+                                      elevation: 3,
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: isExpanded
+                                              ? const Color.fromARGB(255, 50, 150, 250) // Expanded state color
+                                              : (society.active == true
+                                                  ? const Color.fromARGB(255, 7, 126, 11) // Active state color
+                                                  : const Color.fromARGB(255, 50, 150, 250)),// Inactive state color
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: ExpansionTile(
+                                            title: Text(
+                                              society.societyName ?? ' ',
+                                              style: society.active == true
+                                                  ? isExpanded?const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w900,
+                                                      fontFamily:
+                                                          'Poppins-Medium'):
+                                                       const   TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w900,
+                                                      fontFamily:
+                                                          'Poppins-Medium')
+                                                  : Theme.of(context)
+                                                      .textTheme
+                                                      .displayMedium,
+                                            ),
+                                            onExpansionChanged: (bool expanded) {
+                                                      setState(() {
+                                                        isExpanded = expanded;
+                                                      });
+                                                    },
 
-                                                    // Leading elevated button with distance
-                                                    trailing: Column(
-                                                      //mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Container(
-                                                          height: 30,
-                                                          width: 110,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            gradient: isButtonEnabled
-                                                                ? const LinearGradient(
-                                                                    begin: Alignment
-                                                                        .topLeft,
-                                                                    end: Alignment
-                                                                        .bottomRight,
-                                                                    colors: [
-                                                                      Color(
-                                                                          0xff5cb85c),
-                                                                      Color(
-                                                                          0xff5cb85c)
-                                                                    ],
-                                                                  )
-                                                                : const LinearGradient(
-                                                                    begin: Alignment
-                                                                        .topLeft,
-                                                                    end: Alignment
-                                                                        .bottomRight,
-                                                                    colors: [
-                                                                      Colors
-                                                                          .grey,
-                                                                      Color.fromARGB(
-                                                                          255,
-                                                                          172,
-                                                                          168,
-                                                                          168)
-                                                                    ],
-                                                                  ),
+                                            children: [
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    3.8,
+                                                child: SingleChildScrollView(
+                                                  child: Column(
+                                                    children: society.branches!.map((subItem) {
+                                                      String? schDt =
+                                                          subItem.schDate;
+                                                      DateTime parseDate =
+                                                          DateFormat(
+                                                                  "yyyy-MM-dd")
+                                                              .parse(
+                                                                  schDt ?? '');
+                                                      var inputDate =
+                                                          DateTime.parse(
+                                                              parseDate
+                                                                  .toString());
+                                                      var outputFormat =
+                                                          DateFormat(
+                                                              'dd-MM-yyyy');
+                                                      var schdldt = outputFormat
+                                                          .format(inputDate);
+                                                      print(schdldt);
+                                                      final now =
+                                                          DateTime.now();
+                                                      DateFormat dateFormat =
+                                                          DateFormat(
+                                                              "dd-MM-yyyy");
+                                                      date = dateFormat
+                                                          .format(now);
+                                                      print(date);
+                                                      double? dist =
+                                                          subItem.distance;
+
+                                                      String distance = '';
+                                                      if (dist == null) {
+                                                        dist = 0;
+                                                        distance = '0';
+                                                        isButtonEnabled = false;
+                                                      } else if (dist >= 1000) {
+                                                        double dist1 =
+                                                            dist / 1000;
+                                                        String myString = dist1
+                                                            .toStringAsFixed(1);
+                                                        distance =
+                                                            "${myString}km";
+                                                        isButtonEnabled = false;
+                                                      } else {
+                                                        if (dist < 20 &&
+                                                            schdldt == date) {
+                                                          isButtonEnabled =
+                                                              true;
+                                                          String myString = dist
+                                                              .toStringAsFixed(
+                                                                  1);
+                                                          distance =
+                                                              "${myString}m";
+                                                        } else {
+                                                          isButtonEnabled =
+                                                              false;
+                                                          String myString = dist
+                                                              .toStringAsFixed(
+                                                                  1);
+                                                          distance =
+                                                              "${myString}m";
+                                                        }
+                                                      }
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 8.0,
+                                                                horizontal:
+                                                                    16.0),
+                                                        child: Card(
+                                                          elevation: 3,
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 8,
+                                                                  horizontal:
+                                                                      16),
+                                                          shape:
+                                                              RoundedRectangleBorder(
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
-                                                                        12.0),
+                                                                        12),
                                                           ),
-                                                          child: Theme(
-                                                            data: MyTheme
-                                                                .buttonStyleTheme,
-                                                            child:
-                                                                ElevatedButton(
-                                                              onPressed:
-                                                                  isButtonEnabled
-                                                                      ? () async {
-                                                                          if (lat.isNotEmpty &&
-                                                                              long.isNotEmpty) {
-                                                                            try {
-                                                                              double doublelat = double.parse(lat);
-                                                                              double doublelong = double.parse(long);
-
-                                                                              final socdet = Getbasicinfo.val(schedulerId: subItem.schedulerId, schedulerDate: subItem.schDate, userId: usrId, socId: society.socId, socName: society.societyName, branchId: subItem.branchId, lattitude: doublelat, longitude: doublelong, bName: subItem.branchName);
-
-                                                                              await SharedPrefManager.instance.setSocietyinfo(socdet);
-
-                                                                              buildQuery(socdet);
-                                                                            } catch (e) {
-                                                                              // Handle parsing error, e.g., show a message to the user
-                                                                              print("Failed to parse coordinates: $e");
-                                                                            }
-                                                                          } else {
-                                                                            // Show an error message if coordinates are unavailable
-                                                                            print("Location coordinates are not ready yet.");
-                                                                          }
-                                                                        }
-                                                                      : null,
-                                                              child: Text(
-                                                                'START',
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: society
+                                                                          .active ==
+                                                                      true
+                                                                  ? const Color(
+                                                                      0XFF82CAFA) // Active state color
+                                                                  : const Color(
+                                                                      0XFF82CAFA), // Inactive state color
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12),
+                                                            ),
+                                                            child: ListTile(
+                                                              // Main title and subtitle
+                                                              title: Text(
+                                                                subItem.branchName ??
+                                                                    '',
                                                                 style: Theme.of(
                                                                         context)
                                                                     .textTheme
-                                                                    .titleMedium,
+                                                                    .headlineLarge,
                                                               ),
+                                                              subtitle: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  // Text(items[index].title),
+                                                                  const SizedBox(
+                                                                      height:
+                                                                          10),
+                                                                  Text(
+                                                                    'Schedule Date: $schdldt',
+                                                                    style: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .headlineSmall,
+                                                                  ),
+                                                                ],
+                                                              ),
+
+                                                              // Leading elevated button with distance
+                                                              trailing: Column(
+                                                                //mainAxisAlignment: MainAxisAlignment.center,
+                                                                children: [
+                                                                  Container(
+                                                                    height: 30,
+                                                                    width: 110,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      gradient: isButtonEnabled
+                                                                          ? const LinearGradient(
+                                                                              begin: Alignment.topLeft,
+                                                                              end: Alignment.bottomRight,
+                                                                              colors: [
+                                                                                Color.fromARGB(255, 7, 176, 7),
+                                                                                Color.fromARGB(255, 4, 134, 4)
+                                                                              ],
+                                                                            )
+                                                                          : const LinearGradient(
+                                                                              begin: Alignment.topLeft,
+                                                                              end: Alignment.bottomRight,
+                                                                              colors: [
+                                                                                Colors.grey,
+                                                                                Color.fromARGB(255, 172, 168, 168)
+                                                                              ],
+                                                                            ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              12.0),
+                                                                    ),
+                                                                    child:
+                                                                        Theme(
+                                                                      data: MyTheme
+                                                                          .buttonStyleTheme,
+                                                                      child:
+                                                                          ElevatedButton(
+                                                                        onPressed: isButtonEnabled
+                                                                            ? () async {
+                                                                                if (lat.isNotEmpty && long.isNotEmpty) {
+                                                                                  try {
+                                                                                    double doublelat = double.parse(lat);
+                                                                                    double doublelong = double.parse(long);
+
+                                                                                    final socdet = Getbasicinfo.val(schedulerId: subItem.schedulerId, schedulerDate: subItem.schDate, userId: usrId, socId: society.socId, socName: society.societyName, branchId: subItem.branchId, lattitude: doublelat, longitude: doublelong, bName: subItem.branchName);
+
+                                                                                    await SharedPrefManager.instance.setSocietyinfo(socdet);
+
+                                                                                    buildQuery(socdet);
+                                                                                  } catch (e) {
+                                                                                    // Handle parsing error, e.g., show a message to the user
+                                                                                    print("Failed to parse coordinates: $e");
+                                                                                  }
+                                                                                } else {
+                                                                                  Fluttertoast.showToast(msg: "Location are not ready yet.", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.CENTER, timeInSecForIosWeb: 1, backgroundColor: Colors.white, textColor: Colors.black, fontSize: 15.0);
+                                                                                  // Show an error message if coordinates are unavailable
+                                                                                  print("Location coordinates are not ready yet.");
+                                                                                }
+                                                                              }
+                                                                            : null,
+                                                                        child:
+                                                                            Text(
+                                                                          'START',
+                                                                          style: Theme.of(context)
+                                                                              .textTheme
+                                                                              .titleMedium,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      height:
+                                                                          8),
+                                                                  Text(
+                                                                    'Distance: $distance',
+                                                                    style: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .headlineSmall,
+                                                                  ),
+                                                                ],
+                                                              ),
+
+                                                              contentPadding:
+                                                                  const EdgeInsets
+                                                                      .all(16),
                                                             ),
                                                           ),
                                                         ),
-                                                        const SizedBox(
-                                                            height: 8),
-                                                        Text(
-                                                          'Distance: $distance',
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .labelLarge,
-                                                        ),
-                                                      ],
-                                                    ),
-
-                                                    contentPadding:
-                                                        const EdgeInsets.all(
-                                                            16),
+                                                      );
+                                                    }).toList(),
                                                   ),
                                                 ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
+                                              )
+                                            ]),
                                       ),
-                                    )
-                                  ]),
-                            );
-                          },
-                        );
+                                    ),
+                                  );
+                                },
+                              );
                       }),
                 ),
               ],
@@ -510,8 +579,27 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
   }
 
   Future buildQuery(Getbasicinfo val) async {
-    SocietyListFunctions.instance.getSocietyDet(val);
+    final socDet = await SocietyListFunctions.instance.getSocietyDet(val);
+    final inspStat = socDet?.single.inspStatus ?? '';
 
-    Navigator.push(context, Approutes().basicInfoScreen);
+    if (inspStat == 'STARTED') {
+      final actlist = socDet?.single.activity ?? [];
+      String selectedIdsString = "[${actlist.join(", ")}]";
+      Navigator.of(_scaffoldKey.currentContext!).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ScreenQuery(
+            bankname: socDet?.single.socName ?? '',
+            branch: socDet?.single.branchName ?? '',
+            regNo: socDet?.single.regNo ?? '',
+            lastinspdt: socDet?.single.lastInspectionDate ?? '',
+            name: socDet?.single.user?.name ?? '',
+            role: socDet?.single.user?.roleName ?? '',
+            activity: selectedIdsString,
+          ),
+        ),
+      );
+    } else {
+      Navigator.push(_scaffoldKey.currentContext!, Approutes().basicInfoScreen);
+    }
   }
 }

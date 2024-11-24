@@ -27,6 +27,9 @@ class SocietyDet {
   String? socClass;
   String? lastInspectionDate;
   User? user;
+  List<int>? activity;
+  @JsonKey(name: 'inspection_status')
+  String? inspStatus;
   @JsonKey(name: 'society_activity')
   List<SocietyActivity>? societyActivity;
 
@@ -42,6 +45,8 @@ class SocietyDet {
     this.socClass,
     this.lastInspectionDate,
     this.user,
+    this.inspStatus,
+    this.activity,
     this.societyActivity,
   });
 
