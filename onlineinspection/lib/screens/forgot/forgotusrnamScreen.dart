@@ -14,6 +14,8 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
   final _mobilenocontroller = TextEditingController();
   String? selectedBusType;
   List<String> busTypeList = [];
+  String? mobNo;
+  int? refid;
 
   @override
   void initState() {
@@ -44,8 +46,8 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
       child: Scaffold(
         key: _scafoldkey,
         backgroundColor: Theme.of(context).colorScheme.primaryFixed,
-
         appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.primary,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
@@ -63,7 +65,7 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
             Card(
                 margin: const EdgeInsets.all(10),
                 elevation: 3,
-                color:const Color.fromARGB(255, 50, 150, 250) ,
+                color: const Color(0xff1569C7),
                 child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -79,10 +81,10 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
                             child: Column(
                               children: [
                                 Text(
-                                'Forgot Username',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              const SizedBox(height: 30),
+                                  'Forgot Username',
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                                const SizedBox(height: 30),
                                 const SizedBox(height: 10),
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width,
@@ -90,7 +92,7 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
                                     controller: _mobilenocontroller,
                                     keyboardType: TextInputType.phone,
                                     style:
-                                        Theme.of(context).textTheme.labelLarge,
+                                        Theme.of(context).textTheme.bodySmall,
                                     // style:kBodyText,
                                     inputFormatters: [
                                       LengthLimitingTextInputFormatter(10),
@@ -133,13 +135,13 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
                                             " (+91)",
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .labelLarge,
+                                                .bodySmall,
                                           ),
                                         ),
                                         labelText: 'Registered Mobile No',
                                         labelStyle: Theme.of(context)
                                             .textTheme
-                                            .labelLarge),
+                                            .bodySmall),
                                   ),
                                 ),
                                 const SizedBox(
@@ -157,7 +159,7 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
                                                 .primary,
                                             Theme.of(context)
                                                 .colorScheme
-                                                .secondary,
+                                                .primary,
                                           ])),
                                   child: Theme(
                                     data: MyTheme.buttonStyleTheme,
@@ -167,6 +169,10 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
                                           context
                                               .read<ElevatedBtnProvider>()
                                               .changeSelectedVal(true);
+                                          setState(() {
+                                            mobNo = _mobilenocontroller.text;
+                                          });
+                                          userVerify(mobNo);
                                         }
                                       },
                                       child: Text('SHOW',
@@ -185,7 +191,11 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
                 if (provider.selectedVal == false) {
                   return Container();
                 } else if (provider.selectedVal == true) {
-                  return const OtpFiled();
+                  return OtpFiled(
+                    type: frgtUsr,
+                    refId: refid,
+                    mob: mobNo,
+                  );
                 }
                 return Container();
               },
@@ -195,5 +205,61 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
       ),
     );
   }
-// Widget buildotp() {}
+
+  Future userVerify(String? mobNo) async {
+    final loadingProvider = context.read<LoadingProvider>();
+    loadingProvider.toggleLoading();
+
+    final val = ChangeReq(mobNo: mobNo);
+
+    final chngresp = await Ciadata().frgtusrName(val);
+    final resultAsjson = jsonDecode(chngresp.toString());
+    final changeval = ChangeResp.fromJson(resultAsjson as Map<String, dynamic>);
+
+    loadingProvider.toggleLoading();
+    if (chngresp == null) {
+      showLoginerror(_scafoldkey.currentContext!, 1);
+    } else if (chngresp.statusCode == 200 && changeval.status == 'success') {
+      refid = changeval.data?.refId ?? 0;
+      Fluttertoast.showToast(
+          msg: "Otp sended on your registered mobile No",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 15.0);
+
+      _scafoldkey.currentContext!
+          .read<ElevatedBtnProvider>()
+          .changeSelectedVal(true);
+    } else if (changeval.status == 'failure') {
+      showLoginerror(_scafoldkey.currentContext!, 2);
+    } else {
+      showLoginerror(_scafoldkey.currentContext!, 3);
+    }
+  }
+
+  Future showLoginerror(BuildContext? context, stat) async {
+    //print('hi');
+    if (stat == 2) {
+      Fluttertoast.showToast(
+          msg: "No User Found",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 15.0);
+    } else {
+      Fluttertoast.showToast(
+          msg: "Something went wrong",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 15.0);
+    }
+  }
 }

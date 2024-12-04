@@ -49,8 +49,12 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
         key: _scafoldkey,
         backgroundColor: Theme.of(context).colorScheme.primaryFixed,
         appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.primary,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: Icon(
+                Icons.arrow_back,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
               onPressed: () {
                 Navigator.pushReplacement(
                     _scafoldkey.currentContext!, Approutes().homescreen);
@@ -66,7 +70,7 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
             Card(
                 margin: const EdgeInsets.all(10),
                 elevation: 3,
-                color:const Color.fromARGB(255, 50, 150, 250) ,
+                color: const Color(0xff1569C7),
                 child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -81,26 +85,26 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                             key: _formkey,
                             child: Column(
                               children: [
-                                 Text(
-                                'Change Password',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              const SizedBox(height: 30),
-                                
-                               
+                                Text(
+                                  'Change Password',
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                                const SizedBox(height: 30),
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width,
                                   child: TextFormField(
                                     controller: _crntpswrdcontroller,
                                     style:
-                                        Theme.of(context).textTheme.headlineLarge,
+                                        Theme.of(context).textTheme.labelMedium,
                                     decoration: InputDecoration(
                                       labelText: 'Old Password',
-                                      labelStyle:
-                                          Theme.of(context).textTheme.headlineLarge,
+                                      labelStyle: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium,
                                       hintText: 'Enter old password',
-                                      hintStyle:
-                                          Theme.of(context).textTheme.headlineLarge,
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium,
                                     ),
                                     validator: (value) {
                                       if (value!.isEmpty) {
@@ -118,13 +122,14 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                                   width: MediaQuery.of(context).size.width,
                                   child: TextFormField(
                                       controller: _newpswrdcontroller,
-                                      style:
-                                          Theme.of(context).textTheme.headlineLarge,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium,
                                       decoration: InputDecoration(
                                         labelText: 'New Password',
                                         labelStyle: Theme.of(context)
                                             .textTheme
-                                            .headlineLarge,
+                                            .labelMedium,
                                         prefixIcon: Theme(
                                           data: MyTheme.appIconTheme,
                                           child: const Icon(
@@ -175,13 +180,14 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                                   width: MediaQuery.of(context).size.width,
                                   child: TextFormField(
                                       controller: _cnfrmpswrdcontroller,
-                                      style:
-                                          Theme.of(context).textTheme.headlineLarge,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium,
                                       decoration: InputDecoration(
                                         labelText: 'Confirm Password',
                                         labelStyle: Theme.of(context)
                                             .textTheme
-                                            .headlineLarge,
+                                            .labelMedium,
                                         prefixIcon: Theme(
                                           data: MyTheme.appIconTheme,
                                           child: const Icon(
@@ -231,7 +237,7 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                                                 .primary,
                                             Theme.of(context)
                                                 .colorScheme
-                                                .secondary,
+                                                .primary,
                                           ])),
                                   child: Theme(
                                     data: MyTheme.buttonStyleTheme,

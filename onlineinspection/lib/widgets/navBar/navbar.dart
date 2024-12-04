@@ -1,7 +1,7 @@
 import 'package:onlineinspection/core/hook/hook.dart';
 
 class Navbar extends StatefulWidget {
-  //final int? category;
+  
   const Navbar({super.key});
 
   @override
@@ -14,6 +14,9 @@ class _NavbarState extends State<Navbar> {
   String brname = '';
   bool isVisible = true;
   String? version;
+  String? usrNm;
+  int? pen;
+
   @override
   void initState() {
     super.initState();
@@ -22,6 +25,9 @@ class _NavbarState extends State<Navbar> {
 
   void buildversion() async {
     final value = await SharedPrefManager.instance.getdeviceinfo();
+    final val = await SharedPrefManager.instance.getSharedData();
+    usrNm = val!.name;
+    pen = val.pen;
 
     final devversion = value.appversion;
     final devicever = devversion!.split('+');
@@ -59,36 +65,43 @@ class _NavbarState extends State<Navbar> {
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              accountName: Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Text(
-                  'C I A',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+              accountName: Text(
+                '$usrNm',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
               accountEmail: Text(
-                'Version:$version',
+                'PEN No: $pen',
                 style: Theme.of(context).textTheme.labelMedium,
               ),
-              currentAccountPicture: CircleAvatar(
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/splash/2527291.jpg',
-                    width: 90,
-                    height: 90,
-                    fit: BoxFit.cover, //fit image in circle
+              // currentAccountPicture: CircleAvatar(
+              //   child: ClipOval(
+              //     child: Image.asset(
+              //       'assets/splash/2527291.jpg',
+              //       width: 90,
+              //       height: 90,
+              //       fit: BoxFit.cover, //fit image in circle
+              //     ),
+              //   ),
+              // ),
+              decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                      'assets/splash/bg.jpg',
+                      
+                    ),
+                    fit: BoxFit.cover,
+                    
                   ),
                 ),
-              ),
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                    Theme.of(context).colorScheme.secondary,
-                    Theme.of(context).colorScheme.primary
-                  ])),
+              // BoxDecoration(
+              //     gradient: LinearGradient(
+              //         begin: Alignment.topLeft,
+              //         end: Alignment.bottomRight,
+              //         colors: [
+              //       Theme.of(context).colorScheme.secondary,
+              //       Theme.of(context).colorScheme.primary
+              //     ])),
             ),
             // ListTile(
             //     leading: const Icon(
@@ -125,7 +138,7 @@ class _NavbarState extends State<Navbar> {
                 onTap: () {
                   Navigator.push(context, Approutes().changepswrdScreen);
                 }),
-            const Divider(),
+            const Divider(thickness: .4,),
             ListTile(
                 leading: const Icon(
                   Icons.logout_outlined,

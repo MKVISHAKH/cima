@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:onlineinspection/core/hook/hook.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -29,22 +31,39 @@ class _ScreenQueryState extends State<ScreenQuery> {
   String long = '';
   Timer? locationTimer;
   List<Datum>? questval;
+  bool? skip;
+  String outputDate = '';
+  Getbasicinfo? sharedVal;
+  Sharedpref? userval;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       requestLocationPermission();
+      getSharedvalue();
+      _startLocationCheckTimer();
+       final lstinspdt=widget.lastinspdt;
+              if (lstinspdt == '') {
+                      outputDate = '';
+                }else if(lstinspdt == null){
+                      outputDate = '';
+                } else {
+                     
+                      outputDate=lstinspdt;
+                }
     });
   }
 
   @override
   void dispose() {
     selectedFormatNotifier.value = '';
+    locationTimer?.cancel();
     super.dispose();
   }
 
-  Future<void> getquestions() async {
-    //regNo=sharedValue.
+   getSharedvalue() async {
+     sharedVal =await SharedPrefManager.instance.getSocietyinfo();
+      userval =await SharedPrefManager.instance.getSharedData();
   }
   Future<void> requestLocationPermission() async {
     LocationPermission permission = await Geolocator.checkPermission();
@@ -107,6 +126,8 @@ class _ScreenQueryState extends State<ScreenQuery> {
               lattitude: doublelat,
               longitude: doublelong,
               activity: widget.activity);
+
+             
           questval = await QuestionsFunctions.instance.fetchQueStrt(queReq);
           if (questval == null) {
             Fluttertoast.showToast(
@@ -231,11 +252,8 @@ class _ScreenQueryState extends State<ScreenQuery> {
     });
   }
 
-  // Future<bool?> popscreen(BuildContext context) async {
-  //   selectedFormatNotifier.value=
-  //   // Navigator.push(context, Approutes().homescreen);
-  //   return true;
-  // }
+
+ 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -254,8 +272,10 @@ class _ScreenQueryState extends State<ScreenQuery> {
               key: _scaffoldKey,
               backgroundColor: Theme.of(context).colorScheme.primaryFixed,
               appBar: AppBar(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   leading: IconButton(
-                    icon: const Icon(Icons.arrow_back),
+                    icon: Icon(Icons.arrow_back,
+                        color: Theme.of(context).colorScheme.onPrimary),
                     onPressed: () {
                       warningBox(context);
                     },
@@ -263,23 +283,16 @@ class _ScreenQueryState extends State<ScreenQuery> {
                   title: Text(
                     "Questionnaire",
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary),
+                        color: Theme.of(context).colorScheme.onPrimary),
                   )),
               body: ListView(
                 children: [
                   Container(
                     // margin: const EdgeInsets.all(5.0),
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          Theme.of(context).colorScheme.primary,
-                          Theme.of(context).colorScheme.primary
-                        ],
-                      ),
-                      // borderRadius: BorderRadius.circular(12.0),
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: const BoxDecoration(
+                      color: Color(0xff1569C7),
+                     
                     ),
                     child: ListTile(
                       title: Text(
@@ -299,7 +312,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                           Text(
-                            'Last Inspection Date: ${widget.lastinspdt ?? ''}',
+                            'Last Inspection Date: $outputDate',
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],
@@ -310,12 +323,55 @@ class _ScreenQueryState extends State<ScreenQuery> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         if (questval != null && questval!.isNotEmpty) ...[
-                          Text(
-                            'Q.${questval!.first.sortOrder}',
-                            style: Theme.of(context).textTheme.bodyLarge,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Q.${questval!.first.sortOrder}',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              TextButton(onPressed: (){
+                                String selectedValue =
+                                          selectedFormatNotifier.value;
+                                
+                                  skip = true;
+                                        double doublelat =
+                                            double.parse(lat);
+                                        double doublelong =
+                                            double.parse(long);
+                          
+                                        // final sharedValue =
+                                        //     await SharedPrefManager.instance
+                                        //         .getSocietyinfo();
+                                        // final usrval =
+                                        //     await SharedPrefManager.instance
+                                        //         .getSharedData();
+                                        final queReq = QuestionReq(
+                                            questionId:
+                                                questval?.single.questionId,
+                                            inspectionId:
+                                                questval?.single.inspId,
+                                            userId: userval!.userId,
+                                            socId: sharedVal!.socId,
+                                            branchId: sharedVal!.branchId,
+                                            answer: selectedValue,
+                                            lattitude: doublelat,
+                                            longitude: doublelong,
+                                            skip: skip);
+                                        skipBox(context,queReq);
+                                
+                                
+                              }, child: Text('Skip',style:TextStyle(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    fontSize: 16,
+                                    fontFamily: 'Poppins-Medium',
+                                    fontWeight: FontWeight.w900,
+                                  ),))
+                              
+                            ],
                           ),
                           const SizedBox(height: 15),
                           Text(
@@ -359,71 +415,55 @@ class _ScreenQueryState extends State<ScreenQuery> {
                             child: Theme(
                               data: MyTheme.buttonStyleTheme,
                               child: ElevatedButton(
-                                onPressed: () async {
+                                onPressed: ()  {
                                   if (lat.isNotEmpty && long.isNotEmpty) {
                                     try {
                                       String selectedValue =
                                           selectedFormatNotifier.value;
                                       if (selectedValue.isNotEmpty) {
+                                        print("Selected option: $selectedValue");
+                                        skip = false;
+                                        double doublelat =double.parse(lat);
+                                        double doublelong =double.parse(long);
+                          
+                                        // final sharedValue =
+                                        //     await SharedPrefManager.instance.getSocietyinfo();
+                                        // final usrval =
+                                        //     await SharedPrefManager.instance.getSharedData();
+
+                                        final queReq = QuestionReq(
+                                            questionId:
+                                                questval?.single.questionId,
+                                            inspectionId:
+                                                questval?.single.inspId,
+                                            userId: userval!.userId,
+                                            socId: sharedVal!.socId,
+                                            branchId: sharedVal!.branchId,
+                                            answer: selectedValue,
+                                            queStatus:
+                                                questval?.single.questatus,
+                                            lattitude: doublelat,
+                                            longitude: doublelong,
+                                            skip: skip);
+
+                                        confrmBox(context,queReq);
+                                      } else {
                                         print(
                                             "Selected option: $selectedValue");
-                                        double doublelat = double.parse(lat);
-                                        double doublelong = double.parse(long);
 
-                                        final sharedValue =
-                                            await SharedPrefManager.instance
-                                                .getSocietyinfo();
-                                        final usrval = await SharedPrefManager
-                                            .instance
-                                            .getSharedData();
-                                        final queReq = QuestionReq(
-                                          questionId:
-                                              questval?.single.questionId,
-                                          inspectionId: questval?.single.inspId,
-                                          userId: usrval!.userId,
-                                          socId: sharedValue.socId,
-                                          branchId: sharedValue.branchId,
-                                          answer: selectedValue,
-                                          lattitude: doublelat,
-                                          longitude: doublelong,
-                                        );
-                                        questval = await QuestionsFunctions
-                                            .instance
-                                            .fetchQueUpdt(queReq);
-                                        if (questval == null ||
-                                            questval == []) {
-                                          Fluttertoast.showToast(
-                                              msg: "No Data Found",
-                                              toastLength: Toast.LENGTH_SHORT,
-                                              gravity: ToastGravity.CENTER,
-                                              timeInSecForIosWeb: 1,
-                                              backgroundColor: Colors.white,
-                                              textColor: const Color.fromRGBO(
-                                                  0, 0, 0, 1),
-                                              fontSize: 15.0);
-                                        } else if (questval!.single.questatus ==
-                                            true) {
-                                          selectedFormatNotifier.value = '';
-                                          queSubmit(
-                                              _scaffoldKey.currentContext!);
-                                        } else {
-                                          selectedFormatNotifier.value = '';
-                                          if (mounted) {
-                                            setState(() {});
-                                          }
-                                        }
-                                      } else {
-                                        Fluttertoast.showToast(
-                                            msg: "Please select one option",
+                                            Fluttertoast.showToast(
+                                            msg: "Please select one Option",
                                             toastLength: Toast.LENGTH_SHORT,
                                             gravity: ToastGravity.CENTER,
                                             timeInSecForIosWeb: 1,
                                             backgroundColor: Colors.white,
-                                            textColor: Colors.black,
+                                            textColor: const Color.fromRGBO(0, 0, 0, 1),
                                             fontSize: 15.0);
+                                        
                                       }
                                     } catch (e) {
-                                      print("Failed to parse coordinates: $e");
+                                      print(
+                                          "Failed to parse coordinates: $e");
                                     }
                                   } else {
                                     Fluttertoast.showToast(
@@ -434,15 +474,16 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                         backgroundColor: Colors.white,
                                         textColor: Colors.black,
                                         fontSize: 15.0);
-
+                          
                                     print(
                                         "Location coordinates are not ready yet.");
                                   }
                                 },
                                 child: Text(
                                   'NEXT',
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium,
                                 ),
                               ),
                             ),
@@ -465,9 +506,10 @@ class _ScreenQueryState extends State<ScreenQuery> {
       barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
+            backgroundColor: Theme.of(context).colorScheme.primaryFixed,
             title: Center(
-                child: Text("Are you sure Do You want to exit Questionnaire?",
-                    style: Theme.of(context).textTheme.titleSmall)),
+                child: Text("Are you sure Do You want to exit?",
+                    style: Theme.of(context).textTheme.displaySmall)),
             actions: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -484,8 +526,11 @@ class _ScreenQueryState extends State<ScreenQuery> {
                 onPressed: () {
                   selectedFormatNotifier.value = '';
                   selectedItems.value = {0};
-                  Navigator.pushReplacement(
-                      context, Approutes().assignedscreen);
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    Approutes().assignedscreen,
+                    (Route<dynamic> route) => false, // Remove all previous routes
+                  );
                 },
                 child: Text('YES',
                     style: Theme.of(context).textTheme.displayMedium),
@@ -493,15 +538,162 @@ class _ScreenQueryState extends State<ScreenQuery> {
             ],
           ));
 
+  Future confrmBox(BuildContext context, QuestionReq val) async =>
+      showDialog<bool>(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => AlertDialog(
+                backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+                title: Center(
+                    child: Text("Do you want to proceed?",
+                        style: Theme.of(context).textTheme.displaySmall)),
+                actions: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('NO',
+                        style: Theme.of(context).textTheme.displayMedium),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    ),
+                    onPressed: () async {
+    
+                      questval =
+                          await QuestionsFunctions.instance.fetchQueUpdt(val);
+                      if (questval == null || questval == []) {
+                        Fluttertoast.showToast(
+                            msg: "No Data Found",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.white,
+                            textColor: const Color.fromRGBO(0, 0, 0, 1),
+                            fontSize: 15.0);
+                      }else if(questval!.isNotEmpty&&questval!.length==1){
+
+                            if (questval?.single.questatus == 'COMPLETED') {
+                            selectedFormatNotifier.value = '';
+
+                            final status=questval!.single.questatus;
+                            log('$status');
+                            if (!context.mounted) return;
+
+                            queSubmit(context);
+                          } else if (questval?.single.questatus =='PARTIALLY_COMPLETED') {
+                              final status=questval!.single.questatus;
+                            log('$status'); 
+                            if (!context.mounted) return;
+                            partialComp(context);
+                          } else {
+                            log('$questval');
+                            final status=questval!.single.questatus;
+                            log('$status');
+                            if (!context.mounted) return;
+                            Navigator.of(context).pop();
+                            selectedFormatNotifier.value = '';
+                            if (mounted) {
+                              setState(() {});
+                            }
+                            
+                          }
+                      }
+                       else {
+                        Fluttertoast.showToast(
+                            msg: "something went wrong retry",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.white,
+                            textColor: const Color.fromRGBO(0, 0, 0, 1),
+                            fontSize: 15.0);
+                            if (!context.mounted) return;
+                          Navigator.of(context).pop();
+                       }
+                    },
+                    child: Text('YES',
+                        style: Theme.of(context).textTheme.displayMedium),
+                  ),
+                ],
+              ));
+
+  Future skipBox(BuildContext context, QuestionReq val) async =>
+      showDialog<bool>(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => AlertDialog(
+                backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+                title: const Center(
+                    child: Text("Do you want to Skip?",
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 240, 20, 5),
+                            fontSize: 16,
+                            fontFamily: 'Poppins-Medium'))),
+                actions: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('NO',
+                        style: Theme.of(context).textTheme.displayMedium),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    ),
+                    onPressed: () async {
+                      try{
+                          questval =await QuestionsFunctions.instance.fetchQueUpdt(val);
+                      if (questval == null || questval == []) {
+                        Fluttertoast.showToast(
+                            msg: "No Data Found",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.white,
+                            textColor: const Color.fromRGBO(0, 0, 0, 1),
+                            fontSize: 15.0);
+                      } else if (questval?.single.questatus == 'COMPLETED') {
+                        if (!context.mounted) return;
+                        selectedFormatNotifier.value = '';
+                        queSubmit(context);
+                      } else if (questval?.single.questatus =='PARTIALLY_COMPLETED') {
+                        if (!context.mounted) return;
+                        selectedFormatNotifier.value = '';
+                        partialComp(context);
+                      } else {
+                        if (!context.mounted) return;
+                        Navigator.of(context).pop();
+                        selectedFormatNotifier.value = '';
+                        if (mounted) {
+                          setState(() {});
+                        }
+                      }
+                      }catch(e){
+                        log('$questval');
+                      }
+                      
+                    },
+                    child: Text('YES',
+                        style: Theme.of(context).textTheme.displayMedium),
+                  ),
+                ],
+              ));
+
   queSubmit(BuildContext context) async => showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (context) => PopScope(
           canPop: false,
           child: AlertDialog(
+            backgroundColor: Theme.of(context).colorScheme.primaryFixed,
             title: Center(
                 child: Text("Inspection completed Successfully",
-                    style: Theme.of(context).textTheme.titleSmall)),
+                    style: Theme.of(context).textTheme.displaySmall)),
             actions: [
               Container(
                 height: 45,
@@ -526,13 +718,17 @@ class _ScreenQueryState extends State<ScreenQuery> {
                           double doublelat = double.parse(lat);
                           double doublelong = double.parse(long);
 
-                          SocietyListFunctions.instance
-                              .getSocietyList(doublelat, doublelong);
+                          SocietyListFunctions.instance.getSocietyList(doublelat, doublelong);
 
                           selectedFormatNotifier.value = '';
                           selectedItems.value = {0};
-                          Navigator.pushReplacement(
-                              context, Approutes().assignedscreen);
+
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            Approutes().assignedscreen,
+                            (Route<dynamic> route) => false, // Remove all previous routes
+                          );
+                          
                         } catch (e) {
                           // Handle parsing error, e.g., show a message to the user
                           print("Failed to parse coordinates: $e");
@@ -559,4 +755,46 @@ class _ScreenQueryState extends State<ScreenQuery> {
               ),
             ],
           )));
+
+  partialComp(BuildContext context) async => showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => PopScope(
+          canPop: false,
+          child: AlertDialog(
+            backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+            title: Center(
+                child: Text(
+                    "Inspection not completed,Please answer all questions",
+                    style: Theme.of(context).textTheme.displaySmall)),
+            actions: [
+              Container(
+                height: 45,
+                width: 130,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.primary
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: Theme(
+                  data: MyTheme.buttonStyleTheme,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      'OK',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )));
+  
+
 }

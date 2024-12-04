@@ -15,16 +15,17 @@ class ChangeReq {
   String? newPassword;
   @JsonKey(name: 'retype_password')
   String? retypePassword;
+  String? mobNo;
 
-  ChangeReq({
-    this.pen,
-    this.refId,
-    this.otp,
-    this.userId,
-    this.password,
-    this.newPassword,
-    this.retypePassword,
-  });
+  ChangeReq(
+      {this.pen,
+      this.refId,
+      this.otp,
+      this.userId,
+      this.password,
+      this.newPassword,
+      this.retypePassword,
+      this.mobNo});
 
   factory ChangeReq.fromJson(Map<String, dynamic> json) {
     return _$ChangeReqFromJson(json);

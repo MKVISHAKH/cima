@@ -48,8 +48,10 @@ class _ScreenChangeMobNoState extends State<ScreenChangeMobNo> {
         key: _scafoldkey,
         backgroundColor: Theme.of(context).colorScheme.primaryFixed,
         appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.primary,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: Icon(Icons.arrow_back,
+                  color: Theme.of(context).colorScheme.onPrimary),
               onPressed: () {
                 Navigator.pushReplacement(
                     _scafoldkey.currentContext!, Approutes().homescreen);
@@ -64,8 +66,8 @@ class _ScreenChangeMobNoState extends State<ScreenChangeMobNo> {
           child: ListView(children: [
             Card(
               margin: const EdgeInsets.all(10),
-                elevation: 3,
-              color:const Color.fromARGB(255, 50, 150, 250) ,
+              elevation: 3,
+              color: const Color(0xff1569C7),
               child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(
@@ -85,29 +87,27 @@ class _ScreenChangeMobNoState extends State<ScreenChangeMobNo> {
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                               const SizedBox(height: 30),
-              
                               SizedBox(
                                 width: MediaQuery.of(context).size.width,
                                 child: TextFormField(
                                   controller: _crntmobnocontroller,
                                   keyboardType: TextInputType.phone,
                                   style:
-                                      Theme.of(context).textTheme.headlineLarge,
+                                      Theme.of(context).textTheme.labelMedium,
                                   // style:kBodyText,
                                   inputFormatters: [
                                     LengthLimitingTextInputFormatter(10),
                                     FilteringTextInputFormatter.digitsOnly,
                                   ],
                                   // onSaved: (newValue) => mobile = newValue,
-              
+
                                   validator: (value) {
                                     if (value!.isEmpty) {
                                       return "Enter mobile Number";
                                     } else if (_crntmobnocontroller
                                                 .text.length <
                                             10 ||
-                                        _crntmobnocontroller.text.length >
-                                            10) {
+                                        _crntmobnocontroller.text.length > 10) {
                                       return "Enter valid Mobile number";
                                     } else if (value.contains(' ')) {
                                       Fluttertoast.showToast(
@@ -120,7 +120,7 @@ class _ScreenChangeMobNoState extends State<ScreenChangeMobNo> {
                                           textColor: Colors.black,
                                           fontSize: 15.0);
                                     }
-              
+
                                     return null;
                                   },
                                   decoration: InputDecoration(
@@ -135,13 +135,13 @@ class _ScreenChangeMobNoState extends State<ScreenChangeMobNo> {
                                           " (+91)",
                                           style: Theme.of(context)
                                               .textTheme
-                                              .headlineLarge,
+                                              .labelMedium,
                                         ),
                                       ),
                                       labelText: 'Registered Mobile No',
                                       labelStyle: Theme.of(context)
                                           .textTheme
-                                          .headlineLarge),
+                                          .labelMedium),
                                 ),
                               ),
                               const SizedBox(
@@ -153,22 +153,20 @@ class _ScreenChangeMobNoState extends State<ScreenChangeMobNo> {
                                   controller: _newmobnocontroller,
                                   keyboardType: TextInputType.phone,
                                   style:
-                                      Theme.of(context).textTheme.headlineLarge,
+                                      Theme.of(context).textTheme.labelMedium,
                                   // style:kBodyText,
                                   inputFormatters: [
                                     LengthLimitingTextInputFormatter(10),
                                     FilteringTextInputFormatter.digitsOnly,
                                   ],
                                   // onSaved: (newValue) => mobile = newValue,
-              
+
                                   validator: (value) {
                                     if (value!.isEmpty) {
                                       return "Enter mobile Number";
-                                    } else if (_newmobnocontroller
-                                                .text.length <
+                                    } else if (_newmobnocontroller.text.length <
                                             10 ||
-                                        _newmobnocontroller.text.length >
-                                            10) {
+                                        _newmobnocontroller.text.length > 10) {
                                       return "Enter valid Mobile number";
                                     } else if (value.contains(' ')) {
                                       Fluttertoast.showToast(
@@ -181,7 +179,7 @@ class _ScreenChangeMobNoState extends State<ScreenChangeMobNo> {
                                           textColor: Colors.black,
                                           fontSize: 15.0);
                                     }
-              
+
                                     return null;
                                   },
                                   decoration: InputDecoration(
@@ -196,20 +194,18 @@ class _ScreenChangeMobNoState extends State<ScreenChangeMobNo> {
                                           " (+91)",
                                           style: Theme.of(context)
                                               .textTheme
-                                              .headlineLarge,
+                                              .labelMedium,
                                         ),
                                       ),
                                       labelText: 'Enter New Mobile No',
                                       labelStyle: Theme.of(context)
                                           .textTheme
-                                          .headlineLarge),
+                                          .labelMedium),
                                 ),
                               ),
-              
                               const SizedBox(
                                 height: 20,
                               ),
-              
                               const SizedBox(
                                 height: 20,
                               ),
@@ -220,12 +216,8 @@ class _ScreenChangeMobNoState extends State<ScreenChangeMobNo> {
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
                                         colors: [
-                                          Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          Theme.of(context)
-                                              .colorScheme
-                                              .secondary,
+                                          Theme.of(context).colorScheme.primary,
+                                          Theme.of(context).colorScheme.primary,
                                         ])),
                                 child: Theme(
                                   data: MyTheme.buttonStyleTheme,
@@ -254,7 +246,7 @@ class _ScreenChangeMobNoState extends State<ScreenChangeMobNo> {
                 if (provider.selectedVal == false) {
                   return Container();
                 } else if (provider.selectedVal == true) {
-                  return const OtpFiled();
+                  return const OtpFiled(type: chngMob);
                 }
                 return Container();
               },

@@ -1,5 +1,4 @@
 import 'package:onlineinspection/core/hook/hook.dart';
-import 'package:onlineinspection/functions/schedule/scheduleListFun.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Screenhome extends StatefulWidget {
@@ -20,7 +19,7 @@ class _ScreenhomeState extends State<Screenhome> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       requestLocationPermission();
-      //_startLocationCheckTimer();
+      _startLocationCheckTimer();
     });
   }
 
@@ -37,7 +36,7 @@ class _ScreenhomeState extends State<Screenhome> {
       _showPermissionPermanentlyDeniedDialog();
     } else {
       await _getCurrentLocation();
-      //  _startLocationCheckTimer();
+       _startLocationCheckTimer();
     }
   }
 
@@ -76,6 +75,7 @@ class _ScreenhomeState extends State<Screenhome> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.primaryFixed,
         title: const Text("Enable Location Services"),
         content: const Text(
             "Location services are required to proceed. Please enable them in your device settings."),
@@ -165,6 +165,7 @@ class _ScreenhomeState extends State<Screenhome> {
       barrierDismissible: false,
       context: context,
       builder: (context) => AlertDialog(
+            backgroundColor: Theme.of(context).colorScheme.primaryFixed,
             title: Center(
                 child: Text("Do You want to exit App?",
                     style: Theme.of(context).textTheme.titleSmall)),
@@ -199,7 +200,7 @@ class _ScreenhomeState extends State<Screenhome> {
           //final nav=Navigator.of(context);
           if (didPop) return;
           final result = await showWarning(context);
-          print(result);
+          // print(result);
           if (result != null && result) {
             SystemNavigator.pop(); // This will properly exit the app
           }
@@ -224,18 +225,16 @@ class _ScreenhomeState extends State<Screenhome> {
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height / 1.6,
+                      height: MediaQuery.of(context).size.height / 1.669,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-
-                        borderRadius: const BorderRadius.only(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: const BorderRadius.only(
                             bottomRight: Radius.circular(50),
-                            //bottomLeft: Radius.circular(50)
-                            )
-                      ),
+                            // bottomLeft: Radius.circular(50)
+                          )),
                       child: Center(
                         child: Padding(
-                          padding: const EdgeInsets.only(top:60.0),
+                          padding: const EdgeInsets.only(top: 60.0),
                           child: Lottie.asset(
                             'assets/animation/home/Animation - 1730091121508.json',
                             width: MediaQuery.of(context).size.width,
@@ -278,11 +277,11 @@ class _ScreenhomeState extends State<Screenhome> {
                   alignment: Alignment.bottomCenter,
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 2.66,
+                    height: MediaQuery.of(context).size.height / 2.492,
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
 
-                      //borderRadius:const BorderRadius.only(bottomRight: Radius.circular(70))
+                      // borderRadius:const BorderRadius.only(bottomRight: Radius.circular(70))
                     ),
                   ),
                 ),
@@ -290,163 +289,209 @@ class _ScreenhomeState extends State<Screenhome> {
                   alignment: Alignment.bottomCenter,
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 2.66,
-                    padding: const EdgeInsets.only(top: 30, bottom: 30),
+                    height: MediaQuery.of(context).size.height / 2.489,
+                    //padding: const EdgeInsets.only(top: 10, bottom: 10),
                     decoration: const BoxDecoration(
-                      color: Color(0xffAFDCEC),
-                      borderRadius:  BorderRadius.only(
-                          topLeft: Radius.circular(50),
+                        color: Color(0xffAFDCEC),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(55),
                           // topRight: Radius.circular(30),
                           // bottomLeft: Radius.circular(30),
                           // bottomRight: Radius.circular(30),
-                          )
-                    ),
+                        )),
                     child: Column(
                       //crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        GridView(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            mainAxisExtent: 120,
-                          ),
-                          children: [
-                            InkWell(
-                              splashColor:
-                                  Theme.of(context).colorScheme.secondaryFixed,
-                              onTap: () async {
-                                _startLocationCheckTimer();
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 1.4,
+                          height: MediaQuery.of(context).size.height / 2.7,
+                          child: GridView(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisExtent: 120,
+                            ),
+                            children: [
+                              InkWell(
+                                splashColor: Theme.of(context).colorScheme.secondaryFixed,
+                                onTap: () async {
+                                  _startLocationCheckTimer();
 
-                                if (lat.isNotEmpty && long.isNotEmpty) {
-                                  try {
-                                    double doublelat = double.parse(lat);
-                                    double doublelong = double.parse(long);
+                                  if (lat.isNotEmpty && long.isNotEmpty) {
+                                    try {
+                                      double doublelat = double.parse(lat);
+                                      double doublelong = double.parse(long);
 
-                                    SocietyListFunctions.instance
-                                        .getSocietyList(doublelat, doublelong);
-                                    Navigator.pushReplacement(
-                                        context, Approutes().assignedscreen);
-                                  } catch (e) {
-                                    // Handle parsing error, e.g., show a message to the user
-                                    print("Failed to parse coordinates: $e");
+                                      SocietyListFunctions.instance.getSocietyList(doublelat, doublelong);
+                                      Navigator.pushReplacement(
+                                          context, Approutes().assignedscreen);
+                                    } catch (e) {
+                                      // Handle parsing error, e.g., show a message to the user
+                                      print("Failed to parse coordinates: $e");
+                                    }
+                                  } else {
+                                    // Show an error message if coordinates are unavailable
+                                    Fluttertoast.showToast(
+                                        msg: "Location are not ready yet.",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Colors.white,
+                                        textColor: Colors.black,
+                                        fontSize: 15.0);
+                                    print(
+                                        "Location coordinates are not ready yet.");
                                   }
-                                } else {
-                                  // Show an error message if coordinates are unavailable
-                                  Fluttertoast.showToast(
-                                      msg: "Location are not ready yet.",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.white,
-                                      textColor: Colors.black,
-                                      fontSize: 15.0);
-                                  print(
-                                      "Location coordinates are not ready yet.");
-                                }
-                              },
-                              child: Card(
-                                color: Colors.white,
-                                elevation: 5,
-                                margin: const EdgeInsets.all(5),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Image.asset(
-                                        "assets/home/22989318.jpg",
-                                        fit: BoxFit.contain,
-                                        width: 60,
-                                        height: 60,
+                                },
+                                child: Card(
+                                  color: Colors.white,
+                                  elevation: 5,
+                                  margin: const EdgeInsets.all(5),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Image.asset(
+                                          "assets/home/inspection.jpg",
+                                          fit: BoxFit.contain,
+                                          width: 60,
+                                          height: 60,
+                                        ),
                                       ),
-                                    ),
-                                    const Text(
-                                      "Audit",
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontFamily: 'Poppins-Medium'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              splashColor:
-                                  Theme.of(context).colorScheme.secondaryFixed,
-                              onTap: () {
-                                SchedulelistFun.instance.getScheduleList();
-                                Navigator.pushReplacement(context, Approutes().scheduleScreen);
-                              },
-                              child: Card(
-                                color: Colors.white,
-                                elevation: 5,
-                                margin: const EdgeInsets.all(5),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Image.asset(
-                                        "assets/home/istockphoto-1163732070-612x612.jpg",
-                                        fit: BoxFit.contain,
-                                        width: 60,
-                                        height: 60,
-                                      ),
-                                    ),
-                                    const Text('Schedule',
+                                      const Text(
+                                        "Inspection",
                                         style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 16,
-                                            fontFamily: 'Poppins-Medium')),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              splashColor:
-                                  Theme.of(context).colorScheme.secondaryFixed,
-                              onTap: () {
-                                SchedulelistFun.instance.getSchdlcmpltLst();
-                                Navigator.pushReplacement(context, Approutes().cmpltRprtScreen);
-                              },
-                              child: Card(
-                                color: Colors.white,
-                                elevation: 5,
-                                margin: const EdgeInsets.all(5),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Image.asset(
-                                        "assets/home/report.jpg",
-                                        fit: BoxFit.contain,
-                                        width: 60,
-                                        height: 60,
+                                            fontFamily: 'Poppins-Medium'),
                                       ),
-                                    ),
-                                    const Text('Reports',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontFamily: 'Poppins-Medium')),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                              InkWell(
+                                splashColor: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryFixed,
+                                onTap: () {
+                                  SchedulelistFun.instance.getScheduleList();
+                                  Navigator.pushReplacement(
+                                      context, Approutes().scheduleScreen);
+                                },
+                                child: Card(
+                                  color: Colors.white,
+                                  elevation: 5,
+                                  margin: const EdgeInsets.all(5),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Image.asset(
+                                          "assets/home/schedule.jpg",
+                                          fit: BoxFit.contain,
+                                          width: 60,
+                                          height: 60,
+                                        ),
+                                      ),
+                                      const Text('My Schedule',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                              fontFamily: 'Poppins-Medium')),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                splashColor: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryFixed,
+                                onTap: () {
+                                  SchedulelistFun.instance.getSchdlcmpltLst();
+                                  Navigator.pushReplacement(
+                                      context, Approutes().cmpltRprtScreen);
+                                },
+                                child: Card(
+                                  color: Colors.white,
+                                  elevation: 5,
+                                  margin: const EdgeInsets.all(5),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Image.asset(
+                                          "assets/home/reports001.jpg",
+                                          fit: BoxFit.contain,
+                                          width: 60,
+                                          height: 60,
+                                        ),
+                                      ),
+                                      const Text('Reports',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                              fontFamily: 'Poppins-Medium')),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                splashColor: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryFixed,
+                                onTap: () {
+                                  // SchedulelistFun.instance.getSchdlcmpltLst();
+                                  Navigator.pushReplacement(
+                                      context, Approutes().errorScreen);
+                                },
+                                child: Card(
+                                  color: Colors.white,
+                                  elevation: 5,
+                                  margin: const EdgeInsets.all(5),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Image.asset(
+                                          "assets/home/action001.jpg",
+                                          fit: BoxFit.contain,
+                                          width: 60,
+                                          height: 60,
+                                        ),
+                                      ),
+                                      const Text('Actions',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                              fontFamily: 'Poppins-Medium')),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         // SizedBox(
                         //   height: MediaQuery.of(context).size.height / 18,

@@ -1,12 +1,12 @@
 import 'option.dart';
 
 class Datum {
-  bool? questatus;
+  String? questatus;
   int? questionId;
   int? inspId;
   dynamic parent;
   String? question;
-  int? sortOrder;
+  String? sortOrder;
   List<Option>? option;
   Datum(
       {this.questatus,

@@ -9,8 +9,8 @@ class ScreenLogin extends StatefulWidget {
 }
 
 class _ScreenLoginState extends State<ScreenLogin> {
+  
   final _usercontroller = TextEditingController();
-
   final _passcontroller = TextEditingController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formkey = GlobalKey<FormState>();
@@ -153,7 +153,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
+     const BackgroundImage(),
       Scaffold(
+        backgroundColor: Colors.transparent,
         key: _scaffoldKey,
         body: Center(
           child: Card(

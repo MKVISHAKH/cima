@@ -55,29 +55,27 @@ class _ScreenSplashState extends State<ScreenSplash> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-              Theme.of(context).colorScheme.secondary,
-              Theme.of(context).colorScheme.onPrimary
-            ])),
-        child: Center(
-          child: Text(
-            'Co-Operative Inspection App',
-            style: Theme.of(context).textTheme.titleMedium,
+    return Stack(
+      
+      children: [
+     const BackgroundImage(),
+
+        Scaffold(
+        backgroundColor: Colors.transparent,
+          key: _scaffoldKey,
+          body: Center(
+            child: Text(
+              'CO-OPERATIVE INSPECTION APP',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            // Lottie.asset(
+            //   'assets/animation/splash/Animation - 1729853904649.json',
+            //   width: MediaQuery.of(context).size.width,
+            //   //height: MediaQuery.of(context).size.height/2
+            // ),
           ),
-          // Lottie.asset(
-          //   'assets/animation/splash/Animation - 1729853904649.json',
-          //   width: MediaQuery.of(context).size.width,
-          //   //height: MediaQuery.of(context).size.height/2
-          // ),
         ),
-      ),
+      ],
     );
   }
 

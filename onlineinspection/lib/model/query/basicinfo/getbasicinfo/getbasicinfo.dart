@@ -21,6 +21,7 @@ class Getbasicinfo {
   String? activity;
   double? lattitude;
   double? longitude;
+  String? remarks;
 
   Getbasicinfo(
       {this.schedulerId,
@@ -32,7 +33,8 @@ class Getbasicinfo {
       this.longitude,
       this.socName,
       this.bName,
-      this.activity});
+      this.activity,
+      this.remarks});
   Getbasicinfo.val(
       {required this.schedulerId,
       required this.schedulerDate,
@@ -43,7 +45,8 @@ class Getbasicinfo {
       this.lattitude,
       this.longitude,
       this.bName,
-      this.activity});
+      this.activity,
+      this.remarks});
 
   factory Getbasicinfo.fromJson(Map<String, dynamic> json) {
     return _$GetbasicinfoFromJson(json);

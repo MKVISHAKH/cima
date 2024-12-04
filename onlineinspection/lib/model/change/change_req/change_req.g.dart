@@ -14,6 +14,7 @@ ChangeReq _$ChangeReqFromJson(Map<String, dynamic> json) => ChangeReq(
       password: json['password'] as String?,
       newPassword: json['new_password'] as String?,
       retypePassword: json['retype_password'] as String?,
+      mobNo: json['mobNo'] as String?,
     );
 
 Map<String, dynamic> _$ChangeReqToJson(ChangeReq instance) => <String, dynamic>{
@@ -24,4 +25,5 @@ Map<String, dynamic> _$ChangeReqToJson(ChangeReq instance) => <String, dynamic>{
       'password': instance.password,
       'new_password': instance.newPassword,
       'retype_password': instance.retypePassword,
+      'mobNo': instance.mobNo,
     };

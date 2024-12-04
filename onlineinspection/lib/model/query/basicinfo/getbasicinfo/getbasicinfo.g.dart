@@ -17,6 +17,7 @@ Getbasicinfo _$GetbasicinfoFromJson(Map<String, dynamic> json) => Getbasicinfo(
       socName: json['society_name'] as String?,
       bName: json['branch_name'] as String?,
       activity: json['activity'] as String?,
+      remarks: json['remarks'] as String?,
     );
 
 Map<String, dynamic> _$GetbasicinfoToJson(Getbasicinfo instance) =>
@@ -31,4 +32,5 @@ Map<String, dynamic> _$GetbasicinfoToJson(Getbasicinfo instance) =>
       'activity': instance.activity,
       'lattitude': instance.lattitude,
       'longitude': instance.longitude,
+      'remarks': instance.remarks,
     };

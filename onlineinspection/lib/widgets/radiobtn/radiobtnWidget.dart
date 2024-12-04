@@ -35,10 +35,19 @@ class FormatRadioButton extends StatelessWidget {
             );
           },
         ),
-        Text(
-          title,
-          style: txtstyl,
+        Flexible(
+          child: Text(
+            title,
+            maxLines: 2, // Or any number you want
+            overflow: TextOverflow.visible,
+            softWrap: true,
+            style: txtstyl,
+          ),
         ),
+        // Text(
+        //   title,
+        //   style: txtstyl,
+        // ),
       ],
     );
   }

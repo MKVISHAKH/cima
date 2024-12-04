@@ -83,9 +83,12 @@ flutter:
     - assets/animation/splash/Animation - 1730105587032.json
     - assets/splash/2527291.jpg
     - assets/errror/no_data_found.png
-    - assets/home/22989318.jpg
-    - assets/home/istockphoto-1163732070-612x612.jpg
-    - assets/home/report.jpg
+    - assets/home/inspection.jpg
+    - assets/home/schedule.jpg
+    - assets/home/reports001.jpg
+    - assets/home/action001.jpg
+    - assets/errror/alekseyvanin200701168.jpg
+    - assets/splash/bg.jpg
 
   fonts:
     - family: Poppins-Medium

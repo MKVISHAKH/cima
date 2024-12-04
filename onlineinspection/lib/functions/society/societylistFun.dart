@@ -1,7 +1,11 @@
+
 import 'package:onlineinspection/core/hook/hook.dart';
+
+int maxdistScty=0;
 
 class SocietyListFunctions {
   SocietyListFunctions._internal();
+  
   static SocietyListFunctions instance = SocietyListFunctions._internal();
   SocietyListFunctions factory() {
     return instance;
@@ -27,12 +31,16 @@ class SocietyListFunctions {
       if (sctyListRespVal.status == 'success') {
         //print('sucess');
         final itemDet = sctyListRespVal.data?.societies ?? [];
+        maxdistScty=sctyListRespVal.data?.maxdist ?? 0;
         //print(item_det.);
         getScietyListNotifier.value.clear();
         getScietyListNotifier.value.addAll(itemDet);
         getScietyListNotifier.notifyListeners();
       } else if (sctyListRespVal.status == 'failure') {
+
         final itemDet = sctyListRespVal.data?.societies ?? [];
+        maxdistScty=sctyListRespVal.data?.maxdist ?? 0;
+
         getScietyListNotifier.value.clear();
         getScietyListNotifier.value.addAll(itemDet);
         getScietyListNotifier.notifyListeners();

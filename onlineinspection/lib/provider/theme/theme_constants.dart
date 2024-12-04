@@ -35,7 +35,7 @@ class MyTheme {
       labelMedium: TextStyle(
           color: Colors.white, fontSize: 14, fontFamily: 'Poppins-Medium'),
       labelSmall: TextStyle(
-          color: Colors.white, fontSize: 14, fontFamily: 'Poppins-Medium'),
+          color: Colors.white, fontSize: 12, fontFamily: 'Poppins-Medium'),
       bodySmall: TextStyle(
           color: Colors.black, fontSize: 12, fontFamily: 'Poppins-Medium'),
       bodyMedium: TextStyle(
@@ -146,10 +146,10 @@ class MyTheme {
             fontFamily: 'Poppins-Medium',
             fontWeight: FontWeight.w800),
         headlineLarge: TextStyle(
-          color: Colors.black,
-          fontSize: 14,
-          fontFamily: 'Poppins-Medium',
-          fontWeight: FontWeight.w800),
+            color: Colors.black,
+            fontSize: 14,
+            fontFamily: 'Poppins-Medium',
+            fontWeight: FontWeight.w800),
         displaySmall: TextStyle(
             color: Colors.black, fontSize: 16, fontFamily: 'Poppins-Medium'),
         displayMedium: TextStyle(
@@ -170,10 +170,11 @@ class MyTheme {
             fontFamily: 'Poppins-Medium',
             fontWeight: FontWeight.w900),
         bodyLarge: TextStyle(
-            color: Color(0xff293241),
-            fontSize: 16,
-            fontFamily: 'Poppins-Medium',
-            fontWeight: FontWeight.w900,),
+          color: Color(0xff293241),
+          fontSize: 16,
+          fontFamily: 'Poppins-Medium',
+          fontWeight: FontWeight.w900,
+        ),
         titleSmall: TextStyle(
             color: Colors.white, fontSize: 16, fontFamily: 'Poppins-Medium'),
         titleMedium: TextStyle(

@@ -1,6 +1,8 @@
 import 'package:onlineinspection/core/hook/hook.dart';
+import 'package:onlineinspection/screens/error/screenError.dart';
 import 'package:onlineinspection/screens/query/screenbasicinfo.dart';
 import 'package:onlineinspection/screens/report/cmpltdRprtScreen.dart';
+import 'package:onlineinspection/screens/scheduled/screenschdlreq.dart';
 import 'package:onlineinspection/screens/scheduled/screenschedule.dart';
 
 class Approutes {
@@ -76,6 +78,34 @@ class Approutes {
   );
   PageTransition cmpltRprtScreen = PageTransition(
     child: const ScreenCmpltdRprt(),
+    type: PageTransitionType.fade,
+    alignment: Alignment.center,
+    curve: Curves.easeInOutBack,
+    duration: const Duration(microseconds: 500),
+  );
+  PageTransition schdleTabScreen = PageTransition(
+    child: const ScreenScheduled(),
+    type: PageTransitionType.fade,
+    alignment: Alignment.center,
+    curve: Curves.easeInOutBack,
+    duration: const Duration(microseconds: 500),
+  );
+  PageTransition errorScreen = PageTransition(
+    child: const ScreenError(),
+    type: PageTransitionType.fade,
+    alignment: Alignment.center,
+    curve: Curves.easeInOutBack,
+    duration: const Duration(microseconds: 500),
+  );
+  PageTransition screenSplash = PageTransition(
+    child: const ScreenSplash(),
+    type: PageTransitionType.fade,
+    alignment: Alignment.center,
+    curve: Curves.easeInOutBack,
+    duration: const Duration(microseconds: 500),
+  );
+  PageTransition screenschdlReq = PageTransition(
+    child: const ScreenSchdlReq(),
     type: PageTransitionType.fade,
     alignment: Alignment.center,
     curve: Curves.easeInOutBack,

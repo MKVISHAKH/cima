@@ -30,15 +30,6 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
   Future<void> getShareddata() async {
     final sharedValue = await SharedPrefManager.instance.getSharedData();
     usrName = sharedValue?.name?.toUpperCase() ?? 'User';
-    final now = DateTime.now();
-    DateFormat dateFormat = DateFormat("dd-MM-yyyy");
-    date = dateFormat.format(now);
-
-    String currenttime = dateFormat.add_jm().format(DateTime.now());
-    List<String> substrings = currenttime.split(" ");
-    print(substrings);
-
-    time = substrings[1];
   }
 
   List<int> getSelectedActivityIds() {
@@ -59,8 +50,12 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
       child: Scaffold(
           backgroundColor: const Color(0xff98c1d9),
           appBar: AppBar(
+              backgroundColor: Theme.of(context).colorScheme.primary,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
                 onPressed: () {
                   selectedItems.value = {0};
                   Navigator.pushReplacement(
@@ -70,7 +65,7 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
               title: Text(
                 "Questionnaire",
                 style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               )),
           body: ListView(
             children: [
@@ -88,13 +83,22 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
                         final lstinspdt = society.lastInspectionDate;
                         if (lstinspdt == null) {
                           outputDate = '';
+                          var now = DateTime.now();
+                          DateFormat dateFormat = DateFormat("dd-MM-yyyy");
+                          date = dateFormat.format(now);
+                          print(date);
                         } else {
-                          DateTime parseDate = DateFormat("yyyy-MM-dd HH:mm:ss")
-                              .parse(lstinspdt);
+                          var now = DateTime.now();
+                          DateFormat dateFormat = DateFormat("dd-MM-yyyy");
+                          date = dateFormat.format(now);
+                          print(date);
+
+                          DateTime parseDate = DateFormat("yyyy-MM-dd HH:mm:ss").parse(lstinspdt);
                           var inputDate = DateTime.parse(parseDate.toString());
                           var outputFormat = DateFormat('dd-MM-yyyy');
                           outputDate = outputFormat.format(inputDate);
                           print(outputDate);
+
                         }
 
                         return Column(
@@ -102,15 +106,16 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
                             Container(
                               // margin: const EdgeInsets.all(5.0),
                               padding: const EdgeInsets.only(left: 5.0, top: 5),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Theme.of(context).colorScheme.primary,
-                                    Theme.of(context).colorScheme.primary
-                                  ],
-                                ),
+                              decoration: const BoxDecoration(
+                                color: Color(0xff1569C7),
+                                // gradient: LinearGradient(
+                                //   begin: Alignment.topLeft,
+                                //   end: Alignment.bottomRight,
+                                //   colors: [
+                                //     Theme.of(context).colorScheme.primary,
+                                //     Theme.of(context).colorScheme.primary
+                                //   ],
+                                // ),
                                 // borderRadius: BorderRadius.circular(12.0),
                               ),
                               child: ListTile(
@@ -234,7 +239,7 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
                                     }
                                   },
                                   child: Text(
-                                    'START',
+                                    'NEXT',
                                     style:
                                         Theme.of(context).textTheme.titleMedium,
                                   ),

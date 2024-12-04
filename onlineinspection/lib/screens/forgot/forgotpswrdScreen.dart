@@ -52,6 +52,7 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
         key: _scafoldkey,
         backgroundColor: Theme.of(context).colorScheme.primaryFixed,
         appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.primary,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
@@ -67,9 +68,9 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
         body: Center(
           child: ListView(children: [
             Card(
-                 margin: const EdgeInsets.all(10),
+                margin: const EdgeInsets.all(10),
                 elevation: 3,
-              color:const Color.fromARGB(255, 50, 150, 250) ,
+                color: const Color(0xff1569C7),
                 child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -84,12 +85,11 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
                             key: _formkey,
                             child: Column(
                               children: [
-                               Text(
-                                'Forgot Password',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              const SizedBox(height: 30),
-
+                                Text(
+                                  'Forgot Password',
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                                const SizedBox(height: 30),
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width,
                                   child: TextFormField(
@@ -167,7 +167,6 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
                                         return null;
                                       }),
                                 ),
-
                                 const SizedBox(
                                   height: 20,
                                 ),
@@ -231,7 +230,7 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
                                                 .primary,
                                             Theme.of(context)
                                                 .colorScheme
-                                                .secondary,
+                                                .primary,
                                           ])),
                                   child: Theme(
                                     data: MyTheme.buttonStyleTheme,
@@ -277,6 +276,7 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
                   return Container();
                 } else if (provider.selectedVal == true) {
                   return OtpFiled(
+                    type: frgtPswrd,
                     penNO: penNo,
                     nwpswd: newpswrd,
                     cnfrmpswrd: cnfrmpswrd,

@@ -1,13 +1,23 @@
 import 'dart:developer';
 import 'package:onlineinspection/core/hook/hook.dart';
+import 'package:dio/dio.dart' as dio;
+import 'package:onlineinspection/widgets/constants/constants.dart';
 
 class OtpFiled extends StatefulWidget {
   const OtpFiled(
-      {super.key, this.penNO, this.nwpswd, this.cnfrmpswrd, this.refId});
+      {super.key,
+      this.penNO,
+      this.nwpswd,
+      this.cnfrmpswrd,
+      this.refId,
+      this.mob,
+      required this.type});
   final String? penNO;
   final String? nwpswd;
   final String? cnfrmpswrd;
   final int? refId;
+  final String? mob;
+  final String type;
 
   @override
   State<OtpFiled> createState() => _OtpFiledState();
@@ -24,8 +34,6 @@ class _OtpFiledState extends State<OtpFiled> {
   int start = 180;
 
   bool wait = false;
-
-  String type = 'REGISTRATION';
 
   String? otppin;
   OtpFieldController otpController = OtpFieldController();
@@ -56,8 +64,8 @@ class _OtpFiledState extends State<OtpFiled> {
       children: [
         Card(
           margin: const EdgeInsets.all(10),
-                elevation: 3,
-                color:const Color.fromARGB(255, 50, 150, 250) ,
+          elevation: 3,
+          color: const Color.fromARGB(255, 50, 150, 250),
           child: Container(
             decoration: BoxDecoration(
               border:
@@ -92,12 +100,8 @@ class _OtpFiledState extends State<OtpFiled> {
                   fieldStyle: FieldStyle.box,
                   onChanged: (String? pin) {
                     if (pin?.length == 6) {
-                      //print(pin);
                       otppin = pin;
                       log('$otppin');
-                      // final otpreq=Otpvrfyreq.req(
-                      //   mobile: widget.mobileNo, otp: pin, type: type);
-                      // buildotpvrf(otpreq);
                     }
                   },
                 ),
@@ -143,14 +147,23 @@ class _OtpFiledState extends State<OtpFiled> {
                               textColor: Colors.white,
                               fontSize: 16.0);
                         } else {
-                          final otpreq = ChangeReq(
-                              pen: widget.penNO,
-                              refId: widget.refId,
-                              otp: otppin,
-                              password: widget.nwpswd,
-                              retypePassword: widget.cnfrmpswrd);
-                          buildotpvrf(otpreq);
+                          if (widget.type == frgtPswrd) {
+                            final otpreq = ChangeReq(
+                                pen: widget.penNO,
+                                refId: widget.refId,
+                                otp: otppin,
+                                password: widget.nwpswd,
+                                retypePassword: widget.cnfrmpswrd);
+                            buildotpvrf(otpreq, widget.type);
+                          } else if (widget.type == frgtUsr) {
+                            final otpreq = ChangeReq(
+                                mobNo: widget.mob,
+                                refId: widget.refId,
+                                otp: otppin);
+                            buildotpvrf(otpreq, widget.type);
+                          }
                         }
+                        // usrNameBox(context,0,'');
                       },
                       child: Text('VERIFY',
                           style: Theme.of(context).textTheme.titleMedium),
@@ -200,10 +213,16 @@ class _OtpFiledState extends State<OtpFiled> {
     ]);
   }
 
-  Future buildotpvrf(ChangeReq val) async {
+  Future buildotpvrf(ChangeReq val, String type) async {
     // final loadingProvider = context.read<LoadingProvider>();
     // loadingProvider.toggleLoading();
-    final chngresp = await Ciadata().frgtpswrd(val);
+    dio.Response<dynamic>? chngresp;
+    if (type == frgtPswrd) {
+      chngresp = await Ciadata().frgtpswrd(val);
+    } else if (type == frgtUsr) {
+      chngresp = await Ciadata().frgtusevrfy(val);
+    }
+
     final resultAsjson = jsonDecode(chngresp.toString());
     final changeval = ChangeResp.fromJson(resultAsjson as Map<String, dynamic>);
 
@@ -219,16 +238,11 @@ class _OtpFiledState extends State<OtpFiled> {
           fontSize: 15.0);
     } else if (chngresp.statusCode == 200 && changeval.status == 'success') {
       // refid=changeval.data?.refId ?? 0;
-      Fluttertoast.showToast(
-          msg: "Password Changed Successfully",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
-
-      Navigator.push(_scafoldkey.currentContext!, Approutes().loginscreen);
+      final pen = changeval.data?.pen ?? 0;
+      final name = changeval.data?.name ?? '';
+      type == frgtPswrd
+          ? pswrdBox(_scafoldkey.currentContext!)
+          : usrNameBox(_scafoldkey.currentContext!, pen, name);
     } else if (changeval.status == 'failure') {
       Fluttertoast.showToast(
           msg: "Password can't changed",
@@ -248,5 +262,64 @@ class _OtpFiledState extends State<OtpFiled> {
           textColor: Colors.white,
           fontSize: 15.0);
     }
+  }
+
+  Future usrNameBox(BuildContext context, int? pen, String? name) async =>
+      showDialog<bool>(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => AlertDialog(
+                backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+                title: Center(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Warning: This is one time View",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 240, 20, 4),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins-Medium',
+                      ),
+                      //textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Text('Username: $pen',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins-Medium',
+                        )),
+                    Text('Name of User: $name',
+                        style: Theme.of(context).textTheme.displaySmall)
+                  ],
+                )),
+                actions: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    ),
+                    onPressed: () => Navigator.pushReplacement(
+                        context, Approutes().loginscreen),
+                    child: Text('OK',
+                        style: Theme.of(context).textTheme.displayMedium),
+                  ),
+                ],
+              ));
+
+  void pswrdBox(BuildContext context) {
+    Fluttertoast.showToast(
+        msg: "Password Changed Successfully",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 15.0);
+    Navigator.push(_scafoldkey.currentContext!, Approutes().loginscreen);
   }
 }

@@ -14,8 +14,9 @@ abstract class Apicalls {
   Future<dio.Response<dynamic>?> scheduleLst(Societyreq value);
   Future<dio.Response<dynamic>?> schdlRprtcmplt(Societyreq value);
   Future<dio.Response<dynamic>?> dwnldPdf(int? schId);
-
-
+  Future<dio.Response<dynamic>?> frgtusrName(ChangeReq value);
+  Future<dio.Response<dynamic>?> frgtusevrfy(ChangeReq value);
+  Future<dio.Response<dynamic>?> rescdle(Getbasicinfo value);
 }
 
 class Ciadata extends Apicalls {
@@ -145,9 +146,9 @@ class Ciadata extends Apicalls {
       return ex.response;
     }
   }
-  
+
   @override
-  Future<dio.Response?> schdlRprtcmplt(Societyreq value) async{
+  Future<dio.Response?> schdlRprtcmplt(Societyreq value) async {
     try {
       final result = await dioclient.post(
         url.schdlrprtUrl,
@@ -158,19 +159,16 @@ class Ciadata extends Apicalls {
       return ex.response;
     }
   }
-  
+
   @override
-  Future<dio.Response?> dwnldPdf(int? schId) async{
+  Future<dio.Response?> dwnldPdf(int? schId) async {
     try {
-      final result = await dioclient.get('${
-        url.dwnldPdfUrl}/$schId',
-        options: dio.Options(
-          responseType: dio.ResponseType.bytes,
-          followRedirects: false,
-          receiveDataWhenStatusError: true,
-          receiveTimeout: const Duration(seconds: 40)
-        )
-      );
+      final result = await dioclient.get('${url.dwnldPdfUrl}/$schId',
+          options: dio.Options(
+              responseType: dio.ResponseType.bytes,
+              followRedirects: false,
+              receiveDataWhenStatusError: true,
+              receiveTimeout: const Duration(seconds: 30)));
       return result;
     } on dio.DioException catch (ex) {
       if (ex.type ==
@@ -182,6 +180,45 @@ class Ciadata extends Apicalls {
       }
 
       throw Exception(ex.message);
+    }
+  }
+
+  @override
+  Future<dio.Response?> frgtusrName(ChangeReq value) async {
+    try {
+      final result = await dioclient.post(
+        url.frgtUsrUrl,
+        data: value.toJson(),
+      );
+      return result;
+    } on dio.DioException catch (ex) {
+      return ex.response;
+    }
+  }
+
+  @override
+  Future<dio.Response?> frgtusevrfy(ChangeReq value) async {
+    try {
+      final result = await dioclient.post(
+        url.frgtUsrvrfyUrl,
+        data: value.toJson(),
+      );
+      return result;
+    } on dio.DioException catch (ex) {
+      return ex.response;
+    }
+  }
+
+  @override
+  Future<dio.Response?> rescdle(Getbasicinfo value) async {
+    try {
+      final result = await dioclient.post(
+        url.reshdlUrl,
+        data: value.toJson(),
+      );
+      return result;
+    } on dio.DioException catch (ex) {
+      return ex.response;
     }
   }
 }

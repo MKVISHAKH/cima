@@ -11,7 +11,7 @@ class DatumVal {
   @JsonKey(name: 'sch_date')
   String? schDate;
   @JsonKey(name: 'attended_date')
-  String? cmpltDt; 
+  String? cmpltDt;
   @JsonKey(name: 'user_id')
   int? userId;
   @JsonKey(name: 'soc_id')
@@ -37,7 +37,7 @@ class DatumVal {
     this.status,
   });
 
-  factory DatumVal.fromJson(Map<String, dynamic> json) => _$DatumFromJson(json);
+  factory DatumVal.fromJson(Map<String, dynamic> json) => _$DatumValFromJson(json);
 
-  Map<String, dynamic> toJson() => _$DatumToJson(this);
+  Map<String, dynamic> toJson() => _$DatumValToJson(this);
 }
