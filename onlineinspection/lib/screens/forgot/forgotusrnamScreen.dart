@@ -82,7 +82,7 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
                               children: [
                                 Text(
                                   'Forgot Username',
-                                  style: Theme.of(context).textTheme.titleLarge,
+                                  style: Theme.of(context).textTheme.titleMedium,
                                 ),
                                 const SizedBox(height: 30),
                                 const SizedBox(height: 10),

@@ -1,6 +1,6 @@
+import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:onlineinspection/core/hook/hook.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class ScreenAssigned extends StatefulWidget {
   const ScreenAssigned({super.key});
@@ -12,8 +12,6 @@ class ScreenAssigned extends StatefulWidget {
 class _ScreenAssignedState extends State<ScreenAssigned> {
   bool isButtonEnabled = true;
   String locationMessage = 'Current Location of the User';
-  String lat = '';
-  String long = '';
   Timer? locationTimer;
   int? usrId;
   String? usrName;
@@ -21,13 +19,25 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
   String? date;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isExpanded = false;
+  double doublelat=0;
+  double doublelong=0;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      requestLocationPermission();
-      //_startLocationCheckTimer();
+      Livelocationfun.instance.startTracking(
+        context: context,
+        onLocationUpdate: (position) {
+          setState(() {
+            doublelat=position.latitude;
+            doublelong=position.longitude;
+            locationMessage = 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+            log('asgnd screen  init:$locationMessage');
+          });
+          
+        },
+      );
       getShareddata();
     });
   }
@@ -36,143 +46,6 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
     final sharedValue = await SharedPrefManager.instance.getSharedData();
     usrName = sharedValue?.name?.toUpperCase() ?? 'User';
     usrId = sharedValue!.userId;
-  }
-
-  Future<void> requestLocationPermission() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-
-    if (permission == LocationPermission.denied) {
-      _showMandatoryPermissionDialog();
-    } else if (permission == LocationPermission.deniedForever) {
-      _showPermissionPermanentlyDeniedDialog();
-    } else {
-      await _getCurrentLocation();
-      //  _startLocationCheckTimer();
-    }
-  }
-
-  void _startLocationCheckTimer() {
-    locationTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        await _showLocationSettingsDialog();
-        return;
-      } else {
-        // Optionally update location if enabled
-        await _getCurrentLocation();
-      }
-    });
-  }
-
-  Future<void> _getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      await _showLocationSettingsDialog();
-      return;
-    }
-
-    Position position = await Geolocator.getCurrentPosition();
-    if (mounted) {
-      lat = '${position.latitude}';
-      long = '${position.longitude}';
-      setState(() {
-        locationMessage = 'Latitude: $lat, Longitude: $long';
-      });
-      liveLocation();
-    }
-  }
-
-  Future<void> _showLocationSettingsDialog() async {
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Enable Location Services"),
-        content: const Text(
-            "Location services are required to proceed. Please enable them in your device settings."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await Geolocator.openLocationSettings();
-            },
-            child: const Text("Open Settings"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showMandatoryPermissionDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Location Permission Required"),
-        content: const Text(
-            "Location access is required to proceed. Please enable it in settings."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await Permission.location.request();
-            },
-            child: const Text("Allow"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showPermissionPermanentlyDeniedDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Location Permission Required"),
-        content: const Text(
-            "Please go to settings and enable location permission manually."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await openAppSettings();
-            },
-            child: const Text("Open Settings"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void liveLocation() {
-    LocationSettings locationSettings = const LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 100,
-    );
-    Geolocator.getPositionStream(locationSettings: locationSettings)
-        .listen((Position position) {
-      if (mounted) {
-        lat = position.latitude.toString();
-        long = position.longitude.toString();
-        setState(() {
-          locationMessage = 'Latitude: $lat,Longitude: $long';
-        });
-      }
-    });
   }
 
   Future<bool?> popscreen(BuildContext context) async {
@@ -309,7 +182,7 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
                                             },
                                             children: [
                                               SizedBox(
-                                                height: MediaQuery.of(context).size.height /3.8,
+                                                height: MediaQuery.of(context).size.height /2.5,
                                                 child: SingleChildScrollView(
                                                   child: Column(
                                                     children: society.branches!.map((subItem) {
@@ -419,12 +292,20 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
                                                                           ElevatedButton(
                                                                         onPressed: isButtonEnabled
                                                                             ? () async {
-                                                                                if (lat.isNotEmpty && long.isNotEmpty) {
+                                                                                if (doublelat!=0 && doublelong!=0) {
                                                                                   try {
-                                                                                    double doublelat = double.parse(lat);
-                                                                                    double doublelong = double.parse(long);
+                                                                                    
 
-                                                                                    final socdet = Getbasicinfo.val(schedulerId: subItem.schedulerId, schedulerDate: subItem.schDate, userId: usrId, socId: society.socId, socName: society.societyName, branchId: subItem.branchId, lattitude: doublelat, longitude: doublelong, bName: subItem.branchName);
+                                                                                    final socdet = Getbasicinfo.val(
+                                                                                      schedulerId: subItem.schedulerId,
+                                                                                       schedulerDate: subItem.schDate,
+                                                                                        userId: usrId,
+                                                                                         socId: society.socId,
+                                                                                          socName: society.societyName,
+                                                                                           branchId: subItem.branchId,
+                                                                                            lattitude: doublelat,
+                                                                                             longitude: doublelong,
+                                                                                              bName: subItem.branchName);
 
                                                                                     await SharedPrefManager.instance.setSocietyinfo(socdet);
 
@@ -434,7 +315,26 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
                                                                                     print("Failed to parse coordinates: $e");
                                                                                   }
                                                                                 } else {
-                                                                                  Fluttertoast.showToast(msg: "Location are not ready yet.", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.CENTER, timeInSecForIosWeb: 1, backgroundColor: Colors.white, textColor: Colors.black, fontSize: 15.0);
+                                                                                  Fluttertoast.showToast(
+                                                                                    msg: "Location are not ready yet.",
+                                                                                     toastLength: Toast.LENGTH_SHORT,
+                                                                                      gravity: ToastGravity.CENTER,
+                                                                                       timeInSecForIosWeb: 1,
+                                                                                        backgroundColor: Colors.white,
+                                                                                         textColor: Colors.black,
+                                                                                          fontSize: 15.0);
+                                                                                          Livelocationfun.instance.startTracking(
+                                                                                            context: context,
+                                                                                            onLocationUpdate: (position) {
+                                                                                              setState(() {
+                                                                                                doublelat=position.latitude;
+                                                                                                doublelong=position.longitude;
+                                                                                                locationMessage = 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+                                                                                                log('assigned screen  loceror:$locationMessage');
+                                                                                              });
+                                                                                              
+                                                                                            },
+                                                                                          );
                                                                                   // Show an error message if coordinates are unavailable
                                                                                   print("Location coordinates are not ready yet.");
                                                                                 }

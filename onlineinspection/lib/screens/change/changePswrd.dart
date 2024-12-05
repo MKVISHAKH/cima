@@ -87,7 +87,7 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                               children: [
                                 Text(
                                   'Change Password',
-                                  style: Theme.of(context).textTheme.titleLarge,
+                                  style: Theme.of(context).textTheme.titleMedium,
                                 ),
                                 const SizedBox(height: 30),
                                 SizedBox(

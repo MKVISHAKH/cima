@@ -220,7 +220,7 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
                                             bankname: society.socName,
                                             branch: society.branchName,
                                             regNo: society.regNo,
-                                            lastinspdt: outputDate,
+                                            lastinspdt: society.lastInspectionDate,
                                             name: society.user?.name ?? '',
                                             role: society.user?.roleName ?? '',
                                             activity: selectedIdsString,

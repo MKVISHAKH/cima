@@ -1,5 +1,6 @@
+import 'dart:developer';
+
 import 'package:onlineinspection/core/hook/hook.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class Screenhome extends StatefulWidget {
   const Screenhome({super.key});
@@ -10,154 +11,24 @@ class Screenhome extends StatefulWidget {
 
 class _ScreenhomeState extends State<Screenhome> {
   String locationMessage = 'Current Location of the User';
-  String lat = '';
-  String long = '';
   Timer? locationTimer;
-
+  double doublelat=0;
+  double doublelong=0;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      requestLocationPermission();
-      _startLocationCheckTimer();
-    });
-  }
-
-  Future<void> requestLocationPermission() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-
-    if (permission == LocationPermission.denied) {
-      _showMandatoryPermissionDialog();
-    } else if (permission == LocationPermission.deniedForever) {
-      _showPermissionPermanentlyDeniedDialog();
-    } else {
-      await _getCurrentLocation();
-       _startLocationCheckTimer();
-    }
-  }
-
-  void _startLocationCheckTimer() {
-    locationTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        await _showLocationSettingsDialog();
-        return;
-      } else {
-        // Optionally update location if enabled
-        await _getCurrentLocation();
-      }
-    });
-  }
-
-  Future<void> _getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      await _showLocationSettingsDialog();
-      return;
-    }
-
-    Position position = await Geolocator.getCurrentPosition();
-    if (mounted) {
-      lat = '${position.latitude}';
-      long = '${position.longitude}';
-      setState(() {
-        locationMessage = 'Latitude: $lat, Longitude: $long';
-      });
-      liveLocation();
-    }
-  }
-
-  Future<void> _showLocationSettingsDialog() async {
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Theme.of(context).colorScheme.primaryFixed,
-        title: const Text("Enable Location Services"),
-        content: const Text(
-            "Location services are required to proceed. Please enable them in your device settings."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await Geolocator.openLocationSettings();
-            },
-            child: const Text("Open Settings"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showMandatoryPermissionDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Location Permission Required"),
-        content: const Text(
-            "Location access is required to proceed. Please enable it in settings."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await Permission.location.request();
-            },
-            child: const Text("Allow"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showPermissionPermanentlyDeniedDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Location Permission Required"),
-        content: const Text(
-            "Please go to settings and enable location permission manually."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await openAppSettings();
-            },
-            child: const Text("Open Settings"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void liveLocation() {
-    LocationSettings locationSettings = const LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 100,
-    );
-    Geolocator.getPositionStream(locationSettings: locationSettings)
-        .listen((Position position) {
-      if (mounted) {
-        lat = position.latitude.toString();
-        long = position.longitude.toString();
-        setState(() {
-          locationMessage = 'Latitude: $lat,Longitude: $long';
+     
+      Livelocationfun.instance.startTracking(
+        context: context,
+        onLocationUpdate: (position) {
+          setState(() {
+            doublelat=position.latitude;
+            doublelong=position.longitude;
+            locationMessage = 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+            log("homescreen init:$locationMessage");
+          });         
         });
-      }
     });
   }
 
@@ -184,12 +55,19 @@ class _ScreenhomeState extends State<Screenhome> {
                 ),
                 onPressed: () {
                   Navigator.pop(context, true);
+                  Livelocationfun.instance.stopTracking();
                 },
                 child: Text('YES',
                     style: Theme.of(context).textTheme.displayMedium),
               ),
             ],
           ));
+  
+  @override
+  void dispose() {
+    Livelocationfun.instance.stopTracking();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -317,12 +195,11 @@ class _ScreenhomeState extends State<Screenhome> {
                               InkWell(
                                 splashColor: Theme.of(context).colorScheme.secondaryFixed,
                                 onTap: () async {
-                                  _startLocationCheckTimer();
+                                  //_startLocationCheckTimer();
 
-                                  if (lat.isNotEmpty && long.isNotEmpty) {
+                                  if (doublelat!=0 && doublelong!=0) {
                                     try {
-                                      double doublelat = double.parse(lat);
-                                      double doublelong = double.parse(long);
+                                      
 
                                       SocietyListFunctions.instance.getSocietyList(doublelat, doublelong);
                                       Navigator.pushReplacement(
@@ -333,6 +210,17 @@ class _ScreenhomeState extends State<Screenhome> {
                                     }
                                   } else {
                                     // Show an error message if coordinates are unavailable
+                                    Livelocationfun.instance.startTracking(
+                                          context: context,
+                                          onLocationUpdate: (position) {
+                                            setState(() {
+                                              doublelat=position.latitude;
+                                              doublelong=position.longitude;
+                                              locationMessage = 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+                                              log("homescreen notready:$locationMessage");
+                                            });
+                                            
+                                          });
                                     Fluttertoast.showToast(
                                         msg: "Location are not ready yet.",
                                         toastLength: Toast.LENGTH_SHORT,
@@ -341,6 +229,7 @@ class _ScreenhomeState extends State<Screenhome> {
                                         backgroundColor: Colors.white,
                                         textColor: Colors.black,
                                         fontSize: 15.0);
+                                        
                                     print(
                                         "Location coordinates are not ready yet.");
                                   }
@@ -493,73 +382,6 @@ class _ScreenhomeState extends State<Screenhome> {
                             ],
                           ),
                         ),
-                        // SizedBox(
-                        //   height: MediaQuery.of(context).size.height / 18,
-                        // ),
-                        // Container(
-                        //   height: 45,
-                        //   width: 200,
-                        //   decoration: BoxDecoration(
-                        //     gradient: LinearGradient(
-                        //       begin: Alignment.topLeft,
-                        //       end: Alignment.bottomRight,
-                        //       colors: [
-                        //         Theme.of(context).colorScheme.primary,
-                        //         Theme.of(context).colorScheme.primary
-                        //       ],
-                        //     ),
-                        //     borderRadius: BorderRadius.circular(12.0),
-                        //   ),
-                        //   child: Theme(
-                        //     data: MyTheme.buttonStyleTheme,
-                        //     child: ElevatedButton(
-                        //       onPressed: () async {
-                        //         _startLocationCheckTimer();
-                        //         // double doublelat = double.parse(lat);
-                        //         // double doublelong = double.parse(long);
-
-                        //         // SocietyListFunctions.instance.getSocietyList(doublelat, doublelong);
-                        //         // Navigator.pushReplacement(
-                        //         //     context, Approutes().assignedscreen);
-                        //         if (lat.isNotEmpty && long.isNotEmpty) {
-                        //           try {
-                        //             double doublelat = double.parse(lat);
-                        //             double doublelong = double.parse(long);
-
-                        //             SocietyListFunctions.instance
-                        //                 .getSocietyList(doublelat, doublelong);
-                        //             Navigator.pushReplacement(
-                        //                 context, Approutes().assignedscreen);
-                        //           } catch (e) {
-                        //             // Handle parsing error, e.g., show a message to the user
-                        //             print("Failed to parse coordinates: $e");
-                        //           }
-                        //         } else {
-                        //           // Show an error message if coordinates are unavailable
-                        //           Fluttertoast.showToast(
-                        //               msg: "Location are not ready yet.",
-                        //               toastLength: Toast.LENGTH_SHORT,
-                        //               gravity: ToastGravity.CENTER,
-                        //               timeInSecForIosWeb: 1,
-                        //               backgroundColor: Colors.white,
-                        //               textColor: Colors.black,
-                        //               fontSize: 15.0);
-                        //           print(
-                        //               "Location coordinates are not ready yet.");
-                        //         }
-                        //       },
-                        //       child: Text(
-                        //         'Get Started',
-                        //         style: Theme.of(context).textTheme.titleMedium,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                        //  const SizedBox(
-                        //   height: 10,
-                        // ),
-                        // Text('Coperative Inspection App',
-                        // style: Theme.of(context).textTheme.titleMedium,),
                       ],
                     ),
                   ),

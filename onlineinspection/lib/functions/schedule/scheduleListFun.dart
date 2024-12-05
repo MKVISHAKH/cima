@@ -1,5 +1,4 @@
 import 'package:onlineinspection/core/hook/hook.dart';
-import 'package:onlineinspection/model/schedule/schedul_lst_resp/datum.dart';
 import 'package:onlineinspection/model/schedule/schedul_lst_resp/schedul_lst_resp.dart';
 
 class SchedulelistFun {

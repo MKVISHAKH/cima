@@ -84,7 +84,7 @@ class _ScreenChangeMobNoState extends State<ScreenChangeMobNo> {
                             children: [
                               Text(
                                 'Change Mobile Number',
-                                style: Theme.of(context).textTheme.titleLarge,
+                                style: Theme.of(context).textTheme.titleMedium,
                               ),
                               const SizedBox(height: 30),
                               SizedBox(

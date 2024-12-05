@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:onlineinspection/core/hook/hook.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -18,12 +19,26 @@ class _ScreenLoginState extends State<ScreenLogin> {
   String locationMessage = 'Current Location of the User';
   String lat = '';
   String long = '';
+  double doublelat=0;
+  double doublelong=0;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      requestLocationPermission();
+      //requestLocationPermission();
+      Livelocationfun.instance.startTracking(
+        context: context,
+        onLocationUpdate: (position) {
+          setState(() {
+            doublelat=position.latitude;
+            doublelong=position.longitude;
+            locationMessage = 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+            log('asgnd screen  init:$locationMessage');
+          });
+          
+        },
+      );
     });
   }
 

@@ -33,6 +33,7 @@ export 'package:open_file/open_file.dart';
 
 export 'package:path_provider/path_provider.dart';
 
+
 /**************************************/
 /*provider*/
 export 'package:onlineinspection/provider/theme/theme_provider.dart';
@@ -145,4 +146,7 @@ export 'package:onlineinspection/functions/society/societylistFun.dart';
 export 'package:onlineinspection/functions/questions/questionsFun.dart';
 
 export 'package:onlineinspection/functions/schedule/scheduleListFun.dart';
+
+export 'package:onlineinspection/functions/locations/liveLocationFun.dart';
+
 /**************************************/

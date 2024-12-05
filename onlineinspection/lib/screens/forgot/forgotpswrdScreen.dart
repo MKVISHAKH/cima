@@ -87,7 +87,7 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
                               children: [
                                 Text(
                                   'Forgot Password',
-                                  style: Theme.of(context).textTheme.titleLarge,
+                                  style: Theme.of(context).textTheme.titleMedium,
                                 ),
                                 const SizedBox(height: 30),
                                 SizedBox(
