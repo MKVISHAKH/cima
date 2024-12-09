@@ -1,7 +1,9 @@
 import 'package:onlineinspection/core/hook/hook.dart';
 
 class BackgroundImage extends StatelessWidget {
-  const BackgroundImage({super.key,});
+  const BackgroundImage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

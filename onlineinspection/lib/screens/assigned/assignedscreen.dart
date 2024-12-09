@@ -19,8 +19,8 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
   String? date;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isExpanded = false;
-  double doublelat=0;
-  double doublelong=0;
+  double doublelat = 0;
+  double doublelong = 0;
 
   @override
   void initState() {
@@ -30,12 +30,12 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
         context: context,
         onLocationUpdate: (position) {
           setState(() {
-            doublelat=position.latitude;
-            doublelong=position.longitude;
-            locationMessage = 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+            doublelat = position.latitude;
+            doublelong = position.longitude;
+            locationMessage =
+                'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
             log('asgnd screen  init:$locationMessage');
           });
-          
         },
       );
       getShareddata();
@@ -56,426 +56,479 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        PopScope(
-          canPop: false,
-          onPopInvoked: (bool didPop) async {
-            if (!didPop) {
-              if (didPop) return;
-              await popscreen(context);
-            }
-          },
-          child: Scaffold(
-            key: _scaffoldKey,
-            backgroundColor: Theme.of(context).colorScheme.primaryFixed,
-            appBar: AppBar(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back,
-                      color: Theme.of(context).colorScheme.onPrimary),
-                  onPressed: () {
-                    SocietyListFunctions.instance.getScietyListNotifier.value =[];
-                    Navigator.pushReplacement(context, Approutes().homescreen);
-                  },
-                ),
-                title: Text(
-                  "Scheduled Societies",
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-                )),
-            body: ListView(
-              children: [
-                Container(
-                  // margin: const EdgeInsets.all(5.0),
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: const BoxDecoration(
-                    color: Color(0xff1569C7),
+    final sessionTimer =
+        (context.findAncestorWidgetOfExactType<MyApp>() as MyApp).sessionTimer;
+
+    return ActivityMonitor(
+      sessionTimer: sessionTimer,
+      child: Stack(
+        children: [
+          PopScope(
+            canPop: false,
+            onPopInvoked: (bool didPop) async {
+              if (!didPop) {
+                if (didPop) return;
+                await popscreen(context);
+              }
+            },
+            child: Scaffold(
+              key: _scaffoldKey,
+              backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+              appBar: AppBar(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back,
+                        color: Theme.of(context).colorScheme.onPrimary),
+                    onPressed: () {
+                      SocietyListFunctions
+                          .instance.getScietyListNotifier.value = [];
+                      Navigator.pushReplacement(
+                          context, Approutes().homescreen);
+                    },
                   ),
-                  child: Text(
-                    'Welcome $usrName',
-                    style: Theme.of(context).textTheme.labelMedium,
+                  title: Text(
+                    "Scheduled Societies",
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary),
+                  )),
+              body: ListView(
+                children: [
+                  Container(
+                    // margin: const EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: const BoxDecoration(
+                      color: Color(0xff1569C7),
+                    ),
+                    child: Text(
+                      'Welcome $usrName',
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: ValueListenableBuilder(
-                      valueListenable:
-                          SocietyListFunctions.instance.getScietyListNotifier,
-                      builder: (BuildContext context, List<Society> newList,Widget? _) {
-                        return newList.isEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  margin: const EdgeInsets.all(5),
-                                  child: Column(
-                                    //crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 200,
-                                        height: 200,
-                                        decoration: BoxDecoration(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primaryFixed,
-                                            shape: BoxShape.circle,
-                                            image: const DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/errror/no_data_found.png'),
-                                              fit: BoxFit.scaleDown,
-                                            )),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: newList.length,
-                                itemBuilder: (context, index) {
-                                  final society = newList[index];
-                                  return Theme(
-                                    data: Theme.of(context).copyWith(
-                                      dividerColor: Colors.transparent,
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: ValueListenableBuilder(
+                        valueListenable:
+                            SocietyListFunctions.instance.getScietyListNotifier,
+                        builder: (BuildContext context, List<Society> newList,
+                            Widget? _) {
+                          return newList.isEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    margin: const EdgeInsets.all(5),
+                                    child: Column(
+                                      //crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: 200,
+                                          height: 200,
+                                          decoration: BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primaryFixed,
+                                              shape: BoxShape.circle,
+                                              image: const DecorationImage(
+                                                image: AssetImage(
+                                                    'assets/errror/no_data_found.png'),
+                                                fit: BoxFit.scaleDown,
+                                              )),
+                                        ),
+                                      ],
                                     ),
-                                    child: Card(
-                                      elevation: 3,
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 5, horizontal: 5),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: newList.length,
+                                  itemBuilder: (context, index) {
+                                    final society = newList[index];
+                                    return Theme(
+                                      data: Theme.of(context).copyWith(
+                                        dividerColor: Colors.transparent,
                                       ),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: isExpanded
-                                              ? 
-                                              const Color(0xff1569C7)
-                                              
-                                              : society.active == true
-                                                  ? const Color.fromARGB(255,2,72,4) // Active state color
-                                                  : const Color(0xff1569C7), // Inactive state color
+                                      child: Card(
+                                        elevation: 3,
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 5, horizontal: 5),
+                                        shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(12),
                                         ),
-                                        child: ExpansionTile(
-                                            title: Text(
-                                              society.societyName ?? ' ',
-                                              style: society.active == true
-                                                      ? const TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w900,
-                                                          fontFamily:
-                                                              'Poppins-Medium')
-                                                     
-                                                  : Theme.of(context).textTheme.displayMedium,
-                                            ),
-                                            onExpansionChanged:
-                                                (bool expanded) {
-                                              setState(() {
-                                                isExpanded = expanded;
-                                              });
-                                            },
-                                            children: [
-                                              SizedBox(
-                                                height: MediaQuery.of(context).size.height /2.5,
-                                                child: SingleChildScrollView(
-                                                  child: Column(
-                                                    children: society.branches!.map((subItem) {
-                                                      String? schDt =subItem.schDate;
-                                                      DateTime parseDate =DateFormat("yyyy-MM-dd").parse(schDt ?? '');
-                                                      var inputDate =DateTime.parse(parseDate.toString());
-                                                      var outputFormat =DateFormat('dd-MM-yyyy');
-                                                      var schdldt = outputFormat.format(inputDate);
-                                                      print(schdldt);
-                                                      final now =DateTime.now();
-                                                      DateFormat dateFormat =DateFormat("dd-MM-yyyy");
-                                                      date = dateFormat.format(now);
-                                                      print(date);
-                                                      double? dist =subItem.distance;
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: isExpanded
+                                                ? const Color(0xff1569C7)
+                                                : society.active == true
+                                                    ? const Color.fromARGB(
+                                                        255,
+                                                        2,
+                                                        72,
+                                                        4) // Active state color
+                                                    : const Color(
+                                                        0xff1569C7), // Inactive state color
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: ExpansionTile(
+                                              title: Text(
+                                                society.societyName ?? ' ',
+                                                style: society.active == true
+                                                    ? const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w900,
+                                                        fontFamily:
+                                                            'Poppins-Medium')
+                                                    : Theme.of(context)
+                                                        .textTheme
+                                                        .displayMedium,
+                                              ),
+                                              onExpansionChanged:
+                                                  (bool expanded) {
+                                                setState(() {
+                                                  isExpanded = expanded;
+                                                });
+                                              },
+                                              children: [
+                                                SizedBox(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height /
+                                                      2.5,
+                                                  child: SingleChildScrollView(
+                                                    child: Column(
+                                                      children: society
+                                                          .branches!
+                                                          .map((subItem) {
+                                                        String? schDt =
+                                                            subItem.schDate;
+                                                        DateTime parseDate =
+                                                            DateFormat(
+                                                                    "yyyy-MM-dd")
+                                                                .parse(schDt ??
+                                                                    '');
+                                                        var inputDate = DateTime
+                                                            .parse(parseDate
+                                                                .toString());
+                                                        var outputFormat =
+                                                            DateFormat(
+                                                                'dd-MM-yyyy');
+                                                        var schdldt =
+                                                            outputFormat.format(
+                                                                inputDate);
+                                                        print(schdldt);
+                                                        final now =
+                                                            DateTime.now();
+                                                        DateFormat dateFormat =
+                                                            DateFormat("dd-MM-yyyy");
+                                                        date = dateFormat.format(now);
+                                                        print(date);
+                                                        double? dist = subItem.distance;
 
-                                                      String distance = '';
-                                                      if (dist == null) {
-                                                        dist = 0;
-                                                        distance = '0';
-                                                        isButtonEnabled = false;
-                                                      } else if (dist >= 1000) {
-                                                        double dist1 =dist / 1000;
-                                                        String myString = dist1.toStringAsFixed(1);
-                                                        distance ="${myString}km";
-                                                        isButtonEnabled = false;
-                                                      } else {
-                                                        if (dist < maxdistScty &&schdldt == date) {
-                                                          isButtonEnabled =true;
-                                                          String myString = dist.toStringAsFixed(1);
-                                                          distance ="${myString}m";
-                                                        } else {
+                                                        String distance = '';
+                                                        if (dist == null) {
+                                                          dist = 0;
+                                                          distance = '0';
                                                           isButtonEnabled =false;
-                                                          String myString = dist.toStringAsFixed(1);
-                                                          distance ="${myString}m";
+                                                        } else if (dist >=1000) {
+                                                          double dist1 =dist / 1000;
+                                                          String myString = dist1.toStringAsFixed(1);
+                                                          distance ="${myString}km";
+                                                          log('dist>1000 $dist:$maxdistScty');
+                                                          if(dist<maxdistScty && schdldt==date){
+                                                              isButtonEnabled =true;
+                                                          }else{
+                                                              isButtonEnabled =false;
+
+                                                          }
+                                                          
+                                                        } else {
+                                                          if (dist < maxdistScty && schdldt == date) {
+                                                          log('dist<$dist:$maxdistScty');
+                                                            isButtonEnabled =true;
+                                                            String myString = dist.toStringAsFixed(1);
+                                                            distance ="${myString}m";
+                                                          } else {
+                                                            isButtonEnabled =false;
+                                                            String myString = dist.toStringAsFixed(1);
+                                                            distance ="${myString}m";
+                                                          }
                                                         }
-                                                      }
-                                                      return Padding(
-                                                        padding:
-                                                            const EdgeInsets.symmetric(vertical: 8.0,horizontal:5.0),
-                                                        child: Card(
-                                                          elevation: 3,
-                                                          margin:
-                                                              const EdgeInsets.symmetric(vertical: 5,horizontal:0),
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(12),
-                                                          ),
-                                                          child: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: society.active ==true
-                                                                  ? Colors.white // Active state color
-                                                                  : Colors.white, // Inactive state color
+                                                        return Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 8.0,
+                                                                  horizontal:
+                                                                      5.0),
+                                                          child: Card(
+                                                            elevation: 3,
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    vertical: 5,
+                                                                    horizontal:
+                                                                        0),
+                                                            shape:
+                                                                RoundedRectangleBorder(
                                                               borderRadius:
-                                                                  BorderRadius.circular(12),
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12),
                                                             ),
-                                                            child: ListTile(
-                                                              // Main title and subtitle
-                                                              title: Column(
-                                                                children: [
-                                                                  Text(
-                                                                    subItem.branchName ??'',
-                                                                    style: Theme.of(context).textTheme.headlineLarge,
-                                                                  ),
-                                                                  const SizedBox(height:8),
-                                                                  Text(
-                                                                    'Schedule Date: $schdldt',
-                                                                    style: Theme.of(context).textTheme.headlineSmall,
-                                                                  ),
-                                                                  Text(
-                                                                    'Distance: $distance',
-                                                                    style: Theme.of(context).textTheme.headlineSmall,
-                                                                  ),
-                                                                  const SizedBox(height:8),
-                                                                  Container(
-                                                                    height: 30,
-                                                                    width: 110,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      gradient: isButtonEnabled
-                                                                          ? const LinearGradient(
-                                                                              begin: Alignment.topLeft,
-                                                                              end: Alignment.bottomRight,
-                                                                              colors: [
-                                                                                Color.fromARGB(255, 2, 72, 4),
-                                                                                Color.fromARGB(255, 2, 72, 4)
-                                                                              ],
-                                                                            )
-                                                                          : const LinearGradient(
-                                                                              begin: Alignment.topLeft,
-                                                                              end: Alignment.bottomRight,
-                                                                              colors: [
-                                                                                Colors.grey,
-                                                                                Color.fromARGB(255, 172, 168, 168)
-                                                                              ],
-                                                                            ),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              12.0),
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: society
+                                                                            .active ==
+                                                                        true
+                                                                    ? Colors
+                                                                        .white // Active state color
+                                                                    : Colors
+                                                                        .white, // Inactive state color
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
+                                                              ),
+                                                              child: ListTile(
+                                                                // Main title and subtitle
+                                                                title: Column(
+                                                                  children: [
+                                                                    Text(
+                                                                      subItem.branchName ??
+                                                                          '',
+                                                                      style: Theme.of(
+                                                                              context)
+                                                                          .textTheme
+                                                                          .headlineLarge,
                                                                     ),
-                                                                    child:
-                                                                        Theme(
-                                                                      data: MyTheme
-                                                                          .buttonStyleTheme,
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                    Text(
+                                                                      'Schedule Date: $schdldt',
+                                                                      style: Theme.of(
+                                                                              context)
+                                                                          .textTheme
+                                                                          .headlineSmall,
+                                                                    ),
+                                                                    Text(
+                                                                      'Distance: $distance',
+                                                                      style: Theme.of(
+                                                                              context)
+                                                                          .textTheme
+                                                                          .headlineSmall,
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                    Container(
+                                                                      height:
+                                                                          30,
+                                                                      width:
+                                                                          110,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        gradient: isButtonEnabled
+                                                                            ? const LinearGradient(
+                                                                                begin: Alignment.topLeft,
+                                                                                end: Alignment.bottomRight,
+                                                                                colors: [
+                                                                                  Color.fromARGB(255, 2, 72, 4),
+                                                                                  Color.fromARGB(255, 2, 72, 4)
+                                                                                ],
+                                                                              )
+                                                                            : const LinearGradient(
+                                                                                begin: Alignment.topLeft,
+                                                                                end: Alignment.bottomRight,
+                                                                                colors: [
+                                                                                  Colors.grey,
+                                                                                  Color.fromARGB(255, 172, 168, 168)
+                                                                                ],
+                                                                              ),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(12.0),
+                                                                      ),
                                                                       child:
-                                                                          ElevatedButton(
-                                                                        onPressed: isButtonEnabled
-                                                                            ? () async {
-                                                                                if (doublelat!=0 && doublelong!=0) {
-                                                                                  try {
-                                                                                    
-
-                                                                                    final socdet = Getbasicinfo.val(
-                                                                                      schedulerId: subItem.schedulerId,
-                                                                                       schedulerDate: subItem.schDate,
-                                                                                        userId: usrId,
-                                                                                         socId: society.socId,
-                                                                                          socName: society.societyName,
-                                                                                           branchId: subItem.branchId,
-                                                                                            lattitude: doublelat,
-                                                                                             longitude: doublelong,
-                                                                                              bName: subItem.branchName);
-
-                                                                                    await SharedPrefManager.instance.setSocietyinfo(socdet);
-
-                                                                                    buildQuery(socdet);
-                                                                                  } catch (e) {
-                                                                                    // Handle parsing error, e.g., show a message to the user
-                                                                                    print("Failed to parse coordinates: $e");
-                                                                                  }
-                                                                                } else {
-                                                                                  Fluttertoast.showToast(
-                                                                                    msg: "Location are not ready yet.",
-                                                                                     toastLength: Toast.LENGTH_SHORT,
-                                                                                      gravity: ToastGravity.CENTER,
-                                                                                       timeInSecForIosWeb: 1,
-                                                                                        backgroundColor: Colors.white,
-                                                                                         textColor: Colors.black,
-                                                                                          fontSize: 15.0);
-                                                                                          Livelocationfun.instance.startTracking(
-                                                                                            context: context,
-                                                                                            onLocationUpdate: (position) {
-                                                                                              setState(() {
-                                                                                                doublelat=position.latitude;
-                                                                                                doublelong=position.longitude;
-                                                                                                locationMessage = 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
-                                                                                                log('assigned screen  loceror:$locationMessage');
-                                                                                              });
-                                                                                              
-                                                                                            },
-                                                                                          );
-                                                                                  // Show an error message if coordinates are unavailable
-                                                                                  print("Location coordinates are not ready yet.");
-                                                                                }
-                                                                              }
-                                                                            : null,
+                                                                          Theme(
+                                                                        data: MyTheme
+                                                                            .buttonStyleTheme,
                                                                         child:
-                                                                            Text(
-                                                                          'START',
-                                                                          style: Theme.of(context)
-                                                                              .textTheme
-                                                                              .displayMedium,
+                                                                            ElevatedButton(
+                                                                          onPressed: isButtonEnabled
+                                                                              ? () async {
+                                                                                  if (doublelat != 0 && doublelong != 0) {
+                                                                                    try {
+                                                                                      final socdet = Getbasicinfo.val(schedulerId: subItem.schedulerId, schedulerDate: subItem.schDate, userId: usrId, socId: society.socId, socName: society.societyName, branchId: subItem.branchId, lattitude: doublelat, longitude: doublelong, bName: subItem.branchName);
+
+                                                                                      await SharedPrefManager.instance.setSocietyinfo(socdet);
+
+                                                                                      buildQuery(socdet);
+                                                                                    } catch (e) {
+                                                                                      // Handle parsing error, e.g., show a message to the user
+                                                                                      print("Failed to parse coordinates: $e");
+                                                                                    }
+                                                                                  } else {
+                                                                                    Fluttertoast.showToast(msg: "Location are not ready yet.", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.CENTER, timeInSecForIosWeb: 1, backgroundColor: Colors.white, textColor: Colors.black, fontSize: 15.0);
+                                                                                    Livelocationfun.instance.startTracking(
+                                                                                      context: context,
+                                                                                      onLocationUpdate: (position) {
+                                                                                        setState(() {
+                                                                                          doublelat = position.latitude;
+                                                                                          doublelong = position.longitude;
+                                                                                          locationMessage = 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+                                                                                          log('assigned screen  loceror:$locationMessage');
+                                                                                        });
+                                                                                      },
+                                                                                    );
+                                                                                    // Show an error message if coordinates are unavailable
+                                                                                    print("Location coordinates are not ready yet.");
+                                                                                  }
+                                                                                }
+                                                                              : null,
+                                                                          child:
+                                                                              Text(
+                                                                            'START',
+                                                                            style:
+                                                                                Theme.of(context).textTheme.displayMedium,
+                                                                          ),
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                  ),
-                                                                ],
+                                                                  ],
+                                                                ),
+                                                                // subtitle: Column(
+                                                                //   crossAxisAlignment:
+                                                                //       CrossAxisAlignment
+                                                                //           .start,
+                                                                //   children: [
+                                                                //     // Text(items[index].title),
+                                                                //     const SizedBox(
+                                                                //         height:
+                                                                //             10),
+                                                                //     Text(
+                                                                //       'Schedule Date: $schdldt',
+                                                                //       style: Theme.of(
+                                                                //               context)
+                                                                //           .textTheme
+                                                                //           .headlineSmall,
+                                                                //     ),
+                                                                //   ],
+                                                                // ),
+
+                                                                // // Leading elevated button with distance
+                                                                // trailing: Column(
+                                                                //   //mainAxisAlignment: MainAxisAlignment.center,
+                                                                //   children: [
+                                                                //     Container(
+                                                                //       height: 30,
+                                                                //       width: 110,
+                                                                //       decoration:
+                                                                //           BoxDecoration(
+                                                                //         gradient: isButtonEnabled
+                                                                //             ? const LinearGradient(
+                                                                //                 begin: Alignment.topLeft,
+                                                                //                 end: Alignment.bottomRight,
+                                                                //                 colors: [
+                                                                //                   Color.fromARGB(255, 2, 72, 4),
+                                                                //                   Color.fromARGB(255, 2, 72, 4)
+                                                                //                 ],
+                                                                //               )
+                                                                //             : const LinearGradient(
+                                                                //                 begin: Alignment.topLeft,
+                                                                //                 end: Alignment.bottomRight,
+                                                                //                 colors: [
+                                                                //                   Colors.grey,
+                                                                //                   Color.fromARGB(255, 172, 168, 168)
+                                                                //                 ],
+                                                                //               ),
+                                                                //         borderRadius:
+                                                                //             BorderRadius.circular(
+                                                                //                 12.0),
+                                                                //       ),
+                                                                //       child:
+                                                                //           Theme(
+                                                                //         data: MyTheme
+                                                                //             .buttonStyleTheme,
+                                                                //         child:
+                                                                //             ElevatedButton(
+                                                                //           onPressed: isButtonEnabled
+                                                                //               ? () async {
+                                                                //                   if (lat.isNotEmpty && long.isNotEmpty) {
+                                                                //                     try {
+                                                                //                       double doublelat = double.parse(lat);
+                                                                //                       double doublelong = double.parse(long);
+
+                                                                //                       final socdet = Getbasicinfo.val(schedulerId: subItem.schedulerId, schedulerDate: subItem.schDate, userId: usrId, socId: society.socId, socName: society.societyName, branchId: subItem.branchId, lattitude: doublelat, longitude: doublelong, bName: subItem.branchName);
+
+                                                                //                       await SharedPrefManager.instance.setSocietyinfo(socdet);
+
+                                                                //                       buildQuery(socdet);
+                                                                //                     } catch (e) {
+                                                                //                       // Handle parsing error, e.g., show a message to the user
+                                                                //                       print("Failed to parse coordinates: $e");
+                                                                //                     }
+                                                                //                   } else {
+                                                                //                     Fluttertoast.showToast(msg: "Location are not ready yet.", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.CENTER, timeInSecForIosWeb: 1, backgroundColor: Colors.white, textColor: Colors.black, fontSize: 15.0);
+                                                                //                     // Show an error message if coordinates are unavailable
+                                                                //                     print("Location coordinates are not ready yet.");
+                                                                //                   }
+                                                                //                 }
+                                                                //               : null,
+                                                                //           child:
+                                                                //               Text(
+                                                                //             'START',
+                                                                //             style: Theme.of(context)
+                                                                //                 .textTheme
+                                                                //                 .titleMedium,
+                                                                //           ),
+                                                                //         ),
+                                                                //       ),
+                                                                //     ),
+                                                                //     const SizedBox(
+                                                                //         height:
+                                                                //             8),
+                                                                //     Text(
+                                                                //       'Distance: $distance',
+                                                                //       style: Theme.of(
+                                                                //               context)
+                                                                //           .textTheme
+                                                                //           .headlineSmall,
+                                                                //     ),
+                                                                //   ],
+                                                                // ),
+
+                                                                contentPadding:
+                                                                    const EdgeInsets
+                                                                        .all(5),
                                                               ),
-                                                              // subtitle: Column(
-                                                              //   crossAxisAlignment:
-                                                              //       CrossAxisAlignment
-                                                              //           .start,
-                                                              //   children: [
-                                                              //     // Text(items[index].title),
-                                                              //     const SizedBox(
-                                                              //         height:
-                                                              //             10),
-                                                              //     Text(
-                                                              //       'Schedule Date: $schdldt',
-                                                              //       style: Theme.of(
-                                                              //               context)
-                                                              //           .textTheme
-                                                              //           .headlineSmall,
-                                                              //     ),
-                                                              //   ],
-                                                              // ),
-
-                                                              // // Leading elevated button with distance
-                                                              // trailing: Column(
-                                                              //   //mainAxisAlignment: MainAxisAlignment.center,
-                                                              //   children: [
-                                                              //     Container(
-                                                              //       height: 30,
-                                                              //       width: 110,
-                                                              //       decoration:
-                                                              //           BoxDecoration(
-                                                              //         gradient: isButtonEnabled
-                                                              //             ? const LinearGradient(
-                                                              //                 begin: Alignment.topLeft,
-                                                              //                 end: Alignment.bottomRight,
-                                                              //                 colors: [
-                                                              //                   Color.fromARGB(255, 2, 72, 4),
-                                                              //                   Color.fromARGB(255, 2, 72, 4)
-                                                              //                 ],
-                                                              //               )
-                                                              //             : const LinearGradient(
-                                                              //                 begin: Alignment.topLeft,
-                                                              //                 end: Alignment.bottomRight,
-                                                              //                 colors: [
-                                                              //                   Colors.grey,
-                                                              //                   Color.fromARGB(255, 172, 168, 168)
-                                                              //                 ],
-                                                              //               ),
-                                                              //         borderRadius:
-                                                              //             BorderRadius.circular(
-                                                              //                 12.0),
-                                                              //       ),
-                                                              //       child:
-                                                              //           Theme(
-                                                              //         data: MyTheme
-                                                              //             .buttonStyleTheme,
-                                                              //         child:
-                                                              //             ElevatedButton(
-                                                              //           onPressed: isButtonEnabled
-                                                              //               ? () async {
-                                                              //                   if (lat.isNotEmpty && long.isNotEmpty) {
-                                                              //                     try {
-                                                              //                       double doublelat = double.parse(lat);
-                                                              //                       double doublelong = double.parse(long);
-
-                                                              //                       final socdet = Getbasicinfo.val(schedulerId: subItem.schedulerId, schedulerDate: subItem.schDate, userId: usrId, socId: society.socId, socName: society.societyName, branchId: subItem.branchId, lattitude: doublelat, longitude: doublelong, bName: subItem.branchName);
-
-                                                              //                       await SharedPrefManager.instance.setSocietyinfo(socdet);
-
-                                                              //                       buildQuery(socdet);
-                                                              //                     } catch (e) {
-                                                              //                       // Handle parsing error, e.g., show a message to the user
-                                                              //                       print("Failed to parse coordinates: $e");
-                                                              //                     }
-                                                              //                   } else {
-                                                              //                     Fluttertoast.showToast(msg: "Location are not ready yet.", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.CENTER, timeInSecForIosWeb: 1, backgroundColor: Colors.white, textColor: Colors.black, fontSize: 15.0);
-                                                              //                     // Show an error message if coordinates are unavailable
-                                                              //                     print("Location coordinates are not ready yet.");
-                                                              //                   }
-                                                              //                 }
-                                                              //               : null,
-                                                              //           child:
-                                                              //               Text(
-                                                              //             'START',
-                                                              //             style: Theme.of(context)
-                                                              //                 .textTheme
-                                                              //                 .titleMedium,
-                                                              //           ),
-                                                              //         ),
-                                                              //       ),
-                                                              //     ),
-                                                              //     const SizedBox(
-                                                              //         height:
-                                                              //             8),
-                                                              //     Text(
-                                                              //       'Distance: $distance',
-                                                              //       style: Theme.of(
-                                                              //               context)
-                                                              //           .textTheme
-                                                              //           .headlineSmall,
-                                                              //     ),
-                                                              //   ],
-                                                              // ),
-
-                                                              contentPadding:
-                                                                  const EdgeInsets.all(5),
                                                             ),
                                                           ),
-                                                        ),
-                                                      );
-                                                    }).toList(),
+                                                        );
+                                                      }).toList(),
+                                                    ),
                                                   ),
-                                                ),
-                                              )
-                                            ]),
+                                                )
+                                              ]),
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              );
-                      }),
-                ),
-              ],
+                                    );
+                                  },
+                                );
+                        }),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

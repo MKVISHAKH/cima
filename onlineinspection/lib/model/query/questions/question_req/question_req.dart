@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:onlineinspection/model/query/questions/question_req/additional_field.dart';
 
 part 'question_req.g.dart';
 
@@ -20,6 +21,7 @@ class QuestionReq {
   double? lattitude;
   double? longitude;
   bool? skip;
+  List<AdditionalField>? addField;
 
   QuestionReq(
       {this.inspectionId,
@@ -31,7 +33,8 @@ class QuestionReq {
       this.queStatus,
       this.lattitude,
       this.longitude,
-      this.skip});
+      this.skip,
+      this.addField});
 
   factory QuestionReq.fromJson(Map<String, dynamic> json) {
     return _$QuestionReqFromJson(json);

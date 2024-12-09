@@ -56,12 +56,10 @@ class _ScreenSplashState extends State<ScreenSplash> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      
       children: [
-     const BackgroundImage(),
-
+        const BackgroundImage(),
         Scaffold(
-        backgroundColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
           key: _scaffoldKey,
           body: Center(
             child: Text(

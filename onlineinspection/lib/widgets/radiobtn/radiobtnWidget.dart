@@ -1,4 +1,6 @@
 import 'package:onlineinspection/core/hook/hook.dart';
+import 'package:onlineinspection/model/query/questions/questionresp/additional_info.dart';
+import 'package:onlineinspection/provider/additional_info/additional_info_provider.dart';
 
 ValueNotifier<String> selectedFormatNotifier = ValueNotifier<String>('');
 
@@ -7,12 +9,14 @@ class FormatRadioButton extends StatelessWidget {
   final String type; // Use String for activity option
   final TextStyle? txtstyl;
   final Color? color;
+  final List<AdditionalInfo> additionalInfo;
 
   const FormatRadioButton({
     required this.title,
     required this.type,
     required this.txtstyl,
     required this.color,
+    required this.additionalInfo,
     super.key,
   });
 
@@ -30,6 +34,9 @@ class FormatRadioButton extends StatelessWidget {
               onChanged: (value) {
                 if (value != null) {
                   selectedFormatNotifier.value = value;
+
+                  Provider.of<AdditionalInfoProvider>(context, listen: false)
+                      .updateSelectedInfo(additionalInfo);
                 }
               },
             );

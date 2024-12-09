@@ -6,6 +6,7 @@ part 'societyresp.g.dart';
 
 @JsonSerializable()
 class Societyresp {
+  
   String? status;
   Data? data;
   String? message;

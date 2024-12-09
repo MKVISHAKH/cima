@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'dart:math';
 import 'package:intl/intl.dart';
@@ -12,9 +11,9 @@ class ScreenCmpltdRprt extends StatefulWidget {
 }
 
 class _ScreenCmpltdRprtState extends State<ScreenCmpltdRprt> {
-  
   List<String> columns = [];
   List<String?> cells = [];
+
 
   Future<bool?> popscreen(BuildContext context) async {
     Navigator.push(context, Approutes().homescreen);
@@ -22,39 +21,45 @@ class _ScreenCmpltdRprtState extends State<ScreenCmpltdRprt> {
   }
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  
+
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        if (!didPop) {
-          if (didPop) return;
-          await popscreen(context);
-        }
-      },
-      child: Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: Theme.of(context).colorScheme.primaryFixed,
-          appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Theme.of(context).colorScheme.onPrimary,
+    final sessionTimer =
+        (context.findAncestorWidgetOfExactType<MyApp>() as MyApp).sessionTimer;
+
+    return ActivityMonitor(
+      sessionTimer: sessionTimer,
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (bool didPop) async {
+          if (!didPop) {
+            if (didPop) return;
+            await popscreen(context);
+          }
+        },
+        child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+            appBar: AppBar(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  onPressed: () {
+                    Navigator.pushReplacement(context, Approutes().homescreen);
+                  },
                 ),
-                onPressed: () {
-                  Navigator.pushReplacement(context, Approutes().homescreen);
-                },
-              ),
-              title: Text(
-                "Reports",
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-              )),
-          body: ListView(
-            children: [ScrollableWidget(child: buildScheduledTab())],
-          )),
+                title: Text(
+                  "Reports",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                )),
+            body: ListView(
+              children: [ScrollableWidget(child: buildScheduledTab())],
+            )),
+      ),
     );
   }
 
@@ -69,7 +74,9 @@ class _ScreenCmpltdRprtState extends State<ScreenCmpltdRprt> {
               //borderRadius:const BorderRadius.only(topLeft: Radius.circular(12),topRight: Radius.circular(12)),
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                
                 DataTable(
                   headingRowColor:
                       WidgetStateProperty.all(const Color(0xff1569C7)),
@@ -136,7 +143,6 @@ class _ScreenCmpltdRprtState extends State<ScreenCmpltdRprt> {
               style: Theme.of(context).textTheme.displaySmall,
               textAlign: TextAlign.center,
             ),
-           
           );
         }),
         DataCell(
@@ -159,7 +165,7 @@ class _ScreenCmpltdRprtState extends State<ScreenCmpltdRprt> {
                 data: MyTheme.buttonStyleTheme,
                 child: ElevatedButton(
                   onPressed: () async {
-                   // final inspId = task.inspId;
+                    // final inspId = task.inspId;
 
                     openFile(task);
                   },
@@ -204,11 +210,11 @@ class _ScreenCmpltdRprtState extends State<ScreenCmpltdRprt> {
           textColor: Colors.white,
           fontSize: 15.0);
     } else if (dwnldresp.statusCode == 200) {
+      Random random = Random();
+      int random3digit = 100 + random.nextInt(900);
 
-      Random random=Random();
-      int random3digit=100+random.nextInt(900);
-
-      String name = "${task.socId}_${task.branchId}_${task.cmpltDt}_$random3digit.pdf";
+      String name =
+          "${task.socId}_${task.branchId}_${task.cmpltDt}_$random3digit.pdf";
 
       final appStorage = await getApplicationDocumentsDirectory();
       final file = File('${appStorage.path}/$name');
@@ -229,4 +235,5 @@ class _ScreenCmpltdRprtState extends State<ScreenCmpltdRprt> {
     }
     return null;
   }
+   
 }

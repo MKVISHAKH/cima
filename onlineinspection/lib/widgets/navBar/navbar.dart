@@ -1,7 +1,6 @@
 import 'package:onlineinspection/core/hook/hook.dart';
 
 class Navbar extends StatefulWidget {
-  
   const Navbar({super.key});
 
   @override
@@ -85,15 +84,13 @@ class _NavbarState extends State<Navbar> {
               //   ),
               // ),
               decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                      'assets/splash/bg.jpg',
-                      
-                    ),
-                    fit: BoxFit.cover,
-                    
+                image: DecorationImage(
+                  image: AssetImage(
+                    'assets/splash/bg.jpg',
                   ),
+                  fit: BoxFit.cover,
                 ),
+              ),
               // BoxDecoration(
               //     gradient: LinearGradient(
               //         begin: Alignment.topLeft,
@@ -138,7 +135,9 @@ class _NavbarState extends State<Navbar> {
                 onTap: () {
                   Navigator.push(context, Approutes().changepswrdScreen);
                 }),
-            const Divider(thickness: .4,),
+            const Divider(
+              thickness: .4,
+            ),
             ListTile(
                 leading: const Icon(
                   Icons.logout_outlined,

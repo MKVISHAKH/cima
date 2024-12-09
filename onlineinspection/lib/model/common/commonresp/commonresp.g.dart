@@ -8,7 +8,7 @@ part of 'commonresp.dart';
 
 Commonresp _$CommonrespFromJson(Map<String, dynamic> json) => Commonresp(
       status: json['status'] as String?,
-      data: (json["data"] ?? []) as List,
+      data: json['data'] as List<dynamic>?,
       message: json['message'] as String?,
     );
 

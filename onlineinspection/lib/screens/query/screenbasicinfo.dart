@@ -38,221 +38,234 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        if (!didPop) {
-          if (didPop) return;
-          await popscreen(context);
-        }
-        //log('BackButton pressed!');
-      },
-      child: Scaffold(
-          backgroundColor: const Color(0xff98c1d9),
-          appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Theme.of(context).colorScheme.onPrimary,
+    final sessionTimer =
+        (context.findAncestorWidgetOfExactType<MyApp>() as MyApp).sessionTimer;
+
+    return ActivityMonitor(
+      sessionTimer: sessionTimer,
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (bool didPop) async {
+          if (!didPop) {
+            if (didPop) return;
+            await popscreen(context);
+          }
+          //log('BackButton pressed!');
+        },
+        child: Scaffold(
+            backgroundColor: const Color(0xff98c1d9),
+            appBar: AppBar(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  onPressed: () {
+                    selectedItems.value = {0};
+                    Navigator.pushReplacement(
+                        context, Approutes().assignedscreen);
+                  },
                 ),
-                onPressed: () {
-                  selectedItems.value = {0};
-                  Navigator.pushReplacement(
-                      context, Approutes().assignedscreen);
-                },
-              ),
-              title: Text(
-                "Questionnaire",
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-              )),
-          body: ListView(
-            children: [
-              ValueListenableBuilder(
-                  valueListenable:
-                      SocietyListFunctions.instance.getSocietyDetNotifier,
-                  builder: (BuildContext context, List<SocietyDet> newList,
-                      Widget? _) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: newList.length,
-                      itemBuilder: (context, index) {
-                        final society = newList[index];
-                        final lstinspdt = society.lastInspectionDate;
-                        if (lstinspdt == null) {
-                          outputDate = '';
-                          var now = DateTime.now();
-                          DateFormat dateFormat = DateFormat("dd-MM-yyyy");
-                          date = dateFormat.format(now);
-                          print(date);
-                        } else {
-                          var now = DateTime.now();
-                          DateFormat dateFormat = DateFormat("dd-MM-yyyy");
-                          date = dateFormat.format(now);
-                          print(date);
+                title: Text(
+                  "Questionnaire",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                )),
+            body: ListView(
+              children: [
+                ValueListenableBuilder(
+                    valueListenable:
+                        SocietyListFunctions.instance.getSocietyDetNotifier,
+                    builder: (BuildContext context, List<SocietyDet> newList,
+                        Widget? _) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: newList.length,
+                        itemBuilder: (context, index) {
+                          final society = newList[index];
+                          final lstinspdt = society.lastInspectionDate;
+                          if (lstinspdt == null) {
+                            outputDate = '';
+                            var now = DateTime.now();
+                            DateFormat dateFormat = DateFormat("dd-MM-yyyy");
+                            date = dateFormat.format(now);
+                            print(date);
+                          } else {
+                            var now = DateTime.now();
+                            DateFormat dateFormat = DateFormat("dd-MM-yyyy");
+                            date = dateFormat.format(now);
+                            print(date);
 
-                          DateTime parseDate = DateFormat("yyyy-MM-dd HH:mm:ss").parse(lstinspdt);
-                          var inputDate = DateTime.parse(parseDate.toString());
-                          var outputFormat = DateFormat('dd-MM-yyyy');
-                          outputDate = outputFormat.format(inputDate);
-                          print(outputDate);
+                            DateTime parseDate =
+                                DateFormat("yyyy-MM-dd HH:mm:ss")
+                                    .parse(lstinspdt);
+                            var inputDate =
+                                DateTime.parse(parseDate.toString());
+                            var outputFormat = DateFormat('dd-MM-yyyy');
+                            outputDate = outputFormat.format(inputDate);
+                            print(outputDate);
+                          }
 
-                        }
-
-                        return Column(
-                          children: [
-                            Container(
-                              // margin: const EdgeInsets.all(5.0),
-                              padding: const EdgeInsets.only(left: 5.0, top: 5),
-                              decoration: const BoxDecoration(
-                                color: Color(0xff1569C7),
-                                // gradient: LinearGradient(
-                                //   begin: Alignment.topLeft,
-                                //   end: Alignment.bottomRight,
-                                //   colors: [
-                                //     Theme.of(context).colorScheme.primary,
-                                //     Theme.of(context).colorScheme.primary
-                                //   ],
-                                // ),
-                                // borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              child: ListTile(
-                                title: Text(
-                                  society.socName ?? 'User',
-                                  style:
-                                      Theme.of(context).textTheme.labelMedium,
+                          return Column(
+                            children: [
+                              Container(
+                                // margin: const EdgeInsets.all(5.0),
+                                padding:
+                                    const EdgeInsets.only(left: 5.0, top: 5),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xff1569C7),
+                                  // gradient: LinearGradient(
+                                  //   begin: Alignment.topLeft,
+                                  //   end: Alignment.bottomRight,
+                                  //   colors: [
+                                  //     Theme.of(context).colorScheme.primary,
+                                  //     Theme.of(context).colorScheme.primary
+                                  //   ],
+                                  // ),
+                                  // borderRadius: BorderRadius.circular(12.0),
                                 ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      'Branch: ${society.branchName ?? 'Branch'}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall,
-                                    ),
-                                    Text(
-                                      'Reg.No: ${society.regNo ?? 'RegNo'}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall,
-                                    ),
-                                    Text(
-                                      'Circle/District: ${society.circleName ?? 'circle'}/${society.districtName ?? 'dist'}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall,
-                                    ),
-                                    Text(
-                                      'Class(Rule 182): ${society.socClass ?? 'class'}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      'Name: ${society.user?.name ?? ''}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium,
-                                    ),
-                                    Text(
-                                      'Role: ${society.user?.roleName ?? ''}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium,
-                                    ),
-                                    Text(
-                                      'Inspection Date: $date',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium,
-                                    ),
-                                    Text(
-                                      'Last Inspection Date: $outputDate',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium,
-                                    ),
-                                  ],
-                                ),
-                                // trailing: Column(
-                                //   children: [
-
-                                //   ],),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            buildQuestn(society),
-                            Container(
-                              height: 45,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Theme.of(context).colorScheme.primary,
-                                    Theme.of(context).colorScheme.primary
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              child: Theme(
-                                data: MyTheme.buttonStyleTheme,
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    List<int> selectedIds =
-                                        getSelectedActivityIds();
-                                    if (selectedIds.isNotEmpty) {
-                                      String selectedIdsString =
-                                          "[${selectedIds.join(", ")}]";
-                                      Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                          builder: (context) => ScreenQuery(
-                                            bankname: society.socName,
-                                            branch: society.branchName,
-                                            regNo: society.regNo,
-                                            lastinspdt: society.lastInspectionDate,
-                                            name: society.user?.name ?? '',
-                                            role: society.user?.roleName ?? '',
-                                            activity: selectedIdsString,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      Fluttertoast.showToast(
-                                          msg: "Please select one option",
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor: Colors.white,
-                                          textColor: Colors.black,
-                                          fontSize: 15.0);
-                                    }
-                                  },
-                                  child: Text(
-                                    'NEXT',
+                                child: ListTile(
+                                  title: Text(
+                                    society.socName ?? 'User',
                                     style:
-                                        Theme.of(context).textTheme.titleMedium,
+                                        Theme.of(context).textTheme.labelMedium,
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        'Branch: ${society.branchName ?? 'Branch'}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall,
+                                      ),
+                                      Text(
+                                        'Reg.No: ${society.regNo ?? 'RegNo'}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall,
+                                      ),
+                                      Text(
+                                        'Circle/District: ${society.circleName ?? 'circle'}/${society.districtName ?? 'dist'}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall,
+                                      ),
+                                      Text(
+                                        'Class(Rule 182): ${society.socClass ?? 'class'}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'Name: ${society.user?.name ?? ''}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium,
+                                      ),
+                                      Text(
+                                        'Role: ${society.user?.roleName ?? ''}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium,
+                                      ),
+                                      Text(
+                                        'Inspection Date: $date',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium,
+                                      ),
+                                      Text(
+                                        'Last Inspection Date: $outputDate',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium,
+                                      ),
+                                    ],
+                                  ),
+                                  // trailing: Column(
+                                  //   children: [
+
+                                  //   ],),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              buildQuestn(society),
+                              Container(
+                                height: 45,
+                                width: 150,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Theme.of(context).colorScheme.primary,
+                                      Theme.of(context).colorScheme.primary
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                child: Theme(
+                                  data: MyTheme.buttonStyleTheme,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      List<int> selectedIds =
+                                          getSelectedActivityIds();
+                                      if (selectedIds.isNotEmpty) {
+                                        String selectedIdsString =
+                                            "[${selectedIds.join(", ")}]";
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (context) => ScreenQuery(
+                                              bankname: society.socName,
+                                              branch: society.branchName,
+                                              regNo: society.regNo,
+                                              lastinspdt:
+                                                  society.lastInspectionDate,
+                                              name: society.user?.name ?? '',
+                                              role:
+                                                  society.user?.roleName ?? '',
+                                              activity: selectedIdsString,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg: "Please select one option",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.CENTER,
+                                            timeInSecForIosWeb: 1,
+                                            backgroundColor: Colors.white,
+                                            textColor: Colors.black,
+                                            fontSize: 15.0);
+                                      }
+                                    },
+                                    child: Text(
+                                      'NEXT',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }),
-            ],
-          )),
+                            ],
+                          );
+                        },
+                      );
+                    }),
+              ],
+            )),
+      ),
     );
   }
 

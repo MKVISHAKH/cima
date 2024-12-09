@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 import 'package:onlineinspection/core/hook/hook.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -32,7 +31,8 @@ class Livelocationfun {
     _startLocationCheckTimer(context);
   }
 
-  Future<void> _getInitialLocation(BuildContext context, Function(Position) onLocationUpdate) async {
+  Future<void> _getInitialLocation(
+      BuildContext context, Function(Position) onLocationUpdate) async {
     try {
       Position position = await Geolocator.getCurrentPosition();
       onLocationUpdate(position);
@@ -41,14 +41,17 @@ class Livelocationfun {
     }
   }
 
-  void _startLiveLocationStream(BuildContext context, Function(Position) onLocationUpdate) {
+  void _startLiveLocationStream(
+      BuildContext context, Function(Position) onLocationUpdate) {
     try {
       _positionSubscription?.cancel(); // Cancel any previous subscription
       LocationSettings locationSettings = const LocationSettings(
         accuracy: LocationAccuracy.high,
         distanceFilter: 100,
       );
-      _positionSubscription = Geolocator.getPositionStream(locationSettings: locationSettings).listen(
+      _positionSubscription =
+          Geolocator.getPositionStream(locationSettings: locationSettings)
+              .listen(
         (Position position) {
           onLocationUpdate(position);
         },
@@ -77,14 +80,17 @@ class Livelocationfun {
   }
 
   void _startLocationCheckTimer(BuildContext context) {
-    _locationCheckTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+    _locationCheckTimer =
+        Timer.periodic(const Duration(seconds: 5), (timer) async {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         log("Location service disabled. Stopping stream...");
         timer.cancel();
         if (context.mounted) await _showLocationSettingsDialog(context);
-      } else if (_positionSubscription == null || _positionSubscription!.isPaused) {
+      } else if (_positionSubscription == null ||
+          _positionSubscription!.isPaused) {
         log("Restarting location service...");
+      if (!context.mounted) return;
         _startLiveLocationStream(context, (position) => {});
       }
     });
@@ -98,7 +104,8 @@ class Livelocationfun {
 
   Future<void> requestLocationPermission(BuildContext context) async {
     LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
       permission = await Geolocator.requestPermission();
     }
     if (permission == LocationPermission.deniedForever) {
@@ -136,7 +143,8 @@ class Livelocationfun {
       builder: (context) => AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.primaryFixed,
         title: const Text("Permission Denied Forever"),
-        content: const Text("Location permission is permanently denied. Please enable it in settings."),
+        content: const Text(
+            "Location permission is permanently denied. Please enable it in settings."),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),

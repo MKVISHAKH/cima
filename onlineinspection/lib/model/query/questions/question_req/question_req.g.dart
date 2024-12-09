@@ -17,6 +17,9 @@ QuestionReq _$QuestionReqFromJson(Map<String, dynamic> json) => QuestionReq(
       lattitude: (json['lattitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
       skip: json['skip'] as bool?,
+      addField: (json['additional_info'] as List<dynamic>?)
+          ?.map((e) => AdditionalField.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$QuestionReqToJson(QuestionReq instance) =>
@@ -31,4 +34,5 @@ Map<String, dynamic> _$QuestionReqToJson(QuestionReq instance) =>
       'lattitude': instance.lattitude,
       'longitude': instance.longitude,
       'skip': instance.skip,
+      'additional_info':instance.addField
     };

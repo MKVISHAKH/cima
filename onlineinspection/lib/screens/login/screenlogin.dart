@@ -10,7 +10,6 @@ class ScreenLogin extends StatefulWidget {
 }
 
 class _ScreenLoginState extends State<ScreenLogin> {
-  
   final _usercontroller = TextEditingController();
   final _passcontroller = TextEditingController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -19,8 +18,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
   String locationMessage = 'Current Location of the User';
   String lat = '';
   String long = '';
-  double doublelat=0;
-  double doublelong=0;
+  double doublelat = 0;
+  double doublelong = 0;
 
   @override
   void initState() {
@@ -31,12 +30,12 @@ class _ScreenLoginState extends State<ScreenLogin> {
         context: context,
         onLocationUpdate: (position) {
           setState(() {
-            doublelat=position.latitude;
-            doublelong=position.longitude;
-            locationMessage = 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+            doublelat = position.latitude;
+            doublelong = position.longitude;
+            locationMessage =
+                'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
             log('asgnd screen  init:$locationMessage');
           });
-          
         },
       );
     });
@@ -168,7 +167,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-     const BackgroundImage(),
+      const BackgroundImage(),
       Scaffold(
         backgroundColor: Colors.transparent,
         key: _scaffoldKey,

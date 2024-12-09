@@ -20,34 +20,40 @@ class _ScreenScheduledState extends State<ScreenScheduled> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        if (!didPop) {
-          if (didPop) return;
-          await popscreen(context);
-        }
-      },
-      child: Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: Theme.of(context).colorScheme.primaryFixed,
-          appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back,
-                    color: Theme.of(context).colorScheme.onPrimary),
-                onPressed: () {
-                  Navigator.pushReplacement(context, Approutes().homescreen);
-                },
-              ),
-              title: Text(
-                "Schedule Details",
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-              )),
-          body: ListView(
-            children: [ScrollableWidget(child: buildScheduledTab())],
-          )),
+    final sessionTimer =
+        (context.findAncestorWidgetOfExactType<MyApp>() as MyApp).sessionTimer;
+
+    return ActivityMonitor(
+      sessionTimer: sessionTimer,
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (bool didPop) async {
+          if (!didPop) {
+            if (didPop) return;
+            await popscreen(context);
+          }
+        },
+        child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+            appBar: AppBar(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back,
+                      color: Theme.of(context).colorScheme.onPrimary),
+                  onPressed: () {
+                    Navigator.pushReplacement(context, Approutes().homescreen);
+                  },
+                ),
+                title: Text(
+                  "Schedule Details",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                )),
+            body: ListView(
+              children: [ScrollableWidget(child: buildScheduledTab())],
+            )),
+      ),
     );
   }
 

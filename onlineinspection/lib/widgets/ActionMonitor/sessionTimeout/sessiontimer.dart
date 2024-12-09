@@ -1,5 +1,3 @@
-
-
 import 'package:onlineinspection/core/hook/hook.dart';
 
 class SessionTimer {
@@ -9,7 +7,7 @@ class SessionTimer {
   SessionTimer(this.navigatorKey);
 
   void startTimer() {
-    _timer = Timer.periodic(const Duration(minutes: 1), (_) {
+    _timer = Timer.periodic(const Duration(hours: 2), (_) {
       timedOut();
     });
   }
@@ -28,25 +26,23 @@ class SessionTimer {
         context: navigatorKey.currentContext!,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
-          title: const Text('Alert'),
+          backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+          title: Text('Alert', style: Theme.of(context).textTheme.bodyLarge),
           content: const Text(
-              'Sorry but you have been logged out due to inactivity...'),
+              'Sorry, but you have been logged out due to inactivity...'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                // Navigator.pushAndRemoveUntil(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => LoginPage()),
-                //   (route) => false,
-                // );
+                signout(navigatorKey.currentContext!);
               },
-              child: const Text('OK'),
+              child: Text('OK', style: Theme.of(context).textTheme.bodyLarge),
             ),
           ],
         ),
       );
     }
   }
+
   void signout(BuildContext ctx) async {
     final sharedprf = await SharedPreferences.getInstance();
     await sharedprf.remove(savekeyname);
