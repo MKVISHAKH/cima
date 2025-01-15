@@ -209,7 +209,7 @@ class _ScreenhomeState extends State<Screenhome> {
                                       try {
                                         SocietyListFunctions.instance
                                             .getSocietyList(
-                                                doublelat, doublelong);
+                                                doublelat, doublelong, context);
                                         Navigator.pushReplacement(context,
                                             Approutes().assignedscreen);
                                       } catch (e) {
@@ -279,7 +279,7 @@ class _ScreenhomeState extends State<Screenhome> {
                                       .colorScheme
                                       .secondaryFixed,
                                   onTap: () {
-                                    SchedulelistFun.instance.getScheduleList();
+                                    SchedulelistFun.instance.getScheduleList(context);
                                     Navigator.pushReplacement(
                                         context, Approutes().scheduleScreen);
                                   },
@@ -317,7 +317,7 @@ class _ScreenhomeState extends State<Screenhome> {
                                       .colorScheme
                                       .secondaryFixed,
                                   onTap: () {
-                                    SchedulelistFun.instance.getSchdlcmpltLst();
+                                    SchedulelistFun.instance.getSchdlcmpltLst(context);
                                     Navigator.pushReplacement(
                                         context, Approutes().cmpltRprtScreen);
                                   },
@@ -355,9 +355,10 @@ class _ScreenhomeState extends State<Screenhome> {
                                       .colorScheme
                                       .secondaryFixed,
                                   onTap: () {
-                                    // SchedulelistFun.instance.getSchdlcmpltLst();
+                                    SchedulelistFun.instance
+                                        .getActionRprt(context);
                                     Navigator.pushReplacement(
-                                        context, Approutes().errorScreen);
+                                        context, Approutes().screensActionRprt);
                                   },
                                   child: Card(
                                     color: Colors.white,
@@ -414,16 +415,44 @@ class _ScreenhomeState extends State<Screenhome> {
                             },
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.notifications,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            size: 25,
-                          ),
-                          onPressed: () {
-                            // Handle notification button press
-                          },
-                        ),
+                        // Stack(
+                        //   children: [
+                        //     IconButton(
+                        //       icon: Icon(
+                        //         Icons.notifications,
+                        //         color: Theme.of(context).colorScheme.onPrimary,
+                        //         size: 25,
+                        //       ),
+                        //       onPressed: () {
+                        //         // Handle notification button press
+                        //       },
+                        //     ),
+                        //     Positioned(
+                        //       right: 10,
+                        //       top: 8,
+                        //       child: Container(
+                        //         padding:const EdgeInsets.all(2),
+                        //         decoration:const BoxDecoration(
+                        //           color: Colors.red,
+                        //           shape: BoxShape.circle,
+                        //         ),
+                        //         constraints:const BoxConstraints(
+                        //           minWidth: 10,
+                        //           minHeight: 10,
+                        //         ),
+                        //         child:const Text(
+                        //           '', // Replace with dynamic count or leave blank for just a dot
+                        //           style: TextStyle(
+                        //             color: Colors.white,
+                        //             fontSize: 10,
+                        //             fontWeight: FontWeight.bold,
+                        //           ),
+                        //           textAlign: TextAlign.center,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     ),
                   )

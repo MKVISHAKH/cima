@@ -29,7 +29,7 @@ class SocietyDet {
   User? user;
   List<int>? activity;
   @JsonKey(name: 'inspection_status')
-  String? inspStatus;
+  int? inspStatus;
   @JsonKey(name: 'society_activity')
   List<SocietyActivity>? societyActivity;
 

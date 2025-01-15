@@ -248,6 +248,9 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
                                         onPressed: () async {
                                           if (_formkey.currentState!
                                               .validate()) {
+                                            context
+                                                .read<ElevatedBtnProvider>()
+                                                .changeSelectedVal(true);
                                             setState(() {
                                               penNo = _usernamecontroller.text;
                                               newpswrd =
@@ -255,7 +258,7 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
                                               cnfrmpswrd =
                                                   _cnfrmpswrdcontroller.text;
                                             });
-                                            userVerify(penNo);
+                                            userVerify(penNo, context);
                                           }
                                         },
                                         child: Text('RESET',
@@ -264,6 +267,9 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
                                                 .titleMedium),
                                       ),
                                     ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
                                   ),
                                   Consumer<LoadingProvider>(builder:
                                       (context, loadingProvider, child) {
@@ -305,60 +311,57 @@ class _ScreenForgotPswrdState extends State<ScreenForgotPswrd> {
     );
   }
 
-  Future userVerify(String? pen) async {
-    final loadingProvider = context.read<LoadingProvider>();
-    loadingProvider.toggleLoading();
+  Future userVerify(String? pen, BuildContext context) async {
+    try {
+      final loadingProvider = context.read<LoadingProvider>();
+      loadingProvider.toggleLoading();
 
-    final val = ChangeReq(pen: pen);
+      final val = ChangeReq(pen: pen);
 
-    final chngresp = await Ciadata().pswrdVrfy(val);
-    final resultAsjson = jsonDecode(chngresp.toString());
-    final changeval = ChangeResp.fromJson(resultAsjson as Map<String, dynamic>);
+      final chngresp = await Ciadata().pswrdVrfy(val);
+      final resultAsjson = jsonDecode(chngresp.toString());
+      final changeval =
+          ChangeResp.fromJson(resultAsjson as Map<String, dynamic>);
 
-    loadingProvider.toggleLoading();
-    if (chngresp == null) {
-      showLoginerror(_scafoldkey.currentContext!, 1);
-    } else if (chngresp.statusCode == 200 && changeval.status == 'success') {
-      refid = changeval.data?.refId ?? 0;
-      Fluttertoast.showToast(
-          msg: "Otp sended on your registered mobile No",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
+      loadingProvider.toggleLoading();
+      if (chngresp == null) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+      } else if (chngresp.statusCode == 200 && changeval.status == 'success') {
+        refid = changeval.data?.refId ?? 0;
+        if (!context.mounted) return;
 
-      _scafoldkey.currentContext!
-          .read<ElevatedBtnProvider>()
-          .changeSelectedVal(true);
-    } else if (changeval.status == 'failure') {
-      showLoginerror(_scafoldkey.currentContext!, 2);
-    } else {
-      showLoginerror(_scafoldkey.currentContext!, 3);
-    }
-  }
+        CommonFun.instance
+            .showApierror(context, "Otp sended on your registered mobile No");
 
-  Future showLoginerror(BuildContext? context, stat) async {
-    //print('hi');
-    if (stat == 2) {
-      Fluttertoast.showToast(
-          msg: "Password can't changed",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
-    } else {
-      Fluttertoast.showToast(
-          msg: "Something went wrong",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
+        _scafoldkey.currentContext!
+            .read<ElevatedBtnProvider>()
+            .changeSelectedVal(true);
+      } else if (changeval.status == 'failure') {
+        if (!context.mounted) return;
+
+        CommonFun.instance.showApierror(context, "Password can't changed");
+      } else if (chngresp.statusCode == 500) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Sever Not reached");
+
+        // showLoginerror(context, 3);
+      } else if (chngresp.statusCode == 408) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Connection time out");
+
+        //showLoginerror(context, 4);
+      } else {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+        //showLoginerror(context, 5);
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An unexpected error occurred')),
+      );
     }
   }
 }

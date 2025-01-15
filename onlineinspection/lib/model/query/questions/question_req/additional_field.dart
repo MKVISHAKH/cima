@@ -4,11 +4,18 @@ part 'additional_field.g.dart';
 
 @JsonSerializable()
 class AdditionalField {
-  String? memno;
+  List<Map<String, String>> memdet;
   String? mname;
+  String? memno;
   String? amount;
+  String? overdue;
 
-  AdditionalField({this.memno, this.mname, this.amount});
+  AdditionalField(
+      {this.memdet = const [],
+      this.mname,
+      this.memno,
+      this.amount,
+      this.overdue});
 
   factory AdditionalField.fromJson(Map<String, dynamic> json) {
     return _$AdditionalFieldFromJson(json);

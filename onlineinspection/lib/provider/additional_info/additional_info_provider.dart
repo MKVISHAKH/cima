@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:onlineinspection/model/query/questions/questionresp/additional_info.dart';
+import 'package:onlineinspection/core/hook/hook.dart';
 
 class AdditionalInfoProvider with ChangeNotifier {
   List<AdditionalInfo> _selectedInfo = [];
@@ -11,20 +10,12 @@ class AdditionalInfoProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void addMemberField() {
-    _selectedInfo.add(
-      AdditionalInfo(name: 'mname', label: 'Member Name'),
-    );
-    notifyListeners();
-  }
-
-  void removeMemberField(int index) {
-    _selectedInfo.removeAt(index);
-    notifyListeners();
-  }
-
   void clearSelectedInfo() {
     _selectedInfo = [];
     notifyListeners();
   }
+
+  //  bool hasMandatoryFields() {
+  //   return selectedInfo.any((field) => field.isMandatory);
+  // }
 }

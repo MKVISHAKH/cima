@@ -47,6 +47,7 @@ export 'package:onlineinspection/api/url.dart';
 
 export 'package:onlineinspection/provider/location/locationMatch_provider.dart';
 
+export 'package:onlineinspection/provider/additional_info/additional_info_provider.dart';
 /**************************************/
 /*screens*/
 export 'package:onlineinspection/screens/splash/screensplash.dart';
@@ -55,7 +56,7 @@ export 'package:onlineinspection/screens/login/screenlogin.dart';
 
 export 'package:onlineinspection/main.dart';
 
-export 'package:onlineinspection/screens/assigned/assignedscreen.dart';
+export 'package:onlineinspection/screens/assigned/screenassigned.dart';
 
 export 'package:onlineinspection/screens/home/screenhome.dart';
 
@@ -67,11 +68,21 @@ export 'package:onlineinspection/screens/forgot/forgotpswrdScreen.dart';
 
 export 'package:onlineinspection/screens/forgot/forgotusrnamScreen.dart';
 
-export 'package:onlineinspection/screens/report/reportscreen.dart';
-
 export 'package:onlineinspection/screens/query/screenquery.dart';
 
 export 'package:onlineinspection/screens/scheduled/screenschdlreq.dart';
+
+export 'package:onlineinspection/screens/action/screenactionRprt.dart';
+
+export 'package:onlineinspection/screens/error/screenError.dart';
+
+export 'package:onlineinspection/screens/query/screenbasicinfo.dart';
+
+export 'package:onlineinspection/screens/report/screencmpltdRprt.dart';
+
+export 'package:onlineinspection/screens/scheduled/screenschedule.dart';
+
+export 'package:onlineinspection/screens/location/screenaddlocation.dart';
 
 /**************************************/
 /*core*/
@@ -116,6 +127,36 @@ export 'package:onlineinspection/model/schedule/schedul_lst_resp/datum.dart';
 
 export 'package:onlineinspection/model/common/commonresp/commonresp.dart';
 
+export 'package:onlineinspection/model/society/societyuser/society_branch_resp/datum.dart';
+
+export 'package:onlineinspection/model/society/societyuser/society_user_resp/datum.dart';
+
+export 'package:onlineinspection/model/schedule/schedul_lst_resp/schedul_lst_resp.dart';
+
+export 'package:onlineinspection/model/society/societyuser/society_branch_req/society_branch_req.dart';
+
+export 'package:onlineinspection/model/society/societyuser/society_branch_resp/society_branch_resp.dart';
+
+export 'package:onlineinspection/model/society/societyuser/society_user_req/society_user_req.dart';
+
+export 'package:onlineinspection/model/society/societyuser/society_user_resp/society_user_resp.dart';
+
+export 'package:onlineinspection/model/query/questions/questionresp/additional_info.dart';
+
+export 'package:onlineinspection/model/query/questions/question_req/additional_field.dart';
+
+export 'package:onlineinspection/model/schedule/reshdule_resp/data.dart';
+
+export 'package:onlineinspection/model/schedule/schedul_lst_resp/notice.dart';
+
+export 'package:onlineinspection/model/schedule/reschdule_req/reschdule_req.dart';
+
+export 'package:onlineinspection/model/schedule/reshdule_resp/reshdule_resp.dart';
+
+export 'package:onlineinspection/model/location/location_update_list/datum.dart';
+
+export 'package:onlineinspection/model/location/location_update_list/location_update_list.dart';
+
 /**************************************/
 /*widget*/
 export 'package:onlineinspection/widgets/otp/otptimer.dart';
@@ -142,6 +183,8 @@ export 'package:onlineinspection/widgets/ActionMonitor/sessiontimeout/sessiontim
 
 export 'package:onlineinspection/widgets/ActionMonitor/actionWidget/actionmonitor.dart';
 
+export 'package:onlineinspection/widgets/Textformfield/textfromfield.dart';
+
 /**************************************/
 /*function*/
 export 'package:onlineinspection/functions/society/societylistFun.dart';
@@ -151,5 +194,7 @@ export 'package:onlineinspection/functions/questions/questionsFun.dart';
 export 'package:onlineinspection/functions/schedule/scheduleListFun.dart';
 
 export 'package:onlineinspection/functions/locations/liveLocationFun.dart';
+
+export 'package:onlineinspection/functions/commonfn/commonFun.dart';
 
 /**************************************/

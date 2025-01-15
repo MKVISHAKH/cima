@@ -112,20 +112,31 @@ class _NavbarState extends State<Navbar> {
             //     onTap: () {
             //       Navigator.push(context, Approutes().reportScreen);
             //     }),
+            // ListTile(
+            //     leading: const Icon(
+            //       Icons.mobile_friendly,
+            //     ),
+            //     title: Text(
+            //       "Change Mobile Number",
+            //       style: Theme.of(context).textTheme.displaySmall,
+            //     ),
+            //     onTap: () {
+            //       Navigator.push(context, Approutes().changeMobScreen);
+            //     }),
             ListTile(
-                leading: const Icon(
-                  Icons.mobile_friendly,
-                ),
+                leading:const Icon(Icons.location_on_sharp,size: 20,color: Colors.white,),
+
                 title: Text(
-                  "Change Mobile Number",
+                  "Location Mapping",
                   style: Theme.of(context).textTheme.displaySmall,
                 ),
                 onTap: () {
-                  Navigator.push(context, Approutes().changeMobScreen);
+                  Livelocationfun.instance.locationUpdtLst(context);
+                  Navigator.push(context, Approutes().addgeolocation);
                 }),
             ListTile(
                 leading: const Icon(
-                  Icons.lock,
+                  Icons.lock,size: 20,color: Colors.white,
                   //color: Appcolors.labelclr,
                 ),
                 title: Text(
@@ -140,7 +151,7 @@ class _NavbarState extends State<Navbar> {
             ),
             ListTile(
                 leading: const Icon(
-                  Icons.logout_outlined,
+                  Icons.logout_outlined,size: 20,color: Colors.white,
                   //color: Appcolors.labelclr,
                 ),
                 title: Text(

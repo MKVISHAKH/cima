@@ -100,7 +100,7 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
                       color: Color(0xff1569C7),
                     ),
                     child: Text(
-                      'Welcome $usrName',
+                      'Welcome ${usrName ?? ''}',
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),
@@ -111,36 +111,10 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
                             SocietyListFunctions.instance.getScietyListNotifier,
                         builder: (BuildContext context, List<Society> newList,
                             Widget? _) {
-                          return newList.isEmpty
-                              ? Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    margin: const EdgeInsets.all(5),
-                                    child: Column(
-                                      //crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          width: 200,
-                                          height: 200,
-                                          decoration: BoxDecoration(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primaryFixed,
-                                              shape: BoxShape.circle,
-                                              image: const DecorationImage(
-                                                image: AssetImage(
-                                                    'assets/errror/no_data_found.png'),
-                                                fit: BoxFit.scaleDown,
-                                              )),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              : ListView.builder(
+                          return Column(
+                            children: [
+                              if (newList.isNotEmpty) ...[
+                                ListView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: newList.length,
@@ -225,38 +199,59 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
                                                         final now =
                                                             DateTime.now();
                                                         DateFormat dateFormat =
-                                                            DateFormat("dd-MM-yyyy");
-                                                        date = dateFormat.format(now);
+                                                            DateFormat(
+                                                                "dd-MM-yyyy");
+                                                        date = dateFormat
+                                                            .format(now);
                                                         print(date);
-                                                        double? dist = subItem.distance;
+                                                        double? dist =
+                                                            subItem.distance;
 
                                                         String distance = '';
                                                         if (dist == null) {
                                                           dist = 0;
                                                           distance = '0';
-                                                          isButtonEnabled =false;
-                                                        } else if (dist >=1000) {
-                                                          double dist1 =dist / 1000;
-                                                          String myString = dist1.toStringAsFixed(1);
-                                                          distance ="${myString}km";
+                                                          isButtonEnabled =
+                                                              false;
+                                                        } else if (dist >=
+                                                            1000) {
+                                                          double dist1 =
+                                                              dist / 1000;
+                                                          String myString = dist1
+                                                              .toStringAsFixed(
+                                                                  1);
+                                                          distance =
+                                                              "${myString}km";
                                                           log('dist>1000 $dist:$maxdistScty');
-                                                          if(dist<maxdistScty && schdldt==date){
-                                                              isButtonEnabled =true;
-                                                          }else{
-                                                              isButtonEnabled =false;
-
-                                                          }
-                                                          
-                                                        } else {
-                                                          if (dist < maxdistScty && schdldt == date) {
-                                                          log('dist<$dist:$maxdistScty');
-                                                            isButtonEnabled =true;
-                                                            String myString = dist.toStringAsFixed(1);
-                                                            distance ="${myString}m";
+                                                          if (dist <
+                                                                  maxdistScty &&
+                                                              schdldt == date) {
+                                                            isButtonEnabled =
+                                                                true;
                                                           } else {
-                                                            isButtonEnabled =false;
-                                                            String myString = dist.toStringAsFixed(1);
-                                                            distance ="${myString}m";
+                                                            isButtonEnabled =
+                                                                false;
+                                                          }
+                                                        } else {
+                                                          if (dist <
+                                                                  maxdistScty &&
+                                                              schdldt == date) {
+                                                            log('dist<$dist:$maxdistScty');
+                                                            isButtonEnabled =
+                                                                true;
+                                                            String myString = dist
+                                                                .toStringAsFixed(
+                                                                    1);
+                                                            distance =
+                                                                "${myString}m";
+                                                          } else {
+                                                            isButtonEnabled =
+                                                                false;
+                                                            String myString = dist
+                                                                .toStringAsFixed(
+                                                                    1);
+                                                            distance =
+                                                                "${myString}m";
                                                           }
                                                         }
                                                         return Padding(
@@ -368,25 +363,26 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
                                                                                       final socdet = Getbasicinfo.val(schedulerId: subItem.schedulerId, schedulerDate: subItem.schDate, userId: usrId, socId: society.socId, socName: society.societyName, branchId: subItem.branchId, lattitude: doublelat, longitude: doublelong, bName: subItem.branchName);
 
                                                                                       await SharedPrefManager.instance.setSocietyinfo(socdet);
+                                                                                      if (!context.mounted) return;
 
-                                                                                      buildQuery(socdet);
+                                                                                      buildQuery(socdet, context);
                                                                                     } catch (e) {
                                                                                       // Handle parsing error, e.g., show a message to the user
                                                                                       print("Failed to parse coordinates: $e");
                                                                                     }
                                                                                   } else {
                                                                                     Fluttertoast.showToast(msg: "Location are not ready yet.", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.CENTER, timeInSecForIosWeb: 1, backgroundColor: Colors.white, textColor: Colors.black, fontSize: 15.0);
-                                                                                    Livelocationfun.instance.startTracking(
-                                                                                      context: context,
-                                                                                      onLocationUpdate: (position) {
-                                                                                        setState(() {
-                                                                                          doublelat = position.latitude;
-                                                                                          doublelong = position.longitude;
-                                                                                          locationMessage = 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
-                                                                                          log('assigned screen  loceror:$locationMessage');
-                                                                                        });
-                                                                                      },
-                                                                                    );
+                                                                                    // Livelocationfun.instance.startTracking(
+                                                                                    //   context: context,
+                                                                                    //   onLocationUpdate: (position) {
+                                                                                    //     setState(() {
+                                                                                    //       doublelat = position.latitude;
+                                                                                    //       doublelong = position.longitude;
+                                                                                    //       locationMessage = 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+                                                                                    //       log('assigned screen  loceror:$locationMessage');
+                                                                                    //     });
+                                                                                    //   },
+                                                                                    // );
                                                                                     // Show an error message if coordinates are unavailable
                                                                                     print("Location coordinates are not ready yet.");
                                                                                   }
@@ -520,7 +516,39 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
                                       ),
                                     );
                                   },
-                                );
+                                )
+                              ] else ...[
+                                FutureBuilder(
+                                  future: Future.delayed(const Duration(
+                                      seconds: 10)), // Add a delay of 5 seconds
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(top: 200.0),
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                    } else {
+                                      // After 5 seconds, show the No Data Found image
+                                      return Center(
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 200.0),
+                                          child: Image.asset(
+                                            'assets/errror/no_data_found.png', // Path to your No Data Found image
+                                            height: 200,
+                                            width: 200,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ]
+                            ],
+                          );
                         }),
                   ),
                 ],
@@ -532,11 +560,12 @@ class _ScreenAssignedState extends State<ScreenAssigned> {
     );
   }
 
-  Future buildQuery(Getbasicinfo val) async {
-    final socDet = await SocietyListFunctions.instance.getSocietyDet(val);
+  Future buildQuery(Getbasicinfo val, BuildContext context) async {
+    final socDet =
+        await SocietyListFunctions.instance.getSocietyDet(val, context);
     final inspStat = socDet?.single.inspStatus ?? '';
 
-    if (inspStat == 'STARTED') {
+    if (inspStat == 1) {
       final actlist = socDet?.single.activity ?? [];
       String selectedIdsString = "[${actlist.join(", ")}]";
       Navigator.of(_scaffoldKey.currentContext!).pushReplacement(

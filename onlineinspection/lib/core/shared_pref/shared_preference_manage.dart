@@ -1,7 +1,5 @@
 import 'dart:developer';
-
 import 'package:onlineinspection/core/hook/hook.dart';
-import 'package:onlineinspection/model/deviceinfo/deviceinfo.dart';
 
 class SharedPrefManager {
   //---singleton-----
@@ -17,14 +15,22 @@ class SharedPrefManager {
     await sharedprefes.setBool(savekeyname, true);
     await sharedprefes.setInt('USERID', value.userId ?? 0);
     await sharedprefes.setInt('PEN', value.pen ?? 0);
-    await sharedprefes.setString('NAME', value.name!);
-    await sharedprefes.setString('MOBILE', value.mobile!);
+    await sharedprefes.setString('NAME', value.name ?? '');
+    await sharedprefes.setString('MOBILE', value.mobile ?? '');
     await sharedprefes.setInt('DISTRICTID', value.districtid ?? 0);
+    await sharedprefes.setString('DISTRICTNAME', value.districtName ?? '');
+
     await sharedprefes.setInt('TALUKID', value.talukid ?? 0);
+    await sharedprefes.setString('TALUKNAME', value.talukName ?? '');
+
     await sharedprefes.setInt('CIRCLEID', value.circleid ?? 0);
+    await sharedprefes.setString('UNITNAME', value.unitName ?? '');
+
     await sharedprefes.setInt('ROLEID', value.roleid ?? 0);
+    await sharedprefes.setString('ROLENAME', value.roleName ?? '');
+
     await sharedprefes.setInt('ACTIVE', value.active ?? 0);
-    await sharedprefes.setString('ACCESSTOKEN', value.accesstoken!);
+    await sharedprefes.setString('ACCESSTOKEN', value.accesstoken ?? '');
 
     //final jsonString = json.encode(value.toJson());
     // await prefs.setStringList(_key, login);
@@ -42,12 +48,20 @@ class SharedPrefManager {
     final mobile = sharedprefs.getString('MOBILE') ?? '';
 
     final distid = sharedprefs.getInt('DISTRICTID') ?? 0;
+    final distname = sharedprefs.getString('DISTRICTNAME') ?? '';
+
 
     final talid = sharedprefs.getInt('TALUKID') ?? 0;
+    final talname = sharedprefs.getString('TALUKNAME') ?? '';
+
 
     final cirid = sharedprefs.getInt('CIRCLEID') ?? 0;
+    final unitname = sharedprefs.getString('UNITNAME') ?? '';
+
 
     final rolid = sharedprefs.getInt('ROLEID') ?? 0;
+    final rolname = sharedprefs.getString('ROLENAME') ?? '';
+
 
     final active = sharedprefs.getInt('ACTIVE') ?? 0;
 
@@ -59,9 +73,13 @@ class SharedPrefManager {
         name: name,
         mobile: mobile,
         districtid: distid,
+        districtName: distname,
         talukid: talid,
+        talukName: talname,
         circleid: cirid,
+        unitName: unitname,
         roleid: rolid,
+        roleName: rolname,
         active: active,
         accesstoken: atkn);
 

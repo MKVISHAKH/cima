@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:onlineinspection/core/hook/hook.dart';
 import 'package:dio/dio.dart' as dio;
-import 'package:onlineinspection/widgets/constants/constants.dart';
 
 class OtpFiled extends StatefulWidget {
   const OtpFiled(
@@ -154,13 +153,13 @@ class _OtpFiledState extends State<OtpFiled> {
                                 otp: otppin,
                                 password: widget.nwpswd,
                                 retypePassword: widget.cnfrmpswrd);
-                            buildotpvrf(otpreq, widget.type);
+                            buildotpvrf(otpreq, widget.type, context);
                           } else if (widget.type == frgtUsr) {
                             final otpreq = ChangeReq(
                                 mobNo: widget.mob,
                                 refId: widget.refId,
                                 otp: otppin);
-                            buildotpvrf(otpreq, widget.type);
+                            buildotpvrf(otpreq, widget.type, context);
                           }
                         }
                         // usrNameBox(context,0,'');
@@ -213,54 +212,57 @@ class _OtpFiledState extends State<OtpFiled> {
     ]);
   }
 
-  Future buildotpvrf(ChangeReq val, String type) async {
+  Future buildotpvrf(ChangeReq val, String type, BuildContext context) async {
     // final loadingProvider = context.read<LoadingProvider>();
     // loadingProvider.toggleLoading();
-    dio.Response<dynamic>? chngresp;
-    if (type == frgtPswrd) {
-      chngresp = await Ciadata().frgtpswrd(val);
-    } else if (type == frgtUsr) {
-      chngresp = await Ciadata().frgtusevrfy(val);
-    }
+    try {
+      dio.Response<dynamic>? chngresp;
+      if (type == frgtPswrd) {
+        chngresp = await Ciadata().frgtpswrd(val);
+      } else if (type == frgtUsr) {
+        chngresp = await Ciadata().frgtusevrfy(val);
+      }
 
-    final resultAsjson = jsonDecode(chngresp.toString());
-    final changeval = ChangeResp.fromJson(resultAsjson as Map<String, dynamic>);
+      final resultAsjson = jsonDecode(chngresp.toString());
+      final changeval =
+          ChangeResp.fromJson(resultAsjson as Map<String, dynamic>);
 
-    // loadingProvider.toggleLoading();
-    if (chngresp == null) {
-      Fluttertoast.showToast(
-          msg: "Something went wrong",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
-    } else if (chngresp.statusCode == 200 && changeval.status == 'success') {
-      // refid=changeval.data?.refId ?? 0;
-      final pen = changeval.data?.pen ?? 0;
-      final name = changeval.data?.name ?? '';
-      type == frgtPswrd
-          ? pswrdBox(_scafoldkey.currentContext!)
-          : usrNameBox(_scafoldkey.currentContext!, pen, name);
-    } else if (changeval.status == 'failure') {
-      Fluttertoast.showToast(
-          msg: "Password can't changed",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
-    } else {
-      Fluttertoast.showToast(
-          msg: "Something went wrong",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
+      // loadingProvider.toggleLoading();
+      if (chngresp == null) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+      } else if (chngresp.statusCode == 200 && changeval.status == 'success') {
+        // refid=changeval.data?.refId ?? 0;
+        final pen = changeval.data?.pen ?? 0;
+        final name = changeval.data?.name ?? '';
+        type == frgtPswrd
+            ? pswrdBox(_scafoldkey.currentContext!)
+            : usrNameBox(_scafoldkey.currentContext!, pen, name);
+      } else if (changeval.status == 'failure') {
+        if (!context.mounted) return;
+
+        CommonFun.instance.showApierror(context, "Password can't changed");
+      } else if (chngresp.statusCode == 500) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Sever Not Reachable");
+
+        // showLoginerror(context, 3);
+      } else if (chngresp.statusCode == 408) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Connection time out");
+
+        //showLoginerror(context, 4);
+      } else {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+        //showLoginerror(context, 5);
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An unexpected error occurred')),
+      );
     }
   }
 

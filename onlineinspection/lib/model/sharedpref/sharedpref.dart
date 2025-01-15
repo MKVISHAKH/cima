@@ -15,12 +15,20 @@ class Sharedpref {
   String? mobile;
   @JsonKey(name: 'district_id')
   int? districtid;
+  @JsonKey(name: 'district_name')
+  String? districtName;
   @JsonKey(name: 'taluk_id')
   int? talukid;
+  @JsonKey(name: 'taluk_name')
+  String? talukName;
   @JsonKey(name: 'circle_id')
   int? circleid;
+  @JsonKey(name: 'unit_name')
+  String? unitName;
   @JsonKey(name: 'role_id')
   int? roleid;
+  @JsonKey(name: 'role_name')
+  String? roleName;
   @JsonKey(name: 'active')
   int? active;
   @JsonKey(name: 'access_token')
@@ -33,9 +41,13 @@ class Sharedpref {
     this.name,
     this.mobile,
     this.districtid,
+    this.districtName,
     this.talukid,
+    this.talukName,
     this.circleid,
+    this.unitName,
     this.roleid,
+    this.roleName,
     this.active,
     this.accesstoken,
   });
@@ -46,9 +58,13 @@ class Sharedpref {
     required this.name,
     required this.mobile,
     required this.districtid,
+    this.districtName,
     required this.talukid,
+    this.talukName,
     required this.circleid,
+    this.unitName,
     required this.roleid,
+    this.roleName,
     required this.active,
     required this.accesstoken,
   });

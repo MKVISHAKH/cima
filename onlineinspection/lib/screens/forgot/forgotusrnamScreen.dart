@@ -179,7 +179,7 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
                                             setState(() {
                                               mobNo = _mobilenocontroller.text;
                                             });
-                                            userVerify(mobNo);
+                                            userVerify(mobNo, context);
                                           }
                                         },
                                         child: Text('SHOW',
@@ -214,60 +214,60 @@ class _ScreenForgotUserState extends State<ScreenForgotUser> {
     );
   }
 
-  Future userVerify(String? mobNo) async {
-    final loadingProvider = context.read<LoadingProvider>();
-    loadingProvider.toggleLoading();
+  Future userVerify(String? mobNo, BuildContext context) async {
+    try {
+      final loadingProvider = context.read<LoadingProvider>();
+      loadingProvider.toggleLoading();
 
-    final val = ChangeReq(mobNo: mobNo);
+      final val = ChangeReq(mobNo: mobNo);
 
-    final chngresp = await Ciadata().frgtusrName(val);
-    final resultAsjson = jsonDecode(chngresp.toString());
-    final changeval = ChangeResp.fromJson(resultAsjson as Map<String, dynamic>);
+      final chngresp = await Ciadata().frgtusrName(val);
+      final resultAsjson = jsonDecode(chngresp.toString());
+      final changeval =
+          ChangeResp.fromJson(resultAsjson as Map<String, dynamic>);
 
-    loadingProvider.toggleLoading();
-    if (chngresp == null) {
-      showLoginerror(_scafoldkey.currentContext!, 1);
-    } else if (chngresp.statusCode == 200 && changeval.status == 'success') {
-      refid = changeval.data?.refId ?? 0;
-      Fluttertoast.showToast(
-          msg: "Otp sended on your registered mobile No",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
+      loadingProvider.toggleLoading();
+      if (chngresp == null) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+      } else if (chngresp.statusCode == 200 && changeval.status == 'success') {
+        refid = changeval.data?.refId ?? 0;
+        Fluttertoast.showToast(
+            msg: "Otp sended on your registered mobile No",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 15.0);
 
-      _scafoldkey.currentContext!
-          .read<ElevatedBtnProvider>()
-          .changeSelectedVal(true);
-    } else if (changeval.status == 'failure') {
-      showLoginerror(_scafoldkey.currentContext!, 2);
-    } else {
-      showLoginerror(_scafoldkey.currentContext!, 3);
-    }
-  }
+        _scafoldkey.currentContext!
+            .read<ElevatedBtnProvider>()
+            .changeSelectedVal(true);
+      } else if (changeval.status == 'failure') {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "No User Found");
+      } else if (chngresp.statusCode == 500) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Sever Not Reachable");
 
-  Future showLoginerror(BuildContext? context, stat) async {
-    //print('hi');
-    if (stat == 2) {
-      Fluttertoast.showToast(
-          msg: "No User Found",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
-    } else {
-      Fluttertoast.showToast(
-          msg: "Something went wrong",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
+        // showLoginerror(context, 3);
+      } else if (chngresp.statusCode == 408) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Connection time out");
+
+        //showLoginerror(context, 4);
+      } else {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+        //showLoginerror(context, 5);
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An unexpected error occurred')),
+      );
     }
   }
 }

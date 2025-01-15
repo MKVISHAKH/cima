@@ -1,10 +1,15 @@
 import 'dart:developer';
+//import 'package:onlineinspection/core/hook/hook.dart';
 import 'package:onlineinspection/core/hook/hook.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Livelocationfun {
   Livelocationfun._internal();
   static Livelocationfun instance = Livelocationfun._internal();
+  Livelocationfun factory() {
+    return instance;
+  }
+  ValueNotifier<List<DatumValue>> getLocationUpdtListNotifier = ValueNotifier([]);
 
   StreamSubscription<Position>? _positionSubscription;
   Timer? _locationCheckTimer;
@@ -90,7 +95,7 @@ class Livelocationfun {
       } else if (_positionSubscription == null ||
           _positionSubscription!.isPaused) {
         log("Restarting location service...");
-      if (!context.mounted) return;
+        if (!context.mounted) return;
         _startLiveLocationStream(context, (position) => {});
       }
     });
@@ -171,5 +176,149 @@ class Livelocationfun {
       textColor: Colors.black,
       fontSize: 14.0,
     );
+  }
+
+    Future locationUpdtLst(BuildContext context) async {
+    try{
+      final sharedValue = await SharedPrefManager.instance.getSharedData();
+    String? message;
+
+    final schedulReq = Societyreq(
+      userId: sharedValue!.userId,
+    );
+    final scheduleLstresp = await Ciadata().locationupdtList(schedulReq);
+
+    if (scheduleLstresp == null) {
+      getLocationUpdtListNotifier.value.clear();
+      getLocationUpdtListNotifier.value.addAll([]);
+      getLocationUpdtListNotifier.notifyListeners();
+      if (!context.mounted) return ;
+      CommonFun.instance.showApierror(context,"Something went wrong");
+    } else if (scheduleLstresp.statusCode == 200) {
+      final resultAsJson = jsonDecode(scheduleLstresp.toString());
+      final sctyListRespVal =
+          LocationUpdateList.fromJson(resultAsJson as Map<String, dynamic>);
+
+      if (sctyListRespVal.status == 'success') {
+        //print('sucess');
+        final itemDet = sctyListRespVal.data ?? [];
+        //print(item_det.);
+        getLocationUpdtListNotifier.value.clear();
+        getLocationUpdtListNotifier.value.addAll(itemDet);
+        getLocationUpdtListNotifier.notifyListeners();
+      } else if (sctyListRespVal.status == 'failure') {
+        final itemDet = sctyListRespVal.data ?? [];
+        getLocationUpdtListNotifier.value.clear();
+        getLocationUpdtListNotifier.value.addAll(itemDet);
+        getLocationUpdtListNotifier.notifyListeners();
+        if (!context.mounted) return ;
+      CommonFun.instance.showApierror(context,"No Data Found");
+      }
+    }else if(message=='Unauthenticated'||scheduleLstresp.statusCode==401){
+      
+      if (!context.mounted) return [];
+      
+    CommonFun.instance.signout(context);
+
+    }else if(scheduleLstresp.statusCode==500){
+      if (!context.mounted) return ;
+      CommonFun.instance.showApierror(context,"Sever Not reached");
+
+            // showLoginerror(context, 3);
+
+
+    }else if(scheduleLstresp.statusCode==408){
+      if (!context.mounted) return ;
+      CommonFun.instance.showApierror(context,"Connection time out");
+
+            //showLoginerror(context, 4);
+
+    } else {
+      getLocationUpdtListNotifier.value.clear();
+      getLocationUpdtListNotifier.value.addAll([]);
+      getLocationUpdtListNotifier.notifyListeners();
+      if (!context.mounted) return ;
+      CommonFun.instance.showApierror(context,"Something went wrong");
+      //showLoginerror(context, 5);
+    }
+    }catch(e){
+      if (!context.mounted) return ;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('An unexpected error occurred')),
+    );
+    }
+    
+  }
+
+  Future updateLocation(QuestionReq val, BuildContext context,String? screen) async {
+    try {
+      final loadingProvider = context.read<LoadingProvider>();
+      String? message;
+
+      loadingProvider.toggleLoading();
+
+      final loginResponse = await Ciadata().locationUpdt(val);
+
+      final resultAsjson = jsonDecode(loginResponse.toString());
+      final loginval =
+          Commonresp.fromJson(resultAsjson as Map<String, dynamic>);
+
+      loadingProvider.reset();
+      if (loginResponse == null) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+      } else if (loginResponse.statusCode == 200 &&
+          loginval.status == 'success') {
+        final msg = loginval.message;
+        if (!context.mounted) return;
+        
+        screen==scAddLoc?
+        locationUpdtLst(context):
+        SchedulelistFun.instance.getScheduleList(context);
+
+
+        // Fluttertoast.showToast(
+        //     msg: msg ?? '',
+        //     toastLength: Toast.LENGTH_SHORT,
+        //     gravity: ToastGravity.CENTER,
+        //     timeInSecForIosWeb: 1,
+        //     backgroundColor: Colors.black,
+        //     textColor: Colors.white,
+        //     fontSize: 15.0);
+        CommonFun.instance.showApierror(context, msg);
+        //showLoginerror(_scaffoldKey.currentContext!);
+      } else if (loginval.status == 'failure') {
+        final msg = loginval.message;
+
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, msg);
+      } else if (message == 'Unauthenticated' ||
+          loginResponse.statusCode == 401) {
+        if (!context.mounted) return;
+
+        CommonFun.instance.signout(context);
+      } else if (loginResponse.statusCode == 500) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Sever Not Reachable");
+
+        // showLoginerror(context, 3);
+      } else if (loginResponse.statusCode == 408) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Connection time out");
+
+        //showLoginerror(context, 4);
+      } else {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+        //showLoginerror(context, 5);
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An unexpected error occurred')),
+      );
+    }
   }
 }

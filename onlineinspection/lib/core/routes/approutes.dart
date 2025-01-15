@@ -1,9 +1,4 @@
 import 'package:onlineinspection/core/hook/hook.dart';
-import 'package:onlineinspection/screens/error/screenError.dart';
-import 'package:onlineinspection/screens/query/screenbasicinfo.dart';
-import 'package:onlineinspection/screens/report/cmpltdRprtScreen.dart';
-import 'package:onlineinspection/screens/scheduled/screenschdlreq.dart';
-import 'package:onlineinspection/screens/scheduled/screenschedule.dart';
 
 class Approutes {
   PageTransition loginscreen = PageTransition(
@@ -55,13 +50,7 @@ class Approutes {
     curve: Curves.easeInOutBack,
     duration: const Duration(microseconds: 500),
   );
-  PageTransition reportScreen = PageTransition(
-    child: const ScreenReport(),
-    type: PageTransitionType.fade,
-    alignment: Alignment.center,
-    curve: Curves.easeInOutBack,
-    duration: const Duration(microseconds: 500),
-  );
+
   PageTransition basicInfoScreen = PageTransition(
     child: const ScreenBasicInfo(),
     type: PageTransitionType.fade,
@@ -106,6 +95,20 @@ class Approutes {
   );
   PageTransition screenschdlReq = PageTransition(
     child: const ScreenSchdlReq(),
+    type: PageTransitionType.fade,
+    alignment: Alignment.center,
+    curve: Curves.easeInOutBack,
+    duration: const Duration(microseconds: 500),
+  );
+  PageTransition screensActionRprt = PageTransition(
+    child: const ScreenActionRprt(),
+    type: PageTransitionType.fade,
+    alignment: Alignment.center,
+    curve: Curves.easeInOutBack,
+    duration: const Duration(microseconds: 500),
+  );
+  PageTransition addgeolocation = PageTransition(
+    child: const ScreenAddLocation(),
     type: PageTransitionType.fade,
     alignment: Alignment.center,
     curve: Curves.easeInOutBack,

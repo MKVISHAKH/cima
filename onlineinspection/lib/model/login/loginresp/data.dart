@@ -14,12 +14,20 @@ class Data {
   dynamic emailVerifiedAt;
   @JsonKey(name: 'district_id')
   int? districtId;
+  @JsonKey(name: 'district_name')
+  String? districtName;
   @JsonKey(name: 'taluk_id')
   int? talukId;
+  @JsonKey(name: 'taluk_name')
+  String? talukName;
   @JsonKey(name: 'circle_id')
   int? circleId;
+  @JsonKey(name: 'unit_name')
+  String? unitName;
   @JsonKey(name: 'role_id')
   int? roleId;
+  @JsonKey(name: 'role_name')
+  String? roleName;
   int? active;
   @JsonKey(name: 'created_by')
   String? createdBy;
@@ -40,9 +48,13 @@ class Data {
     this.email,
     this.emailVerifiedAt,
     this.districtId,
+    this.districtName,
     this.talukId,
+    this.talukName,
     this.circleId,
+    this.unitName,
     this.roleId,
+    this.roleName,
     this.active,
     this.createdBy,
     this.updatedBy,

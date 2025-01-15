@@ -7,7 +7,7 @@
      
     <application
         android:enableOnBackInvokedCallback="true"
-        android:label="C I A"
+        android:label="C I M A"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

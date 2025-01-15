@@ -61,8 +61,7 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
                 onPressed: () {
-                  Navigator.pushReplacement(
-                      _scafoldkey.currentContext!, Approutes().homescreen);
+                  Navigator.pushReplacement(context, Approutes().homescreen);
                 },
               ),
               title: Text(
@@ -272,7 +271,9 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                                                 password: oldpswrd,
                                                 newPassword: newpswrd,
                                                 retypePassword: cnfrmpaswrd);
-                                            changePswrd(chngreq);
+                                            if (!context.mounted) return;
+
+                                            changePswrd(chngreq, context);
                                           }
                                         },
                                         child: Text('RESET',
@@ -315,53 +316,59 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
     );
   }
 
-  Future changePswrd(ChangeReq val) async {
-    final loadingProvider = context.read<LoadingProvider>();
-    loadingProvider.toggleLoading();
-    final chngresp = await Ciadata().changePswd(val);
-    final resultAsjson = jsonDecode(chngresp.toString());
-    final changeval = ChangeResp.fromJson(resultAsjson as Map<String, dynamic>);
-    loadingProvider.toggleLoading();
-    if (chngresp == null) {
-      showLoginerror(_scafoldkey.currentContext!, 1);
-    } else if (chngresp.statusCode == 200 && changeval.status == 'success') {
-      //final msg=changeval.message;
-      Fluttertoast.showToast(
-          msg: "Password Changed Successfully",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
-      Navigator.push(_scafoldkey.currentContext!, Approutes().homescreen);
-    } else if (changeval.status == 'failure') {
-      showLoginerror(_scafoldkey.currentContext!, 2);
-    } else {
-      showLoginerror(_scafoldkey.currentContext!, 3);
-    }
-  }
+  Future changePswrd(ChangeReq val, BuildContext context) async {
+    try {
+      String? message;
+      final loadingProvider = context.read<LoadingProvider>();
+      loadingProvider.toggleLoading();
+      final chngresp = await Ciadata().changePswd(val);
+      final resultAsjson = jsonDecode(chngresp.toString());
+      final changeval =
+          ChangeResp.fromJson(resultAsjson as Map<String, dynamic>);
+      loadingProvider.toggleLoading();
+      if (chngresp == null) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+      } else if (chngresp.statusCode == 200 && changeval.status == 'success') {
+        //final msg=changeval.message;
+        Fluttertoast.showToast(
+            msg: "Password Changed Successfully",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 15.0);
+        Navigator.push(_scafoldkey.currentContext!, Approutes().homescreen);
+      } else if (changeval.status == 'failure') {
+        if (!context.mounted) return;
 
-  Future showLoginerror(BuildContext? context, stat) async {
-    //print('hi');
-    if (stat == 2) {
-      Fluttertoast.showToast(
-          msg: "Password can't changed",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
-    } else {
-      Fluttertoast.showToast(
-          msg: "Something went wrong",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
+        CommonFun.instance.showApierror(context, "Password can't changed");
+      } else if (message == 'Unauthenticated' || chngresp.statusCode == 401) {
+        if (!context.mounted) return;
+
+        CommonFun.instance.signout(context);
+      } else if (chngresp.statusCode == 500) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Sever Not reached");
+
+        // showLoginerror(context, 3);
+      } else if (chngresp.statusCode == 408) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Connection time out");
+
+        //showLoginerror(context, 4);
+      } else {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+        //showLoginerror(context, 5);
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An unexpected error occurred')),
+      );
     }
   }
 }

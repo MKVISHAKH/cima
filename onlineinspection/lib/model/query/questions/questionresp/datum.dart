@@ -8,6 +8,7 @@ class Datum {
   String? question;
   String? sortOrder;
   List<Option>? option;
+  String? sno;
   Datum(
       {this.questatus,
       this.questionId,
@@ -15,7 +16,8 @@ class Datum {
       this.parent,
       this.question,
       this.sortOrder,
-      this.option = const []});
+      this.option = const [],
+      this.sno});
   factory Datum.fromJson(Map<String, dynamic> json) {
     var tklst = ((json["option"] ?? []) as List);
     List<Option> wklylist = tklst.map((e) => Option.fromJson(e)).toList();
@@ -27,6 +29,7 @@ class Datum {
       question: json["question"],
       sortOrder: json["sort_order"],
       option: wklylist,
+      sno: json["sno"],
     );
   }
   Map<String, dynamic> toJson() => {
@@ -36,6 +39,7 @@ class Datum {
         "parent": parent,
         "question": question,
         "sort_order": sortOrder,
-        "option": option
+        "option": option,
+        "sno": sno
       };
 }

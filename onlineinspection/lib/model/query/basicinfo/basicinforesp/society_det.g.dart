@@ -20,7 +20,7 @@ SocietyDet _$SocietyDetFromJson(Map<String, dynamic> json) => SocietyDet(
       user: json['user'] == null
           ? null
           : User.fromJson(json['user'] as Map<String, dynamic>),
-      inspStatus: json['inspection_status'] as String?,
+      inspStatus: (json['inspection_status'] as num?)?.toInt(),
       activity: (json['activity'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toList(),

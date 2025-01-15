@@ -338,7 +338,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                                 child: ElevatedButton(
                                   onPressed: () async {
                                     if (_formkey.currentState!.validate()) {
-                                      getlogin();
+                                      getlogin(context);
                                     }
                                   },
                                   child: Text(
@@ -377,71 +377,78 @@ class _ScreenLoginState extends State<ScreenLogin> {
     ]);
   }
 
-  Future getlogin() async {
-    final loadingProvider = context.read<LoadingProvider>();
+  Future getlogin(BuildContext context) async {
+    try {
+      final loadingProvider = context.read<LoadingProvider>();
 
-    loadingProvider.toggleLoading();
-    final username = _usercontroller.text;
-    final password = _passcontroller.text;
+      loadingProvider.toggleLoading();
+      final username = _usercontroller.text;
+      final password = _passcontroller.text;
+      final logreq = Loginreq(pen: username, password: password);
 
-    final logreq = Loginreq(pen: username, password: password);
+      final loginResponse = await Ciadata().login(logreq);
+      final resultAsjson = jsonDecode(loginResponse.toString());
+      final loginval = Loginresp.fromJson(resultAsjson as Map<String, dynamic>);
 
-    final loginResponse = await Ciadata().login(logreq);
-    final resultAsjson = jsonDecode(loginResponse.toString());
-    final loginval = Loginresp.fromJson(resultAsjson as Map<String, dynamic>);
+      loadingProvider.toggleLoading();
+      if (loginResponse == null) {
+        if (!context.mounted) return;
 
-    loadingProvider.toggleLoading();
-    if (loginResponse == null) {
-      showLoginerror(_scaffoldKey.currentContext!, 1);
-    } else if (loginResponse.statusCode == 200 &&
-        loginval.status == 'success') {
-      final sharedPrefLogin = Sharedpref.value(
-          userId: loginval.data!.userId,
-          pen: loginval.data!.pen,
-          name: loginval.data!.name,
-          mobile: loginval.data!.mobile,
-          districtid: loginval.data!.districtId,
-          talukid: loginval.data!.talukId,
-          circleid: loginval.data!.circleId,
-          roleid: loginval.data!.roleId,
-          active: loginval.data!.active,
-          accesstoken: loginval.data!.accessToken);
-      addLoginShareddata(sharedPrefLogin);
-      /*wklycollection function */
+        CommonFun.instance.showApierror(context, "Something went wrong");
+      } else if (loginResponse.statusCode == 200 &&
+          loginval.status == 'success') {
+        final sharedPrefLogin = Sharedpref.value(
+            userId: loginval.data!.userId,
+            pen: loginval.data!.pen,
+            name: loginval.data!.name,
+            mobile: loginval.data!.mobile,
+            districtid: loginval.data!.districtId,
+            districtName: loginval.data!.districtName,
+            talukid: loginval.data!.talukId,
+            talukName: loginval.data!.talukName,
+            circleid: loginval.data!.circleId,
+            unitName: loginval.data!.unitName,
+            roleid: loginval.data!.roleId,
+            roleName: loginval.data!.roleName,
+            active: loginval.data!.active,
+            accesstoken: loginval.data!.accessToken);
+        addLoginShareddata(sharedPrefLogin);
+        /*wklycollection function */
 
-      /**************************/
+        /**************************/
+        if (!context.mounted) return;
 
-      Navigator.pushReplacement(
-          _scaffoldKey.currentContext!, Approutes().homescreen);
+        Navigator.pushReplacement(
+            context, Approutes().homescreen);
 
-      //showLoginerror(_scaffoldKey.currentContext!);
-    } else if (loginval.status == 'failure') {
-      showLoginerror(_scaffoldKey.currentContext!, 2);
-    } else {
-      showLoginerror(_scaffoldKey.currentContext!, 3);
-    }
-  }
+        //showLoginerror(_scaffoldKey.currentContext!);
+      } else if (loginval.status == 'failure') {
+        if (!context.mounted) return;
+        CommonFun.instance
+            .showApierror(context, "Username or password Incorrect");
 
-  Future showLoginerror(BuildContext? context, stat) async {
-    //print('hi');
-    if (stat == 2) {
-      Fluttertoast.showToast(
-          msg: "Username or password incorrect",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
-    } else {
-      Fluttertoast.showToast(
-          msg: "Something went wrong",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 15.0);
+        // showLoginerror(context, 2);
+      } else if (loginResponse.statusCode == 500) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Sever Not Reachable");
+
+        // showLoginerror(context, 3);
+      } else if (loginResponse.statusCode == 408) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Connection time out");
+
+        //showLoginerror(context, 4);
+      } else {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+        //showLoginerror(context, 5);
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An unexpected error occurred')),
+      );
     }
   }
 

@@ -22,6 +22,9 @@ class QuestionReq {
   double? longitude;
   bool? skip;
   List<AdditionalField>? addField;
+  @JsonKey(name: 'mem_details')
+  List<Map<String, String>> memberdet;
+  String? amount;
 
   QuestionReq(
       {this.inspectionId,
@@ -34,7 +37,9 @@ class QuestionReq {
       this.lattitude,
       this.longitude,
       this.skip,
-      this.addField});
+      this.addField,
+      this.memberdet = const [],
+      this.amount});
 
   factory QuestionReq.fromJson(Map<String, dynamic> json) {
     return _$QuestionReqFromJson(json);

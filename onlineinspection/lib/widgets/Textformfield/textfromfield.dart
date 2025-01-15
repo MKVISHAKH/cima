@@ -1,24 +1,29 @@
 import 'package:onlineinspection/core/hook/hook.dart';
 
 class TextInputfield extends StatelessWidget {
-  const TextInputfield({
-    //add constructor by clicking bulb icon add formal paramaeters
-    Key? key,
-    required this.label,
-    required this.hint,
-    required this.inputType,
-    required this.inputAction,
-    required this.cmncontroller,
-   // required this.formkey,
-  }) : super(key: key);
+  const TextInputfield(
+      {Key? key,
+      required this.label,
+      required this.hint,
+      required this.inputType,
+      required this.inputAction,
+      required this.cmncontroller,
+      this.onSaved,
+      this.validator,
+      this.onChanged,
+      this.inputFormatters // Add custom validator
+      })
+      : super(key: key);
 
-  // final IconData icon;
-  final String label; // for hintext
-  final String hint; // for hintext
-  final TextInputType inputType; //for keyboard layout
+  final String label;
+  final String hint;
+  final TextInputType inputType;
   final TextInputAction inputAction;
   final TextEditingController cmncontroller;
-  //final GlobalKey<FormState> formkey;
+  final Function(String?)? onSaved;
+  final String? Function(String?)? validator; // For custom validation rules
+  final Function(String)? onChanged;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +32,13 @@ class TextInputfield extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white60.withOpacity(0.3),
-          //borderRadius: BorderRadius.circular(16),
         ),
         child: Theme(
           data: MyTheme.googleFormTheme,
           child: SizedBox(
             width: MediaQuery.of(context).size.width / 1.5,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 0.0, horizontal: 5),
+              padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 5),
               child: TextFormField(
                 controller: cmncontroller,
                 style: Theme.of(context).textTheme.headlineLarge,
@@ -44,23 +47,21 @@ class TextInputfield extends StatelessWidget {
                 decoration: InputDecoration(
                   labelText: label,
                   labelStyle: Theme.of(context).textTheme.headlineLarge,
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 10, horizontal: 10),
-                  //border: InputBorder.none,
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   hintText: hint,
                   hintStyle: Theme.of(context).textTheme.headlineLarge,
-                  // prefixIcon: Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  //   child: Icon(icon, color: Colors.white, size: 15),
-                  // ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Enter $label";
-                  } else {
-                    return null;
-                  }
-                },
+                validator: validator ??
+                    (value) {
+                      if (value == null || value.isEmpty) {
+                        return "$label is required";
+                      }
+                      return null;
+                    },
+                onSaved: onSaved,
+                onChanged: onChanged,
+                inputFormatters: inputFormatters,
               ),
             ),
           ),

@@ -1,10 +1,6 @@
 import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:onlineinspection/core/hook/hook.dart';
-import 'package:onlineinspection/model/query/questions/question_req/additional_field.dart';
-import 'package:onlineinspection/model/query/questions/questionresp/additional_info.dart';
-import 'package:onlineinspection/provider/additional_info/additional_info_provider.dart';
-import 'package:onlineinspection/widgets/Textformfield/textfromfield.dart';
 
 class ScreenQuery extends StatefulWidget {
   const ScreenQuery(
@@ -46,10 +42,43 @@ class _ScreenQueryState extends State<ScreenQuery> {
   bool? isVisible;
   String? mname;
   String? mnum;
+  String _amount = '';
   //final _amntcontroller = TextEditingController();
   List<AdditionalField> fieldList = [];
+  List<Map<String, TextEditingController>> _memberDetails = [];
+  bool isQuestionFetched = false;
+  final GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  // Function to add a new member
+  void _addMember() {
+    setState(() {
+      _memberDetails.add({
+        'name': TextEditingController(),
+        'id': TextEditingController(),
+        'email': TextEditingController(),
+        'mobno': TextEditingController(),
+      });
+    });
+  }
 
-final GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  // Function to remove a member
+  void _removeMember(int index) {
+    setState(() {
+      _memberDetails.removeAt(index);
+    });
+  }
+
+  // Function to get member details
+  List<Map<String, String>> getMemberDetails() {
+    return _memberDetails.map((member) {
+      return {
+        'name': member['name']!.text,
+        'id': member['id']!.text,
+        'email': member['email']!.text,
+        'mobno': member['mobno']!.text,
+      };
+    }).toList();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -64,7 +93,15 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
                 'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
             log('query screen strtque init:$locationMessage');
           });
-          getStartquestion(doublelat, doublelong);
+
+          if (!isQuestionFetched) {
+            isQuestionFetched =
+                true; // Set the flag to true after the first call
+            getStartquestion(doublelat, doublelong);
+          }
+          // getStartquestion(doublelat, doublelong);
+
+          // Livelocationfun.instance.stopTracking();
         },
       );
       isVisible = false;
@@ -89,6 +126,12 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   void dispose() {
     selectedFormatNotifier.value = '';
     Livelocationfun.instance.stopTracking();
+    for (var member in _memberDetails) {
+      member['name']?.dispose();
+      member['id']?.dispose();
+      member['email']?.dispose();
+      member['mobno']?.dispose();
+    }
     super.dispose();
   }
 
@@ -109,10 +152,11 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
             lattitude: doublelat,
             longitude: doublelong,
             activity: widget.activity);
-        questval = await QuestionsFunctions.instance.fetchQueStrt(queReq);
-        if (questval == null) {
+        questval =
+            await QuestionsFunctions.instance.fetchQueStrt(queReq, context);
+        if (questval == null || questval == []) {
           Fluttertoast.showToast(
-              msg: "No Data Found",
+              msg: "Something went wrong",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 1,
@@ -137,20 +181,6 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
           backgroundColor: Colors.white,
           textColor: Colors.black,
           fontSize: 15.0);
-      Livelocationfun.instance.startTracking(
-        context: context,
-        onLocationUpdate: (position) {
-          setState(() {
-            doublelat = position.latitude;
-            doublelong = position.longitude;
-            locationMessage =
-                'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
-            log('query screen strtque loc_not_ready:$locationMessage');
-          });
-          getStartquestion(doublelat, doublelong);
-        },
-      );
-      print("Location coordinates are not ready yet.");
     }
   }
 
@@ -225,33 +255,44 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(10.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           if (questval != null && questval!.isNotEmpty) ...[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Q.${questval!.first.sortOrder}',
+                                  'SlNo. ${questval!.first.sno}',
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
-                                TextButton(
-                                    onPressed: () {
-                                      getNextQue(context, skipnxt);
-                                    },
-                                    child: Text(
-                                      'Skip',
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        fontSize: 16,
-                                        fontFamily: 'Poppins-Medium',
-                                        fontWeight: FontWeight.w900,
-                                      ),
-                                    ))
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Q.${questval!.first.sortOrder}',
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge,
+                                    ),
+                                    TextButton(
+                                        onPressed: () {
+                                          getNextQue(context, skipnxt, [], '');
+                                        },
+                                        child: Text(
+                                          'Skip',
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            fontSize: 16,
+                                            fontFamily: 'Poppins-Medium',
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ))
+                                  ],
+                                ),
                               ],
                             ),
                             const SizedBox(height: 15),
@@ -296,7 +337,9 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
                                 }
 
                                 return Card(
-                                  margin: const EdgeInsets.all(10),
+                                  margin: const EdgeInsets.only(
+                                    bottom: 20,
+                                  ),
                                   elevation: 3,
                                   color: Colors.white,
                                   child: Form(
@@ -310,23 +353,488 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
                                         final infoField =
                                             provider.selectedInfo[index];
                                         // final controller = TextEditingController();
-                                        final controller =
-                                            infoField.name == 'mname'
-                                                ? _namecontroller
-                                                : _nocontroller;
-                                        return Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: TextInputfield(
-                                            label: infoField.label ??
-                                                'Label $index',
-                                            hint:
-                                                'Enter ${infoField.label ?? 'info'}',
-                                            inputType: TextInputType.name,
-                                            inputAction: TextInputAction.next,
-                                            cmncontroller: controller,
-                                            //formkey: GlobalKey<FormState>(),
-                                          ),
-                                        );
+                                        if (infoField.name == 'mname') {
+                                          return Column(
+                                            //crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                "Add Member Details",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge,
+                                              ),
+                                              ..._memberDetails
+                                                  .asMap()
+                                                  .entries
+                                                  .map((entry) {
+                                                int index = entry.key;
+                                                Map<String,
+                                                        TextEditingController>
+                                                    member = entry.value;
+
+                                                return Container(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors
+                                                        .white, // White background
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12), // Rounded corners
+                                                    border: Border.all(
+                                                      // Thin black border
+                                                      color: Colors.black26,
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                  margin: const EdgeInsets
+                                                      .symmetric(
+                                                    vertical: 2,
+                                                    horizontal: 2,
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.all(6),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        'Member ${index + 1}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child:
+                                                                  TextInputfield(
+                                                                label:
+                                                                    'Member Name',
+                                                                hint:
+                                                                    'Enter member name',
+                                                                inputType:
+                                                                    TextInputType
+                                                                        .name,
+                                                                inputAction:
+                                                                    TextInputAction
+                                                                        .next,
+                                                                cmncontroller:
+                                                                    member[
+                                                                        'name']!,
+                                                                onChanged:
+                                                                    (value) {
+                                                                  member['name']!
+                                                                          .text =
+                                                                      value;
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child:
+                                                                  TextInputfield(
+                                                                label:
+                                                                    'Member ID',
+                                                                hint:
+                                                                    'Enter member ID',
+                                                                inputType:
+                                                                    TextInputType
+                                                                        .text,
+                                                                inputAction:
+                                                                    TextInputAction
+                                                                        .next,
+                                                                cmncontroller:
+                                                                    member[
+                                                                        'id']!,
+                                                                onChanged:
+                                                                    (value) {
+                                                                  member['id']!
+                                                                          .text =
+                                                                      value;
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          // IconButton(
+                                                          //   icon: Icon(Icons.delete,
+                                                          //       color:
+                                                          //           Theme.of(context)
+                                                          //               .colorScheme
+                                                          //               .primary),
+                                                          //   onPressed: () {
+                                                          //     _removeMember(index);
+                                                          //   },
+                                                          // ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child:
+                                                                  TextInputfield(
+                                                                label:
+                                                                    'Email Address',
+                                                                hint:
+                                                                    'Enter Email Address',
+                                                                inputType:
+                                                                    TextInputType
+                                                                        .emailAddress,
+                                                                inputAction:
+                                                                    TextInputAction
+                                                                        .next,
+                                                                cmncontroller:
+                                                                    member[
+                                                                        'email']!,
+                                                                onChanged:
+                                                                    (value) {
+                                                                  member['email']!
+                                                                          .text =
+                                                                      value;
+                                                                },
+                                                                validator:
+                                                                    (value) {
+                                                                  if (value ==
+                                                                          null ||
+                                                                      value
+                                                                          .isEmpty) {
+                                                                    Fluttertoast.showToast(
+                                                                        msg:
+                                                                            "Enter Email Address",
+                                                                        toastLength:
+                                                                            Toast
+                                                                                .LENGTH_SHORT,
+                                                                        gravity:
+                                                                            ToastGravity
+                                                                                .CENTER,
+                                                                        timeInSecForIosWeb:
+                                                                            1,
+                                                                        backgroundColor:
+                                                                            Colors
+                                                                                .black,
+                                                                        textColor:
+                                                                            Colors
+                                                                                .white,
+                                                                        fontSize:
+                                                                            15.0);
+                                                                    return "Enter Email Address";
+                                                                  } else if (value
+                                                                      .contains(
+                                                                          ' ')) {
+                                                                    Fluttertoast.showToast(
+                                                                        msg:
+                                                                            "Remove Space from  Mobile number",
+                                                                        toastLength:
+                                                                            Toast
+                                                                                .LENGTH_SHORT,
+                                                                        gravity:
+                                                                            ToastGravity
+                                                                                .CENTER,
+                                                                        timeInSecForIosWeb:
+                                                                            1,
+                                                                        backgroundColor:
+                                                                            Colors
+                                                                                .black,
+                                                                        textColor:
+                                                                            Colors
+                                                                                .white,
+                                                                        fontSize:
+                                                                            15.0);
+                                                                    // showSnackBar(context,
+                                                                    //     text: "Remove Space from  Mobile number");
+                                                                  }
+                                                                  final emailRegEx =
+                                                                      RegExp(
+                                                                          r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+                                                                  if (!emailRegEx
+                                                                      .hasMatch(
+                                                                          value)) {
+                                                                    Fluttertoast.showToast(
+                                                                        msg:
+                                                                            "Please enter a valid email address",
+                                                                        toastLength:
+                                                                            Toast
+                                                                                .LENGTH_SHORT,
+                                                                        gravity:
+                                                                            ToastGravity
+                                                                                .CENTER,
+                                                                        timeInSecForIosWeb:
+                                                                            1,
+                                                                        backgroundColor:
+                                                                            Colors
+                                                                                .black,
+                                                                        textColor:
+                                                                            Colors
+                                                                                .white,
+                                                                        fontSize:
+                                                                            15.0);
+                                                                    return "Please enter a valid email address";
+                                                                  }
+
+                                                                  return null;
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child:
+                                                                  TextInputfield(
+                                                                label:
+                                                                    'Mobile Number',
+                                                                hint:
+                                                                    'Enter Mobile Number',
+                                                                inputType:
+                                                                    TextInputType
+                                                                        .number,
+                                                                inputAction:
+                                                                    TextInputAction
+                                                                        .next,
+                                                                cmncontroller:
+                                                                    member[
+                                                                        'mobno']!,
+                                                                onChanged:
+                                                                    (value) {
+                                                                  member['mobno']!
+                                                                          .text =
+                                                                      value;
+                                                                },
+                                                                inputFormatters: [
+                                                                  LengthLimitingTextInputFormatter(
+                                                                      10),
+                                                                  FilteringTextInputFormatter
+                                                                      .digitsOnly,
+                                                                ],
+                                                                validator:
+                                                                    (value) {
+                                                                  if (value ==
+                                                                          null ||
+                                                                      value
+                                                                          .isEmpty) {
+                                                                    Fluttertoast.showToast(
+                                                                        msg:
+                                                                            "Enter mobile Number",
+                                                                        toastLength:
+                                                                            Toast
+                                                                                .LENGTH_SHORT,
+                                                                        gravity:
+                                                                            ToastGravity
+                                                                                .CENTER,
+                                                                        timeInSecForIosWeb:
+                                                                            1,
+                                                                        backgroundColor:
+                                                                            Colors
+                                                                                .black,
+                                                                        textColor:
+                                                                            Colors
+                                                                                .white,
+                                                                        fontSize:
+                                                                            15.0);
+                                                                    return "Enter mobile Number";
+                                                                  } else if (member['mobno']!
+                                                                              .text
+                                                                              .length <
+                                                                          10 ||
+                                                                      member['mobno']!
+                                                                              .text
+                                                                              .length >
+                                                                          10) {
+                                                                    Fluttertoast.showToast(
+                                                                        msg:
+                                                                            "Enter valid Mobile number",
+                                                                        toastLength:
+                                                                            Toast
+                                                                                .LENGTH_SHORT,
+                                                                        gravity:
+                                                                            ToastGravity
+                                                                                .CENTER,
+                                                                        timeInSecForIosWeb:
+                                                                            1,
+                                                                        backgroundColor:
+                                                                            Colors
+                                                                                .black,
+                                                                        textColor:
+                                                                            Colors
+                                                                                .white,
+                                                                        fontSize:
+                                                                            15.0);
+                                                                    return "Enter valid Mobile number";
+                                                                  } else if (value
+                                                                      .contains(
+                                                                          ' ')) {
+                                                                    Fluttertoast.showToast(
+                                                                        msg:
+                                                                            "Remove Space from  Mobile number",
+                                                                        toastLength:
+                                                                            Toast
+                                                                                .LENGTH_SHORT,
+                                                                        gravity:
+                                                                            ToastGravity
+                                                                                .CENTER,
+                                                                        timeInSecForIosWeb:
+                                                                            1,
+                                                                        backgroundColor:
+                                                                            Colors
+                                                                                .black,
+                                                                        textColor:
+                                                                            Colors
+                                                                                .white,
+                                                                        fontSize:
+                                                                            15.0);
+                                                                    // showSnackBar(context,
+                                                                    //     text: "Remove Space from  Mobile number");
+                                                                  }
+
+                                                                  return null;
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          IconButton(
+                                                            icon: Icon(
+                                                                Icons.delete,
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .colorScheme
+                                                                    .primary),
+                                                            onPressed: () {
+                                                              _removeMember(
+                                                                  index);
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: TextButton(
+                                                  onPressed: _addMember,
+                                                  style: TextButton.styleFrom(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 16.0),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize
+                                                        .min, // Ensures the button fits the content
+                                                    children: [
+                                                      Icon(
+                                                        Icons.add_box_rounded,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary, // Replace with your desired icon
+                                                        size: 20,
+                                                      ),
+                                                      const SizedBox(
+                                                          width:
+                                                              8), // Adds spacing between the icon and text
+                                                      Text(
+                                                        'Add Member',
+                                                        style: TextStyle(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                          fontSize: 16,
+                                                          fontFamily:
+                                                              'Poppins-Medium',
+                                                          fontWeight:
+                                                              FontWeight.w900,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        }
+                                        // else if (infoField.name == 'amount') {
+                                        //   // For Amount handling
+                                        //   return Padding(
+                                        //     padding: const EdgeInsets.all(8.0),
+                                        //     child: TextInputfield(
+                                        //       label:
+                                        //           infoField.label ?? 'Amount',
+                                        //       hint: 'Enter amount',
+                                        //       inputType: const TextInputType
+                                        //           .numberWithOptions(
+                                        //           decimal: true),
+                                        //       inputAction: TextInputAction.done,
+                                        //       cmncontroller:
+                                        //           TextEditingController(),
+                                        //       onSaved: (value) {
+                                        //         // Save the entered amount
+                                        //         _amount = value ?? '0';
+                                        //       },
+                                        //       validator: (value) {
+                                        //         if (value == null ||
+                                        //             value.isEmpty) {
+                                        //           return "Amount is required";
+                                        //         }
+                                        //         if (double.tryParse(value) ==
+                                        //             null) {
+                                        //           return "Enter a valid amount";
+                                        //         }
+                                        //         return null;
+                                        //       },
+                                        //     ),
+                                        //   );
+                                        // }
+                                        else if (infoField.name != 'memno') {
+                                          //final controller = _namecontroller;
+                                          return Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: TextInputfield(
+                                              label: infoField.label ?? '',
+                                              hint: 'Enter ${infoField.name}',
+                                              inputType: const TextInputType
+                                                  .numberWithOptions(
+                                                  decimal: true),
+                                              inputAction: TextInputAction.done,
+                                              cmncontroller:
+                                                  TextEditingController(),
+                                              onSaved: (value) {
+                                                // Save the entered amount
+                                                _amount = value ?? '0';
+                                              },
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return "field is required";
+                                                }
+                                                if (double.tryParse(value) ==
+                                                    null) {
+                                                  return "Enter a valid number";
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                          );
+                                        } else {
+                                          return Container();
+                                        }
                                       },
                                     ),
                                   ),
@@ -334,8 +842,8 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
                               },
                             ),
                             Container(
-                              height: 45,
-                              width: 150,
+                              height: 40,
+                              width: 130,
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
@@ -345,21 +853,47 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
                                     Theme.of(context).colorScheme.primary
                                   ],
                                 ),
-                                borderRadius: BorderRadius.circular(12.0),
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Theme(
                                 data: MyTheme.buttonStyleTheme,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    // if (formkey.currentState?.validate() ?? false) {
-                                    //     formkey.currentState!.save();
-                                    //     mname = _namecontroller.text;
-                                    //     mnum = _nocontroller.text;
+                                    final additionalInfoProvider =
+                                        Provider.of<AdditionalInfoProvider>(
+                                            context,
+                                            listen: false);
 
-                                    //     // Proceed to next question
-                                    //     getNextQue(context, proceednxt);
-                                    //   }
-                                    getNextQue(context, proceednxt);
+                                    // Check if there are selected options requiring validation
+                                    if (additionalInfoProvider
+                                        .selectedInfo.isNotEmpty) {
+                                      if (formkey.currentState?.validate() ??
+                                          false) {
+                                        // Save valid input data
+                                        formkey.currentState!.save();
+
+                                        final memberDetails =
+                                            getMemberDetails();
+                                        log('Member Details: $memberDetails');
+                                        final amount = _amount;
+                                        log('amount: $amount');
+
+                                        // Proceed to the next question
+                                        getNextQue(context, proceednxt,
+                                            memberDetails, amount);
+                                      } else {
+                                        // Show an error message if validation fails
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  'Please fill all mandatory fields')),
+                                        );
+                                      }
+                                    } else {
+                                      // No additional input required; proceed to the next question
+                                      getNextQue(context, proceednxt, [], '');
+                                    }
                                   },
                                   child: Text(
                                     'NEXT',
@@ -370,11 +904,64 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
                               ),
                             ),
                           ] else ...[
-                            const Center(
-                                child: Padding(
-                              padding: EdgeInsets.only(top: 150.0),
-                              child: CircularProgressIndicator(),
-                            )),
+                            // const Center(
+                            //     child: Padding(
+                            //   padding: EdgeInsets.only(top: 150.0),
+                            //   child: CircularProgressIndicator(),
+                            // )),
+                            FutureBuilder(
+                              future: Future.delayed(const Duration(
+                                  minutes: 1)), // Add a delay of 5 seconds
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(top: 150.0),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                } else {
+                                  // After 5 seconds, show the No Data Found image
+                                  return Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const SizedBox(
+                                          height: 60,
+                                        ),
+                                        Image.asset(
+                                          'assets/errror/no_data_found.png', // Path to your No Data Found image
+                                          height: 150,
+                                          width: 150,
+                                        ),
+                                        Text('Something Went Wrong',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge),
+                                        Text('Retry',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge),
+                                        IconButton(
+                                            onPressed: () {
+                                              getStartquestion(
+                                                  doublelat, doublelong);
+                                            },
+                                            icon: Icon(
+                                              Icons.restart_alt,
+                                              size: 45,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                            ))
+                                      ],
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
                           ],
                         ],
                       ),
@@ -388,7 +975,8 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
     );
   }
 
-  getNextQue(BuildContext context, String type) {
+  getNextQue(BuildContext context, String type,
+      List<Map<String, String>> memdet, String? amnt) {
     Livelocationfun.instance.startTracking(
       context: context,
       onLocationUpdate: (position) {
@@ -404,22 +992,25 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
     );
     String selectedValue = selectedFormatNotifier.value;
     if (doublelat != 0 && doublelong != 0) {
-      
-      fieldList.add(AdditionalField(mname: mname, memno: mnum, amount: mnum));
+      fieldList.add(AdditionalField(
+          mname: mname, memno: mnum, amount: amnt, memdet: memdet));
       if (type == skipnxt) {
         skip = true;
 
         final queReq = QuestionReq(
-            questionId: questval?.single.questionId,
-            inspectionId: questval?.single.inspId,
-            userId: userval!.userId,
-            socId: sharedVal!.socId,
-            branchId: sharedVal!.branchId,
-            // answer: selectedValue,
-            addField: fieldList,
-            lattitude: doublelat,
-            longitude: doublelong,
-            skip: skip);
+          questionId: questval?.single.questionId,
+          inspectionId: questval?.single.inspId,
+          userId: userval!.userId,
+          socId: sharedVal!.socId,
+          branchId: sharedVal!.branchId,
+          // answer: selectedValue,
+          addField: fieldList,
+          lattitude: doublelat,
+          longitude: doublelong,
+          skip: skip,
+          //memberdet: memdet
+        );
+
         skipBox(context, queReq);
       } else if (type == proceednxt) {
         try {
@@ -435,7 +1026,9 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
                 queStatus: questval?.single.questatus,
                 lattitude: doublelat,
                 longitude: doublelong,
-                skip: skip);
+                skip: skip,
+                memberdet: memdet,
+                amount: amnt);
 
             confrmBox(context, queReq);
           } else {
@@ -455,7 +1048,8 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
       } else if (type == cmpltdNxt) {
         Provider.of<AdditionalInfoProvider>(context, listen: false)
             .clearSelectedInfo();
-        SocietyListFunctions.instance.getSocietyList(doublelat, doublelong);
+        SocietyListFunctions.instance
+            .getSocietyList(doublelat, doublelong, context);
         selectedFormatNotifier.value = '';
         selectedItems.value = {0};
 
@@ -545,8 +1139,8 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
                               listen: false)
                           .clearSelectedInfo();
 
-                      questval =
-                          await QuestionsFunctions.instance.fetchQueUpdt(val);
+                      questval = await QuestionsFunctions.instance
+                          .fetchQueUpdt(val, context);
                       _namecontroller.clear();
                       _nocontroller.clear();
                       if (questval == null || questval == []) {
@@ -635,8 +1229,8 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
                           .clearSelectedInfo();
 
                       try {
-                        questval =
-                            await QuestionsFunctions.instance.fetchQueUpdt(val);
+                        questval = await QuestionsFunctions.instance
+                            .fetchQueUpdt(val, context);
                         if (questval == null || questval == []) {
                           Fluttertoast.showToast(
                               msg: "No Data Found",
@@ -702,7 +1296,7 @@ final GlobalKey<FormState> formkey = GlobalKey<FormState>();
                   data: MyTheme.buttonStyleTheme,
                   child: ElevatedButton(
                     onPressed: () async {
-                      getNextQue(context, cmpltdNxt);
+                      getNextQue(context, cmpltdNxt, [], '');
                     },
                     child: Text(
                       'Submit',
