@@ -895,13 +895,20 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                           final amount = _amount;
                                           log('amount: $amount');
                                             //final loanbond_Det=Loanandbonddet(propertyLoan: loandetails,)
-                                           loanbonddet = {
+                                            if(amount.isEmpty&&memberDetails.isEmpty){
+                                              loanbonddet = {
                                               'property_loan': getProperyLoandet(), // Property loan details
                                               'mss_bond': getMssNo(),          // MSS bond details
                                               'fdloan': getFdloanNo(),        // FD loan details
                                             };
 
                                             log('Loan and Bond Details: $loanbonddet');
+                                            }else{
+                                              loanbonddet={};
+                                            log('Loan and Bond Details: $loanbonddet');
+
+                                            }
+                                           
 
                                           if (memberDetails.isEmpty && amount.isEmpty && loanbonddet.isEmpty) {
                                             ScaffoldMessenger.of(context).showSnackBar(
@@ -1205,7 +1212,10 @@ class _ScreenQueryState extends State<ScreenQuery> {
                       _nocontroller.clear();
                       _amount = '';
                       _memberDetails = [];
-                      loanbonddet={};
+                      // _propertyLoanDetails=[];
+                      // _mssBondDetails=[];
+                      // _fdloanDetails=[];
+                      loanbonddet.clear();
                       if (questval == null || questval == []) {
                         Fluttertoast.showToast(
                             msg: "No Data Found",

@@ -96,6 +96,8 @@ class Livelocationfun {
         if (context.mounted) await _showLocationSettingsDialog(context);
       } else if (_positionSubscription == null ||_positionSubscription!.isPaused) {
         log("Restarting location service...");
+            _showErrorToast("Restarting location service...");
+
         if (!context.mounted) return;
         _startLiveLocationStream(context, (position) => {});
       }
