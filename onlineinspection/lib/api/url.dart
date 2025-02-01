@@ -3,9 +3,11 @@ class Url {
 
   //String baseUrl = 'http://117.251.17.163:665/cia/public';
 
-  String baseUrl = 'http://117.251.17.163:665/cianew/public';
+  // String baseUrl = 'http://117.251.17.163:665/cianew/public';
 
   // String baseUrl = 'http://117.251.17.163:665/cima/public';
+
+  String baseUrl = 'http://117.251.17.163:665/cima_new/public';
 
   // String baseUrl = 'http://117.251.17.163:665/cimademo/public';
 
@@ -29,5 +31,5 @@ class Url {
   String noticeViewUrl = '/api/v1/inspection/notice';
   String rschdlReqUrl = '/api/v1/schedule/resform';
   String loctnupdtLstUrl = '/api/v1/societies/location/update/list';
-  String loctnUpdtUrl='/api/v1/societies/location/update';
+  String loctnUpdtUrl = '/api/v1/societies/location/update';
 }

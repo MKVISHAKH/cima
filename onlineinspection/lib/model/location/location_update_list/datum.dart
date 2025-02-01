@@ -25,7 +25,8 @@ class DatumValue {
     this.name,
   });
 
-  factory DatumValue.fromJson(Map<String, dynamic> json) => _$DatumFromJson(json);
+  factory DatumValue.fromJson(Map<String, dynamic> json) =>
+      _$DatumValueFromJson(json);
 
-  Map<String, dynamic> toJson() => _$DatumToJson(this);
+  Map<String, dynamic> toJson() => _$DatumValueToJson(this);
 }

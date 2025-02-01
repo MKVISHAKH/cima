@@ -21,8 +21,8 @@ class _ScreenScheduledState extends State<ScreenScheduled> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-     // fetchSociety();
-      
+      // fetchSociety();
+
       Livelocationfun.instance.startTracking(
           context: context,
           onLocationUpdate: (position) {
@@ -77,7 +77,9 @@ class _ScreenScheduledState extends State<ScreenScheduled> {
                       TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 )),
             body: Column(
-              children: [Expanded(child: ScrollableWidget(child: buildScheduledTab()))],
+              children: [
+                Expanded(child: ScrollableWidget(child: buildScheduledTab()))
+              ],
             )),
       ),
     );
@@ -218,12 +220,17 @@ class _ScreenScheduledState extends State<ScreenScheduled> {
         }),
         DataCell(
           Center(
-            child: IconButton(onPressed: (){
-                task.geoLocationupdt==0?addlocationbox(task,context):locationuptodatebox(context);
-            }, icon:task.geoLocationupdt==0? 
-            Icon(Icons.location_off_rounded,size: 20,color:Colors.red[600])
-            :Icon(Icons.location_on_rounded,size: 20,color:Colors.green[600]))
-          ),
+              child: IconButton(
+                  onPressed: () {
+                    task.geoLocationupdt == 0
+                        ? addlocationbox(task, context)
+                        : locationuptodatebox(context);
+                  },
+                  icon: task.geoLocationupdt == 0
+                      ? Icon(Icons.location_off_rounded,
+                          size: 20, color: Colors.red[600])
+                      : Icon(Icons.location_on_rounded,
+                          size: 20, color: Colors.green[600]))),
         ),
         DataCell(
           Center(
@@ -262,7 +269,10 @@ class _ScreenScheduledState extends State<ScreenScheduled> {
                   },
                   child: Text(
                     'RESCHEDULE',
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(fontSize: 13),
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayMedium
+                        ?.copyWith(fontSize: 13),
                   ),
                 ),
               ),
@@ -273,7 +283,7 @@ class _ScreenScheduledState extends State<ScreenScheduled> {
     }).toList();
   }
 
-  Future addlocationbox(DatumVal task,BuildContext context) async =>
+  Future addlocationbox(DatumVal task, BuildContext context) async =>
       showDialog<bool>(
           barrierDismissible: false,
           context: context,
@@ -283,11 +293,22 @@ class _ScreenScheduledState extends State<ScreenScheduled> {
                   children: [
                     Center(
                         child: Text("NO LOCATION AVAILABLE",
-                            style:  Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 16,fontWeight: FontWeight.bold,color:Colors.red[600] ))),
-                    SizedBox(height: 10,),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red[600]))),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Center(
                         child: Text("Please Update Society Location",
-                            style:  Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white))),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(color: Colors.white))),
                   ],
                 ),
                 actions: [
@@ -301,28 +322,7 @@ class _ScreenScheduledState extends State<ScreenScheduled> {
                     child: Text('Update Location',
                         style: Theme.of(context).textTheme.displayMedium),
                   ),
-                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                    ),
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text('Back',
-                        style: Theme.of(context).textTheme.displayMedium),
-                  ),
-                  
-                ],
-              ));
-  Future locationuptodatebox(BuildContext context) async =>
-      showDialog<bool>(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) => AlertDialog(
-                backgroundColor: Theme.of(context).colorScheme.primaryFixed,
-                title: Center(
-                    child: Text("Location is UptoDate",
-                        style: Theme.of(context).textTheme.titleSmall)),
-                actions: [
-                   ElevatedButton(
+                  ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.secondary,
                     ),
@@ -332,7 +332,26 @@ class _ScreenScheduledState extends State<ScreenScheduled> {
                   ),
                 ],
               ));
-    addGeoloc(DatumVal task,BuildContext context) async {
+  Future locationuptodatebox(BuildContext context) async => showDialog<bool>(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => AlertDialog(
+            backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+            title: Center(
+                child: Text("Location is UptoDate",
+                    style: Theme.of(context).textTheme.titleSmall)),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('Back',
+                    style: Theme.of(context).textTheme.displayMedium),
+              ),
+            ],
+          ));
+  addGeoloc(DatumVal task, BuildContext context) async {
     if (doublelat != 0 && doublelong != 0) {
       final userval = await SharedPrefManager.instance.getSharedData();
 
@@ -343,12 +362,12 @@ class _ScreenScheduledState extends State<ScreenScheduled> {
         lattitude: doublelat,
         longitude: doublelong,
       );
-        if (!context.mounted) return;
-      await Livelocationfun.instance.updateLocation(locReq, context,scSchdlLoc);
-      
       if (!context.mounted) return;
-      Navigator.of (context).pop();
-      
+      await Livelocationfun.instance
+          .updateLocation(locReq, context, scSchdlLoc);
+
+      if (!context.mounted) return;
+      Navigator.of(context).pop();
     } else {
       Livelocationfun.instance.startTracking(
         context: context,

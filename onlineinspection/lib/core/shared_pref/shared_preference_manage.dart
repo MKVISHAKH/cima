@@ -50,18 +50,14 @@ class SharedPrefManager {
     final distid = sharedprefs.getInt('DISTRICTID') ?? 0;
     final distname = sharedprefs.getString('DISTRICTNAME') ?? '';
 
-
     final talid = sharedprefs.getInt('TALUKID') ?? 0;
     final talname = sharedprefs.getString('TALUKNAME') ?? '';
-
 
     final cirid = sharedprefs.getInt('CIRCLEID') ?? 0;
     final unitname = sharedprefs.getString('UNITNAME') ?? '';
 
-
     final rolid = sharedprefs.getInt('ROLEID') ?? 0;
     final rolname = sharedprefs.getString('ROLENAME') ?? '';
-
 
     final active = sharedprefs.getInt('ACTIVE') ?? 0;
 

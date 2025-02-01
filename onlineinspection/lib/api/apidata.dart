@@ -25,7 +25,6 @@ abstract class Apicalls {
   Future<dio.Response<dynamic>?> rschdlreq(ReschduleReq value);
   Future<dio.Response<dynamic>?> locationupdtList(Societyreq value);
   Future<dio.Response<dynamic>?> locationUpdt(QuestionReq value);
-
 }
 
 class Ciadata extends Apicalls {
@@ -734,9 +733,9 @@ class Ciadata extends Apicalls {
       );
     }
   }
-  
+
   @override
-  Future<dio.Response?> locationUpdt(QuestionReq value) async{
+  Future<dio.Response?> locationUpdt(QuestionReq value) async {
     final sharedValue = await SharedPrefManager.instance.getSharedData();
     final token = sharedValue!.accesstoken;
     try {

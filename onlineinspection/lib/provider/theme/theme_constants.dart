@@ -127,10 +127,11 @@ class MyTheme {
     ),
     textTheme: const TextTheme(
         labelLarge: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontFamily: 'Poppins-Medium',
-            fontWeight: FontWeight.w800),
+          color: Colors.white,
+          fontSize: 12,
+          fontFamily: 'Poppins-Medium',
+          fontWeight: FontWeight.w800,
+        ),
         labelMedium: TextStyle(
             color: Colors.white, fontSize: 14, fontFamily: 'Poppins-Medium'),
         labelSmall: TextStyle(

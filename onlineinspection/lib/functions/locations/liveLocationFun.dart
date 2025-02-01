@@ -9,7 +9,9 @@ class Livelocationfun {
   Livelocationfun factory() {
     return instance;
   }
-  ValueNotifier<List<DatumValue>> getLocationUpdtListNotifier = ValueNotifier([]);
+
+  ValueNotifier<List<DatumValue>> getLocationUpdtListNotifier =
+      ValueNotifier([]);
 
   StreamSubscription<Position>? _positionSubscription;
   Timer? _locationCheckTimer;
@@ -42,7 +44,7 @@ class Livelocationfun {
       Position position = await Geolocator.getCurrentPosition();
       onLocationUpdate(position);
     } catch (e) {
-      _showErrorToast("Failed to get initial location.");
+      _showErrorToast("Loading...");
     }
   }
 
@@ -92,8 +94,7 @@ class Livelocationfun {
         log("Location service disabled. Stopping stream...");
         timer.cancel();
         if (context.mounted) await _showLocationSettingsDialog(context);
-      } else if (_positionSubscription == null ||
-          _positionSubscription!.isPaused) {
+      } else if (_positionSubscription == null ||_positionSubscription!.isPaused) {
         log("Restarting location service...");
         if (!context.mounted) return;
         _startLiveLocationStream(context, (position) => {});
@@ -178,80 +179,76 @@ class Livelocationfun {
     );
   }
 
-    Future locationUpdtLst(BuildContext context) async {
-    try{
+  Future locationUpdtLst(BuildContext context) async {
+    try {
       final sharedValue = await SharedPrefManager.instance.getSharedData();
-    String? message;
+      String? message;
 
-    final schedulReq = Societyreq(
-      userId: sharedValue!.userId,
-    );
-    final scheduleLstresp = await Ciadata().locationupdtList(schedulReq);
+      final schedulReq = Societyreq(
+        userId: sharedValue!.userId,
+      );
+      final scheduleLstresp = await Ciadata().locationupdtList(schedulReq);
 
-    if (scheduleLstresp == null) {
-      getLocationUpdtListNotifier.value.clear();
-      getLocationUpdtListNotifier.value.addAll([]);
-      getLocationUpdtListNotifier.notifyListeners();
-      if (!context.mounted) return ;
-      CommonFun.instance.showApierror(context,"Something went wrong");
-    } else if (scheduleLstresp.statusCode == 200) {
-      final resultAsJson = jsonDecode(scheduleLstresp.toString());
-      final sctyListRespVal =
-          LocationUpdateList.fromJson(resultAsJson as Map<String, dynamic>);
-
-      if (sctyListRespVal.status == 'success') {
-        //print('sucess');
-        final itemDet = sctyListRespVal.data ?? [];
-        //print(item_det.);
+      if (scheduleLstresp == null) {
         getLocationUpdtListNotifier.value.clear();
-        getLocationUpdtListNotifier.value.addAll(itemDet);
+        getLocationUpdtListNotifier.value.addAll([]);
         getLocationUpdtListNotifier.notifyListeners();
-      } else if (sctyListRespVal.status == 'failure') {
-        final itemDet = sctyListRespVal.data ?? [];
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+      } else if (scheduleLstresp.statusCode == 200) {
+        final resultAsJson = jsonDecode(scheduleLstresp.toString());
+        final sctyListRespVal =
+            LocationUpdateList.fromJson(resultAsJson as Map<String, dynamic>);
+
+        if (sctyListRespVal.status == 'success') {
+          //print('sucess');
+          final itemDet = sctyListRespVal.data ?? [];
+          //print(item_det.);
+          getLocationUpdtListNotifier.value.clear();
+          getLocationUpdtListNotifier.value.addAll(itemDet);
+          getLocationUpdtListNotifier.notifyListeners();
+        } else if (sctyListRespVal.status == 'failure') {
+          final itemDet = sctyListRespVal.data ?? [];
+          getLocationUpdtListNotifier.value.clear();
+          getLocationUpdtListNotifier.value.addAll(itemDet);
+          getLocationUpdtListNotifier.notifyListeners();
+          if (!context.mounted) return;
+          CommonFun.instance.showApierror(context, "No Data Found");
+        }
+      } else if (message == 'Unauthenticated' ||
+          scheduleLstresp.statusCode == 401) {
+        if (!context.mounted) return [];
+
+        CommonFun.instance.signout(context);
+      } else if (scheduleLstresp.statusCode == 500) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Sever Not reached");
+
+        // showLoginerror(context, 3);
+      } else if (scheduleLstresp.statusCode == 408) {
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Connection time out");
+
+        //showLoginerror(context, 4);
+      } else {
         getLocationUpdtListNotifier.value.clear();
-        getLocationUpdtListNotifier.value.addAll(itemDet);
+        getLocationUpdtListNotifier.value.addAll([]);
         getLocationUpdtListNotifier.notifyListeners();
-        if (!context.mounted) return ;
-      CommonFun.instance.showApierror(context,"No Data Found");
+        if (!context.mounted) return;
+        CommonFun.instance.showApierror(context, "Something went wrong");
+        //showLoginerror(context, 5);
       }
-    }else if(message=='Unauthenticated'||scheduleLstresp.statusCode==401){
-      
-      if (!context.mounted) return [];
-      
-    CommonFun.instance.signout(context);
-
-    }else if(scheduleLstresp.statusCode==500){
-      if (!context.mounted) return ;
-      CommonFun.instance.showApierror(context,"Sever Not reached");
-
-            // showLoginerror(context, 3);
-
-
-    }else if(scheduleLstresp.statusCode==408){
-      if (!context.mounted) return ;
-      CommonFun.instance.showApierror(context,"Connection time out");
-
-            //showLoginerror(context, 4);
-
-    } else {
-      getLocationUpdtListNotifier.value.clear();
-      getLocationUpdtListNotifier.value.addAll([]);
-      getLocationUpdtListNotifier.notifyListeners();
-      if (!context.mounted) return ;
-      CommonFun.instance.showApierror(context,"Something went wrong");
-      //showLoginerror(context, 5);
-    }
-    }catch(e){
-      if (!context.mounted) return ;
+    } catch (e) {
+      if (!context.mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('An unexpected error occurred')),
-    );
+        const SnackBar(content: Text('An unexpected error occurred')),
+      );
     }
-    
   }
 
-  Future updateLocation(QuestionReq val, BuildContext context,String? screen) async {
+  Future updateLocation(
+      QuestionReq val, BuildContext context, String? screen) async {
     try {
       final loadingProvider = context.read<LoadingProvider>();
       String? message;
@@ -272,11 +269,10 @@ class Livelocationfun {
           loginval.status == 'success') {
         final msg = loginval.message;
         if (!context.mounted) return;
-        
-        screen==scAddLoc?
-        locationUpdtLst(context):
-        SchedulelistFun.instance.getScheduleList(context);
 
+        screen == scAddLoc
+            ? locationUpdtLst(context)
+            : SchedulelistFun.instance.getScheduleList(context);
 
         // Fluttertoast.showToast(
         //     msg: msg ?? '',

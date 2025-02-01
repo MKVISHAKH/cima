@@ -39,7 +39,6 @@ DatumVal _$DatumValFromJson(Map<String, dynamic> json) => DatumVal(
               ?.map((e) => Notice.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-     
       geoLocationupdt: (json['geo_location_update'] as num?)?.toInt(),
     );
 
@@ -73,5 +72,5 @@ Map<String, dynamic> _$DatumValToJson(DatumVal instance) => <String, dynamic>{
       'notice_id': instance.noticeId,
       'reason': instance.reason,
       'notice': instance.notice,
-      'geo_location_update':instance.geoLocationupdt
+      'geo_location_update': instance.geoLocationupdt,
     };

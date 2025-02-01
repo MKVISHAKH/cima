@@ -63,8 +63,11 @@ class _ScreenSplashState extends State<ScreenSplash> {
           key: _scaffoldKey,
           body: Center(
             child: Text(
-              'CO-OPERATIVE INSPECTION APP',
-              style: Theme.of(context).textTheme.titleMedium,
+              'CO-OPERATIVE INSPECTION MOBILE APP',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontSize: 17),
             ),
             // Lottie.asset(
             //   'assets/animation/splash/Animation - 1729853904649.json',

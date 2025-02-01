@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:onlineinspection/core/hook/hook.dart';
+//import 'package:onlineinspection/model/query/questions/loanbond_det/loanandbonddet.dart';
 
 class ScreenQuery extends StatefulWidget {
   const ScreenQuery(
@@ -35,7 +36,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
   Sharedpref? userval;
   double doublelat = 0;
   double doublelong = 0;
-  final _namecontroller = TextEditingController();
+  final _amountcontroller = TextEditingController();
   final _nocontroller = TextEditingController();
   List<AdditionalInfo>? addinfo;
   int? infoLgth;
@@ -45,10 +46,11 @@ class _ScreenQueryState extends State<ScreenQuery> {
   String _amount = '';
   //final _amntcontroller = TextEditingController();
   List<AdditionalField> fieldList = [];
-  List<Map<String, TextEditingController>> _memberDetails = [];
   bool isQuestionFetched = false;
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   // Function to add a new member
+  Map<String, List<Map<String, String>>> loanbonddet={};
+  List<Map<String, TextEditingController>> _memberDetails = [];
   void _addMember() {
     setState(() {
       _memberDetails.add({
@@ -63,6 +65,9 @@ class _ScreenQueryState extends State<ScreenQuery> {
   // Function to remove a member
   void _removeMember(int index) {
     setState(() {
+      for (var controller in _memberDetails[index].values) {
+        controller.dispose();
+      }
       _memberDetails.removeAt(index);
     });
   }
@@ -79,6 +84,37 @@ class _ScreenQueryState extends State<ScreenQuery> {
     }).toList();
   }
 
+  List<Map<String, TextEditingController>> _propertyLoanDetails = [];
+
+
+  List<Map<String, String>> getProperyLoandet() {
+    return _propertyLoanDetails.map((loandet) {
+      return {
+        'loanno': loandet['loanno']!.text,
+      };
+    }).toList();
+  }
+
+  List<Map<String, TextEditingController>> _mssBondDetails = [];
+
+  List<Map<String, String>> getMssNo() {
+    return _mssBondDetails.map((loandet) {
+      return {
+        'mssno': loandet['mssno']!.text,
+      };
+    }).toList();
+  }
+
+  List<Map<String, TextEditingController>> _fdloanDetails = [];
+
+  List<Map<String, String>> getFdloanNo() {
+    return _fdloanDetails.map((loandet) {
+      return {
+        'fdloanno': loandet['fdloanno']!.text,
+      };
+    }).toList();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -89,14 +125,12 @@ class _ScreenQueryState extends State<ScreenQuery> {
           setState(() {
             doublelat = position.latitude;
             doublelong = position.longitude;
-            locationMessage =
-                'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+            locationMessage ='Latitude: ${position.latitude}, Longitude: ${position.longitude}';
             log('query screen strtque init:$locationMessage');
           });
 
           if (!isQuestionFetched) {
-            isQuestionFetched =
-                true; // Set the flag to true after the first call
+            isQuestionFetched =true; // Set the flag to true after the first call
             getStartquestion(doublelat, doublelong);
           }
           // getStartquestion(doublelat, doublelong);
@@ -132,6 +166,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
       member['email']?.dispose();
       member['mobno']?.dispose();
     }
+    _amountcontroller.dispose();
     super.dispose();
   }
 
@@ -152,6 +187,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
             lattitude: doublelat,
             longitude: doublelong,
             activity: widget.activity);
+
         questval =
             await QuestionsFunctions.instance.fetchQueStrt(queReq, context);
         if (questval == null || questval == []) {
@@ -187,8 +223,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    final sessionTimer =
-        (context.findAncestorWidgetOfExactType<MyApp>() as MyApp).sessionTimer;
+    final sessionTimer =(context.findAncestorWidgetOfExactType<MyApp>() as MyApp).sessionTimer;
 
     return ActivityMonitor(
       sessionTimer: sessionTimer,
@@ -230,7 +265,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                       ),
                       child: ListTile(
                         title: Text(
-                          widget.bankname ?? 'User',
+                          widget.bankname ?? '',
                           style: Theme.of(context).textTheme.labelMedium,
                         ),
                         subtitle: Column(
@@ -238,11 +273,11 @@ class _ScreenQueryState extends State<ScreenQuery> {
                           children: [
                             const SizedBox(height: 10),
                             Text(
-                              'Branch: ${widget.branch ?? 'Branch'}',
+                              'Branch: ${widget.branch ?? ''}',
                               style: Theme.of(context).textTheme.labelSmall,
                             ),
                             Text(
-                              'Reg.No: ${widget.regNo ?? 'RegNo'}',
+                              'Reg.No: ${widget.regNo ?? ''}',
                               style: Theme.of(context).textTheme.labelSmall,
                             ),
                             Text(
@@ -278,7 +313,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                     ),
                                     TextButton(
                                         onPressed: () {
-                                          getNextQue(context, skipnxt, [], '');
+                                          getNextQue(context, skipnxt, [], '',{});
                                         },
                                         child: Text(
                                           'Skip',
@@ -307,12 +342,8 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                 shrinkWrap: true,
                                 itemCount: questval!.first.option?.length ?? 0,
                                 itemBuilder: (context, index) {
-                                  final option =
-                                      questval!.first.option?[index].option ??
-                                          'activity';
-                                  addinfo =
-                                      questval!.first.option?[index].addInfo ??
-                                          [];
+                                  final option =questval!.first.option?[index].option ??'';
+                                  addinfo =questval!.first.option?[index].addInfo ??[];
                                   infoLgth = addinfo?.length ?? 0;
 
                                   //infoLgth!=0?isVisible==true:isVisible==false;
@@ -321,9 +352,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                   return FormatRadioButton(
                                     title: option,
                                     type: option,
-                                    txtstyl: Theme.of(context)
-                                        .textTheme
-                                        .displaySmall,
+                                    txtstyl: Theme.of(context).textTheme.displaySmall,
                                     color: const Color.fromARGB(255, 2, 73, 4),
                                     additionalInfo: addinfo ?? [],
                                   );
@@ -335,7 +364,6 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                 if (provider.selectedInfo.isEmpty) {
                                   return Container(); // No fields to display
                                 }
-
                                 return Card(
                                   margin: const EdgeInsets.only(
                                     bottom: 20,
@@ -346,12 +374,10 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                     key: formkey,
                                     child: ListView.builder(
                                       shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
+                                      physics:const NeverScrollableScrollPhysics(),
                                       itemCount: provider.selectedInfo.length,
                                       itemBuilder: (context, index) {
-                                        final infoField =
-                                            provider.selectedInfo[index];
+                                        final infoField =provider.selectedInfo[index];
                                         // final controller = TextEditingController();
                                         if (infoField.name == 'mname') {
                                           return Column(
@@ -362,229 +388,114 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                               ),
                                               Text(
                                                 "Add Member Details",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyLarge,
+                                                style: Theme.of(context).textTheme.bodyLarge,
                                               ),
-                                              ..._memberDetails
-                                                  .asMap()
-                                                  .entries
-                                                  .map((entry) {
+                                              ..._memberDetails.asMap().entries.map((entry) {
                                                 int index = entry.key;
-                                                Map<String,
-                                                        TextEditingController>
+                                                Map<String,TextEditingController>
                                                     member = entry.value;
-
                                                 return Container(
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
+                                                  width: MediaQuery.of(context).size.width,
                                                   decoration: BoxDecoration(
-                                                    color: Colors
-                                                        .white, // White background
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12), // Rounded corners
+                                                    color: Colors.white, // White background
+                                                    borderRadius:BorderRadius.circular(12), // Rounded corners
                                                     border: Border.all(
                                                       // Thin black border
                                                       color: Colors.black26,
                                                       width: 1,
                                                     ),
                                                   ),
-                                                  margin: const EdgeInsets
-                                                      .symmetric(
-                                                    vertical: 2,
-                                                    horizontal: 2,
-                                                  ),
-                                                  padding:
-                                                      const EdgeInsets.all(6),
+                                                  margin: const EdgeInsets.symmetric(vertical: 2,horizontal: 2,),
+                                                  padding:const EdgeInsets.all(6),
                                                   child: Column(
                                                     children: [
                                                       Text(
                                                         'Member ${index + 1}',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyLarge,
+                                                        style: Theme.of(context).textTheme.bodyLarge,
                                                       ),
                                                       Row(
                                                         children: [
                                                           Expanded(
                                                             child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              child:
-                                                                  TextInputfield(
-                                                                label:
-                                                                    'Member Name',
-                                                                hint:
-                                                                    'Enter member name',
-                                                                inputType:
-                                                                    TextInputType
-                                                                        .name,
-                                                                inputAction:
-                                                                    TextInputAction
-                                                                        .next,
-                                                                cmncontroller:
-                                                                    member[
-                                                                        'name']!,
-                                                                onChanged:
-                                                                    (value) {
-                                                                  member['name']!
-                                                                          .text =
-                                                                      value;
+                                                              padding:const EdgeInsets.all(8.0),
+                                                              child:TextInputfield(
+                                                                label:'Member Name',
+                                                                hint:'Enter member name',
+                                                                inputType:TextInputType.name,
+                                                                inputAction:TextInputAction.next,
+                                                                cmncontroller:member['name']!,
+                                                                onChanged:(value) {
+                                                                  member['name']!.text =value;
                                                                 },
                                                               ),
                                                             ),
                                                           ),
                                                           Expanded(
                                                             child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              child:
-                                                                  TextInputfield(
-                                                                label:
-                                                                    'Member ID',
-                                                                hint:
-                                                                    'Enter member ID',
-                                                                inputType:
-                                                                    TextInputType
-                                                                        .text,
-                                                                inputAction:
-                                                                    TextInputAction
-                                                                        .next,
-                                                                cmncontroller:
-                                                                    member[
-                                                                        'id']!,
-                                                                onChanged:
-                                                                    (value) {
-                                                                  member['id']!
-                                                                          .text =
-                                                                      value;
+                                                              padding:const EdgeInsets.all(8.0),
+                                                              child:TextInputfield(
+                                                                label:'Member ID',
+                                                                hint:'Enter member ID',
+                                                                inputType:TextInputType.text,
+                                                                inputAction:TextInputAction.next,
+                                                                cmncontroller:member['id']!,
+                                                                onChanged:(value) {
+                                                                  member['id']!.text =value;
                                                                 },
                                                               ),
                                                             ),
                                                           ),
-                                                          // IconButton(
-                                                          //   icon: Icon(Icons.delete,
-                                                          //       color:
-                                                          //           Theme.of(context)
-                                                          //               .colorScheme
-                                                          //               .primary),
-                                                          //   onPressed: () {
-                                                          //     _removeMember(index);
-                                                          //   },
-                                                          // ),
                                                         ],
                                                       ),
                                                       Row(
                                                         children: [
                                                           Expanded(
                                                             child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              child:
-                                                                  TextInputfield(
-                                                                label:
-                                                                    'Email Address',
-                                                                hint:
-                                                                    'Enter Email Address',
-                                                                inputType:
-                                                                    TextInputType
-                                                                        .emailAddress,
-                                                                inputAction:
-                                                                    TextInputAction
-                                                                        .next,
-                                                                cmncontroller:
-                                                                    member[
-                                                                        'email']!,
-                                                                onChanged:
-                                                                    (value) {
-                                                                  member['email']!
-                                                                          .text =
-                                                                      value;
+                                                              padding:const EdgeInsets.all(8.0),
+                                                              child:TextInputfield(
+                                                                label:'Email Address',
+                                                                hint:'Enter Email Address',
+                                                                inputType:TextInputType.emailAddress,
+                                                                inputAction:TextInputAction.next,
+                                                                cmncontroller:member['email']!,
+                                                                onChanged:(value) {
+                                                                  member['email']!.text =value;
                                                                 },
-                                                                validator:
-                                                                    (value) {
-                                                                  if (value ==
-                                                                          null ||
-                                                                      value
-                                                                          .isEmpty) {
+                                                                validator:(value) {
+                                                                  if (value ==null ||value.isEmpty) {
                                                                     Fluttertoast.showToast(
-                                                                        msg:
-                                                                            "Enter Email Address",
-                                                                        toastLength:
-                                                                            Toast
-                                                                                .LENGTH_SHORT,
-                                                                        gravity:
-                                                                            ToastGravity
-                                                                                .CENTER,
-                                                                        timeInSecForIosWeb:
-                                                                            1,
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .black,
-                                                                        textColor:
-                                                                            Colors
-                                                                                .white,
-                                                                        fontSize:
-                                                                            15.0);
+                                                                        msg:"Enter Email Address",
+                                                                        toastLength:Toast.LENGTH_SHORT,
+                                                                        gravity:ToastGravity.CENTER,
+                                                                        timeInSecForIosWeb:1,
+                                                                        backgroundColor:Colors.black,
+                                                                        textColor:Colors.white,
+                                                                        fontSize:15.0);
                                                                     return "Enter Email Address";
-                                                                  } else if (value
-                                                                      .contains(
-                                                                          ' ')) {
+                                                                  } else if (value.contains(' ')) {
                                                                     Fluttertoast.showToast(
-                                                                        msg:
-                                                                            "Remove Space from  Mobile number",
-                                                                        toastLength:
-                                                                            Toast
-                                                                                .LENGTH_SHORT,
-                                                                        gravity:
-                                                                            ToastGravity
-                                                                                .CENTER,
-                                                                        timeInSecForIosWeb:
-                                                                            1,
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .black,
-                                                                        textColor:
-                                                                            Colors
-                                                                                .white,
-                                                                        fontSize:
-                                                                            15.0);
+                                                                        msg:"Remove Space from  Email Address",
+                                                                        toastLength:Toast.LENGTH_SHORT,
+                                                                        gravity:ToastGravity.CENTER,
+                                                                        timeInSecForIosWeb:1,
+                                                                        backgroundColor:Colors.black,
+                                                                        textColor:Colors.white,
+                                                                        fontSize:15.0);
                                                                     // showSnackBar(context,
                                                                     //     text: "Remove Space from  Mobile number");
                                                                   }
-                                                                  final emailRegEx =
-                                                                      RegExp(
-                                                                          r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-                                                                  if (!emailRegEx
-                                                                      .hasMatch(
-                                                                          value)) {
+                                                                  final emailRegEx =RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+                                                                  if (!emailRegEx.hasMatch(value)) {
                                                                     Fluttertoast.showToast(
-                                                                        msg:
-                                                                            "Please enter a valid email address",
-                                                                        toastLength:
-                                                                            Toast
-                                                                                .LENGTH_SHORT,
-                                                                        gravity:
-                                                                            ToastGravity
-                                                                                .CENTER,
-                                                                        timeInSecForIosWeb:
-                                                                            1,
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .black,
-                                                                        textColor:
-                                                                            Colors
-                                                                                .white,
-                                                                        fontSize:
-                                                                            15.0);
+                                                                        msg:"Please enter a valid email address",
+                                                                        toastLength:Toast.LENGTH_SHORT,
+                                                                        gravity:ToastGravity.CENTER,
+                                                                        timeInSecForIosWeb:1,
+                                                                        backgroundColor:Colors.black,
+                                                                        textColor:Colors.white,
+                                                                        fontSize:15.0);
                                                                     return "Please enter a valid email address";
                                                                   }
-
                                                                   return null;
                                                                 },
                                                               ),
@@ -592,116 +503,53 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                                           ),
                                                           Expanded(
                                                             child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              child:
-                                                                  TextInputfield(
-                                                                label:
-                                                                    'Mobile Number',
-                                                                hint:
-                                                                    'Enter Mobile Number',
-                                                                inputType:
-                                                                    TextInputType
-                                                                        .number,
-                                                                inputAction:
-                                                                    TextInputAction
-                                                                        .next,
-                                                                cmncontroller:
-                                                                    member[
-                                                                        'mobno']!,
-                                                                onChanged:
-                                                                    (value) {
-                                                                  member['mobno']!
-                                                                          .text =
-                                                                      value;
+                                                              padding:const EdgeInsets.all(8.0),
+                                                              child:TextInputfield(
+                                                                label:'Mobile Number',
+                                                                hint:'Enter Mobile Number',
+                                                                inputType:TextInputType.number,
+                                                                inputAction:TextInputAction.next,
+                                                                cmncontroller:member['mobno']!,
+                                                                onChanged:(value) {
+                                                                  member['mobno']!.text =value;
                                                                 },
                                                                 inputFormatters: [
-                                                                  LengthLimitingTextInputFormatter(
-                                                                      10),
-                                                                  FilteringTextInputFormatter
-                                                                      .digitsOnly,
+                                                                  LengthLimitingTextInputFormatter(10),
+                                                                  FilteringTextInputFormatter.digitsOnly,
                                                                 ],
-                                                                validator:
-                                                                    (value) {
-                                                                  if (value ==
-                                                                          null ||
-                                                                      value
-                                                                          .isEmpty) {
+                                                                validator:(value) {
+                                                                  if (value ==null ||value.isEmpty) {
                                                                     Fluttertoast.showToast(
-                                                                        msg:
-                                                                            "Enter mobile Number",
-                                                                        toastLength:
-                                                                            Toast
-                                                                                .LENGTH_SHORT,
-                                                                        gravity:
-                                                                            ToastGravity
-                                                                                .CENTER,
-                                                                        timeInSecForIosWeb:
-                                                                            1,
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .black,
-                                                                        textColor:
-                                                                            Colors
-                                                                                .white,
-                                                                        fontSize:
-                                                                            15.0);
+                                                                        msg:"Enter mobile Number",
+                                                                        toastLength:Toast.LENGTH_SHORT,
+                                                                        gravity:ToastGravity.CENTER,
+                                                                        timeInSecForIosWeb:1,
+                                                                        backgroundColor:Colors.black,
+                                                                        textColor:Colors.white,
+                                                                        fontSize:15.0);
                                                                     return "Enter mobile Number";
-                                                                  } else if (member['mobno']!
-                                                                              .text
-                                                                              .length <
-                                                                          10 ||
-                                                                      member['mobno']!
-                                                                              .text
-                                                                              .length >
-                                                                          10) {
+                                                                  } else if (member['mobno']!.text.length <10 ||member['mobno']!.text.length >10) {
                                                                     Fluttertoast.showToast(
-                                                                        msg:
-                                                                            "Enter valid Mobile number",
-                                                                        toastLength:
-                                                                            Toast
-                                                                                .LENGTH_SHORT,
-                                                                        gravity:
-                                                                            ToastGravity
-                                                                                .CENTER,
-                                                                        timeInSecForIosWeb:
-                                                                            1,
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .black,
-                                                                        textColor:
-                                                                            Colors
-                                                                                .white,
-                                                                        fontSize:
-                                                                            15.0);
+                                                                        msg:"Enter valid Mobile number",
+                                                                        toastLength:Toast.LENGTH_SHORT,
+                                                                        gravity:ToastGravity.CENTER,
+                                                                        timeInSecForIosWeb:1,
+                                                                        backgroundColor:Colors.black,
+                                                                        textColor:Colors.white,
+                                                                        fontSize:15.0);
                                                                     return "Enter valid Mobile number";
-                                                                  } else if (value
-                                                                      .contains(
-                                                                          ' ')) {
+                                                                  } else if (value.contains(' ')) {
                                                                     Fluttertoast.showToast(
-                                                                        msg:
-                                                                            "Remove Space from  Mobile number",
-                                                                        toastLength:
-                                                                            Toast
-                                                                                .LENGTH_SHORT,
-                                                                        gravity:
-                                                                            ToastGravity
-                                                                                .CENTER,
-                                                                        timeInSecForIosWeb:
-                                                                            1,
-                                                                        backgroundColor:
-                                                                            Colors
-                                                                                .black,
-                                                                        textColor:
-                                                                            Colors
-                                                                                .white,
-                                                                        fontSize:
-                                                                            15.0);
+                                                                        msg:"Remove Space from  Mobile number",
+                                                                        toastLength:Toast.LENGTH_SHORT,
+                                                                        gravity:ToastGravity.CENTER,
+                                                                        timeInSecForIosWeb:1,
+                                                                        backgroundColor:Colors.black,
+                                                                        textColor:Colors.white,
+                                                                        fontSize:15.0);
                                                                     // showSnackBar(context,
                                                                     //     text: "Remove Space from  Mobile number");
                                                                   }
-
                                                                   return null;
                                                                 },
                                                               ),
@@ -710,13 +558,9 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                                           IconButton(
                                                             icon: Icon(
                                                                 Icons.delete,
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .primary),
+                                                                color: Theme.of(context).colorScheme.primary),
                                                             onPressed: () {
-                                                              _removeMember(
-                                                                  index);
+                                                              _removeMember(index);
                                                             },
                                                           ),
                                                         ],
@@ -726,41 +570,27 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                                 );
                                               }).toList(),
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
+                                                padding:const EdgeInsets.all(8.0),
                                                 child: TextButton(
                                                   onPressed: _addMember,
                                                   style: TextButton.styleFrom(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 16.0),
+                                                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                                                   ),
                                                   child: Row(
-                                                    mainAxisSize: MainAxisSize
-                                                        .min, // Ensures the button fits the content
+                                                    mainAxisSize: MainAxisSize.min, // Ensures the button fits the content
                                                     children: [
                                                       Icon(
                                                         Icons.add_box_rounded,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .primary, // Replace with your desired icon
+                                                        color: Theme.of(context).colorScheme.primary, // Replace with your desired icon
                                                         size: 20,
                                                       ),
-                                                      const SizedBox(
-                                                          width:
-                                                              8), // Adds spacing between the icon and text
-                                                      Text(
-                                                        'Add Member',
+                                                      const SizedBox(width:8), // Adds spacing between the icon and text
+                                                      Text('Add Member',
                                                         style: TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary,
+                                                          color:Theme.of(context).colorScheme.primary,
                                                           fontSize: 16,
-                                                          fontFamily:
-                                                              'Poppins-Medium',
-                                                          fontWeight:
-                                                              FontWeight.w900,
+                                                          fontFamily:'Poppins-Medium',
+                                                          fontWeight:FontWeight.w900,
                                                         ),
                                                       ),
                                                     ],
@@ -769,64 +599,247 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                               ),
                                             ],
                                           );
-                                        }
-                                        // else if (infoField.name == 'amount') {
-                                        //   // For Amount handling
-                                        //   return Padding(
-                                        //     padding: const EdgeInsets.all(8.0),
-                                        //     child: TextInputfield(
-                                        //       label:
-                                        //           infoField.label ?? 'Amount',
-                                        //       hint: 'Enter amount',
-                                        //       inputType: const TextInputType
-                                        //           .numberWithOptions(
-                                        //           decimal: true),
-                                        //       inputAction: TextInputAction.done,
-                                        //       cmncontroller:
-                                        //           TextEditingController(),
-                                        //       onSaved: (value) {
-                                        //         // Save the entered amount
-                                        //         _amount = value ?? '0';
-                                        //       },
-                                        //       validator: (value) {
-                                        //         if (value == null ||
-                                        //             value.isEmpty) {
-                                        //           return "Amount is required";
-                                        //         }
-                                        //         if (double.tryParse(value) ==
-                                        //             null) {
-                                        //           return "Enter a valid amount";
-                                        //         }
-                                        //         return null;
-                                        //       },
-                                        //     ),
-                                        //   );
-                                        // }
-                                        else if (infoField.name != 'memno') {
+                                        } else if (infoField.propertyLoan !=null) {
+                                          int loanFields = infoField.propertyLoan!.madatory ??1;
+                                          int bondFields =infoField.mssBond?.madatory ?? 1;
+                                          int fdLoanFields =infoField.fdloan?.madatory ?? 1;
+
+                                          //int maxFields = [loanFields, bondFields, fdLoanFields].reduce((a, b) => a > b ? a : b); // Get the max count
+
+                                          // Ensure the list has enough controllers
+                                          if (_propertyLoanDetails.length <loanFields) {
+                                            _propertyLoanDetails =List.generate(loanFields,(index) => {
+                                                'loanno':TextEditingController(),
+                                              },
+                                            );
+                                          }
+                                          if (_mssBondDetails.length <bondFields) {
+                                            _mssBondDetails = List.generate(bondFields,(index) => {
+                                                'mssno':TextEditingController(),
+                                              },
+                                            );
+                                          }
+                                          if (_fdloanDetails.length <fdLoanFields) {
+                                            _fdloanDetails = List.generate(fdLoanFields,(index) => {
+                                                'fdloanno':TextEditingController(),
+                                              },
+                                            );
+                                          }
+
+                                          return Column(
+                                            children: [
+                                              const SizedBox(height: 10),
+                                              Text(
+                                                "Add Loan/Bond Details",
+                                                style: Theme.of(context).textTheme.bodyLarge,
+                                              ),
+                                              const SizedBox(height: 10),
+
+                                              // Display Loan No fields first
+                                              if (loanFields > 0)
+                                                Container(
+                                                  width: MediaQuery.of(context).size.width,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white, // White background
+                                                    borderRadius:BorderRadius.circular(12), // Rounded corners
+                                                    border: Border.all(
+                                                      // Thin black border
+                                                      color: Colors.black26,
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                  margin: const EdgeInsets.symmetric(vertical: 2,horizontal: 2,),
+                                                  padding:const EdgeInsets.all(6),
+                                                  child: ExpansionTile(
+                                                    title: Text("Property Loan Details",
+                                                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                                        color: Theme.of(context).colorScheme.primary)),
+                                                    children: List.generate(loanFields, (index) {
+                                                      return buildTextFieldContainer(
+                                                          //title: '${infoField.propertyLoan!.label} ${index + 1}',
+                                                          label:'Loan No ${index + 1}',
+                                                          hint:'Enter ${infoField.propertyLoan!.label}',
+                                                          controller:_propertyLoanDetails[index]['loanno']!,
+                                                          onChanged: (value) {
+                                                            _propertyLoanDetails[index]['loanno']!.text = value;
+                                                          },
+                                                          validator: (value) {
+                                                            if (value == null ||value.isEmpty) {
+                                                              Fluttertoast.showToast(
+                                                                  msg:"Enter Loan No",
+                                                                  toastLength: Toast.LENGTH_SHORT,
+                                                                  gravity:ToastGravity.CENTER,
+                                                                  timeInSecForIosWeb:1,
+                                                                  backgroundColor:Colors.black,
+                                                                  textColor:Colors.white,
+                                                                  fontSize:15.0);
+                                                              return "Enter Loan No";
+                                                            } else if (value.contains(' ')) {
+                                                              Fluttertoast.showToast(
+                                                                  msg:"Remove Space from  Loan no",
+                                                                  toastLength: Toast.LENGTH_SHORT,
+                                                                  gravity:ToastGravity.CENTER,
+                                                                  timeInSecForIosWeb:1,
+                                                                  backgroundColor:Colors.black,
+                                                                  textColor:Colors.white,
+                                                                  fontSize:15.0);
+                                                              // showSnackBar(context,
+                                                              //     text: "Remove Space from  Mobile number");
+                                                              return "Remove Space from Loan no";
+                                                            }
+                                                            return null;
+                                                          });
+                                                    }),
+                                                  ),
+                                                ),
+
+                                              // Display MSS No fields second
+                                              if (bondFields > 0)
+                                                Container(
+                                                  width: MediaQuery.of(context).size.width,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white, // White background
+                                                    borderRadius:BorderRadius.circular(12), // Rounded corners
+                                                    border: Border.all(
+                                                      // Thin black border
+                                                      color: Colors.black26,
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                  margin: const EdgeInsets.symmetric(vertical: 2,horizontal: 2,),
+                                                  padding:const EdgeInsets.all(6),
+                                                  child: ExpansionTile(
+                                                    title: Text("MSS Bond Details",
+                                                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                                                color: Theme.of(context).colorScheme.primary)),
+                                                    children: List.generate(bondFields, (index) {
+                                                      return buildTextFieldContainer(
+                                                          //title: '${infoField.mssBond!.label} ${index + 1}',
+                                                          label:'MSS Ticket No ${index + 1}',
+                                                          hint:'Enter ${infoField.mssBond!.label}',
+                                                          controller:_mssBondDetails[index]['mssno']!,
+                                                          onChanged: (value) {
+                                                            _mssBondDetails[index]['mssno']!.text = value;
+                                                          },
+                                                          validator: (value) {
+                                                            if (value == null ||value.isEmpty) {
+                                                              Fluttertoast.showToast(
+                                                                  msg:"Enter MSS Ticket No",
+                                                                  toastLength: Toast.LENGTH_SHORT,
+                                                                  gravity:ToastGravity.CENTER,
+                                                                  timeInSecForIosWeb:1,
+                                                                  backgroundColor:Colors.black,
+                                                                  textColor:Colors.white,
+                                                                  fontSize:15.0);
+                                                              return "Enter MSS Ticket No";
+                                                            } else if (value.contains(' ')) {
+                                                              Fluttertoast.showToast(
+                                                                  msg:"Remove Space from  MSS Ticket No",
+                                                                  toastLength: Toast.LENGTH_SHORT,
+                                                                  gravity:ToastGravity.CENTER,
+                                                                  timeInSecForIosWeb:1,
+                                                                  backgroundColor:Colors.black,
+                                                                  textColor:Colors.white,
+                                                                  fontSize:15.0);
+                                                              // showSnackBar(context,
+                                                              //     text: "Remove Space from  Mobile number");
+                                                              return "Remove Space from MSS Ticket No";
+                                                            }
+                                                            return null;
+                                                          });
+                                                    }),
+                                                  ),
+                                                ),
+
+                                              // Display FD Loan No fields third
+                                              if (fdLoanFields > 0)
+                                                Container(
+                                                  width: MediaQuery.of(context).size.width,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white, // White background
+                                                    borderRadius:BorderRadius.circular(12), // Rounded corners
+                                                    border: Border.all(
+                                                      // Thin black border
+                                                      color: Colors.black26,
+                                                      width: 1,
+                                                    ),
+                                                  ),
+                                                  margin: const EdgeInsets.symmetric(vertical: 2,horizontal: 2,),
+                                                  padding:const EdgeInsets.all(6),
+                                                  child: ExpansionTile(
+                                                    title: Text("FD Loan Details",
+                                                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                                                color: Theme.of(context).colorScheme.primary)),
+                                                    children: List.generate(fdLoanFields, (index) {
+                                                      return buildTextFieldContainer(
+                                                          //title: '${infoField.fdloan!.label} ${index + 1}',
+                                                          label:'FD Loan No ${index + 1}',
+                                                          hint:'Enter ${infoField.fdloan!.label}',
+                                                          controller:_fdloanDetails[index]['fdloanno']!,
+                                                          onChanged: (value) {
+                                                            _fdloanDetails[index]['fdloanno']!.text = value;
+                                                          },
+                                                          validator: (value) {
+                                                            if (value == null ||value.isEmpty) {
+                                                              Fluttertoast.showToast(
+                                                                  msg:"Enter FD Loan No",
+                                                                  toastLength: Toast.LENGTH_SHORT,
+                                                                  gravity:ToastGravity.CENTER,
+                                                                  timeInSecForIosWeb:1,
+                                                                  backgroundColor:Colors.black,
+                                                                  textColor:Colors.white,
+                                                                  fontSize:15.0);
+                                                              return "Enter FD Loan No";
+                                                            } else if (value.contains(' ')) {
+                                                              Fluttertoast.showToast(
+                                                                  msg:"Remove Space from FD Loan No",
+                                                                  toastLength: Toast.LENGTH_SHORT,
+                                                                  gravity:ToastGravity.CENTER,
+                                                                  timeInSecForIosWeb:1,
+                                                                  backgroundColor:Colors.black,
+                                                                  textColor:Colors.white,
+                                                                  fontSize:15.0);
+                                                              return "Remove Space from FD Loan No";
+
+                                                              // showSnackBar(context,
+                                                              //     text: "Remove Space from  Mobile number");
+                                                            }
+                                                            return null;
+                                                          });
+                                                    }),
+                                                  ),
+                                                ),
+                                            ],
+                                          );
+                                        } else if (infoField.name != 'memno') {
                                           //final controller = _namecontroller;
                                           return Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: TextInputfield(
                                               label: infoField.label ?? '',
                                               hint: 'Enter ${infoField.name}',
-                                              inputType: const TextInputType
-                                                  .numberWithOptions(
-                                                  decimal: true),
+                                              inputType: const TextInputType.numberWithOptions(decimal: true),
                                               inputAction: TextInputAction.done,
-                                              cmncontroller:
-                                                  TextEditingController(),
+                                              cmncontroller: _amountcontroller,
                                               onSaved: (value) {
                                                 // Save the entered amount
                                                 _amount = value ?? '0';
                                               },
                                               validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
+                                                if (value == null ||value.isEmpty) {
                                                   return "field is required";
-                                                }
-                                                if (double.tryParse(value) ==
-                                                    null) {
+                                                } else if (double.tryParse(value) ==null) {
                                                   return "Enter a valid number";
+                                                } else if (value.contains(' ')) {
+                                                  Fluttertoast.showToast(
+                                                      msg:"Remove Space from number",
+                                                      toastLength:Toast.LENGTH_SHORT,
+                                                      gravity:ToastGravity.CENTER,
+                                                      timeInSecForIosWeb: 1,
+                                                      backgroundColor:Colors.black,
+                                                      textColor: Colors.white,
+                                                      fontSize: 15.0);
+                                                  return "Remove Space from number";
                                                 }
                                                 return null;
                                               },
@@ -859,46 +872,66 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                 data: MyTheme.buttonStyleTheme,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    final additionalInfoProvider =
-                                        Provider.of<AdditionalInfoProvider>(
-                                            context,
-                                            listen: false);
+                                    final additionalInfoProvider = Provider.of<AdditionalInfoProvider>(context,listen: false);
 
                                     // Check if there are selected options requiring validation
-                                    if (additionalInfoProvider
-                                        .selectedInfo.isNotEmpty) {
-                                      if (formkey.currentState?.validate() ??
-                                          false) {
+                                    if (additionalInfoProvider.selectedInfo.isNotEmpty) {
+                                      if (formkey.currentState?.validate() ??false) {
                                         // Save valid input data
                                         formkey.currentState!.save();
 
-                                        final memberDetails =
-                                            getMemberDetails();
-                                        log('Member Details: $memberDetails');
-                                        final amount = _amount;
-                                        log('amount: $amount');
+                                        if (areAllFieldsFilled()) {
+                                          // final loandetails =getProperyLoandet();
+                                          // log('Property Details: $loandetails');
+
+                                          // final mssbonddet = getMssNo();
+                                          // log('Mssbond Details: $mssbonddet');
+
+                                          // final fdloandet = getFdloanNo();
+                                          // log('Fdloan Details: $fdloandet');
+                                          final memberDetails =getMemberDetails();
+                                          log('Member Details: $memberDetails');
+
+                                          final amount = _amount;
+                                          log('amount: $amount');
+                                            //final loanbond_Det=Loanandbonddet(propertyLoan: loandetails,)
+                                           loanbonddet = {
+                                              'property_loan': getProperyLoandet(), // Property loan details
+                                              'mss_bond': getMssNo(),          // MSS bond details
+                                              'fdloan': getFdloanNo(),        // FD loan details
+                                            };
+
+                                            log('Loan and Bond Details: $loanbonddet');
+
+                                          if (memberDetails.isEmpty && amount.isEmpty && loanbonddet.isEmpty) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(content: Text('Please fill all mandatory fields')),
+                                            );
+                                          } else {
+                                            getNextQue(context, proceednxt,memberDetails, amount,loanbonddet);
+                                          }
+                                        } else {
+                                          // Show an error message if validation fails
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text('Please fill all mandatory fields')),
+                                          );
+                                        }
+                                        ;
 
                                         // Proceed to the next question
-                                        getNextQue(context, proceednxt,
-                                            memberDetails, amount);
                                       } else {
                                         // Show an error message if validation fails
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                              content: Text(
-                                                  'Please fill all mandatory fields')),
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Please fill all mandatory fields')),
                                         );
                                       }
                                     } else {
                                       // No additional input required; proceed to the next question
-                                      getNextQue(context, proceednxt, [], '');
+                                      getNextQue(context, proceednxt, [], '',{});
                                     }
                                   },
-                                  child: Text(
-                                    'NEXT',
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
+                                  child: Text('NEXT',
+                                    style:Theme.of(context).textTheme.titleMedium,
                                   ),
                                 ),
                               ),
@@ -910,11 +943,9 @@ class _ScreenQueryState extends State<ScreenQuery> {
                             //   child: CircularProgressIndicator(),
                             // )),
                             FutureBuilder(
-                              future: Future.delayed(const Duration(
-                                  minutes: 1)), // Add a delay of 5 seconds
+                              future: Future.delayed(const Duration(minutes: 1)), // Add a delay of 5 seconds
                               builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
+                                if (snapshot.connectionState ==ConnectionState.waiting) {
                                   return const Center(
                                     child: Padding(
                                       padding: EdgeInsets.only(top: 150.0),
@@ -925,36 +956,24 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                   // After 5 seconds, show the No Data Found image
                                   return Center(
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment:MainAxisAlignment.center,
                                       children: [
-                                        const SizedBox(
-                                          height: 60,
-                                        ),
+                                        const SizedBox(height: 60,),
                                         Image.asset(
                                           'assets/errror/no_data_found.png', // Path to your No Data Found image
                                           height: 150,
                                           width: 150,
                                         ),
-                                        Text('Something Went Wrong',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge),
-                                        Text('Retry',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge),
+                                        Text('Something Went Wrong',style: Theme.of(context).textTheme.bodyLarge),
+                                        Text('Retry',style: Theme.of(context).textTheme.bodyLarge),
                                         IconButton(
                                             onPressed: () {
-                                              getStartquestion(
-                                                  doublelat, doublelong);
+                                              getStartquestion(doublelat, doublelong);
                                             },
                                             icon: Icon(
                                               Icons.restart_alt,
                                               size: 45,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
+                                              color: Theme.of(context).colorScheme.primary,
                                             ))
                                       ],
                                     ),
@@ -975,16 +994,68 @@ class _ScreenQueryState extends State<ScreenQuery> {
     );
   }
 
-  getNextQue(BuildContext context, String type,
-      List<Map<String, String>> memdet, String? amnt) {
+  bool areAllFieldsFilled() {
+    // Check if all property loan fields are filled
+    for (var loanDetail in _propertyLoanDetails) {
+      if (loanDetail['loanno']!.text.isEmpty ||loanDetail['loanno']!.text.contains(' ')) {
+        return false;
+      }
+    }
+
+    // Check if all MSS Bond fields are filled
+    for (var bondDetail in _mssBondDetails) {
+      if (bondDetail['mssno']!.text.isEmpty ||bondDetail['mssno']!.text.contains(' ')) {
+        return false;
+      }
+    }
+
+    // Check if all FD Loan fields are filled
+    for (var fdDetail in _fdloanDetails) {
+      if (fdDetail['fdloanno']!.text.isEmpty ||fdDetail['fdloanno']!.text.contains(' ')) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  Widget buildTextFieldContainer({
+    //String? title,
+
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    String? Function(String?)? validator, // For custom validation rules
+    Function(String)? onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Text(
+        //   title??'',
+        //   style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.primary,),
+        // ),
+        TextInputfield(
+          label: label,
+          hint: hint,
+          inputType: TextInputType.text,
+          inputAction: TextInputAction.next,
+          cmncontroller: controller,
+          onChanged: onChanged,
+          validator: validator,
+        ),
+      ],
+    );
+  }
+
+  getNextQue(BuildContext context, String type,List<Map<String, String>> memdet, String? amnt,Map<String, List<Map<String, String>>> loanbond) {
     Livelocationfun.instance.startTracking(
       context: context,
       onLocationUpdate: (position) {
         setState(() {
           doublelat = position.latitude;
           doublelong = position.longitude;
-          locationMessage =
-              'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+          locationMessage ='Latitude: ${position.latitude}, Longitude: ${position.longitude}';
           log('query screen updateque:$locationMessage');
         });
         //getStartquestion(doublelat,doublelong);
@@ -992,8 +1063,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
     );
     String selectedValue = selectedFormatNotifier.value;
     if (doublelat != 0 && doublelong != 0) {
-      fieldList.add(AdditionalField(
-          mname: mname, memno: mnum, amount: amnt, memdet: memdet));
+      fieldList.add(AdditionalField(mname: mname, memno: mnum, amount: amnt, memdet: memdet));
       if (type == skipnxt) {
         skip = true;
 
@@ -1028,7 +1098,8 @@ class _ScreenQueryState extends State<ScreenQuery> {
                 longitude: doublelong,
                 skip: skip,
                 memberdet: memdet,
-                amount: amnt);
+                amount: amnt,
+                loanbond: loanbond);
 
             confrmBox(context, queReq);
           } else {
@@ -1046,16 +1117,12 @@ class _ScreenQueryState extends State<ScreenQuery> {
           print("Failed to parse coordinates: $e");
         }
       } else if (type == cmpltdNxt) {
-        Provider.of<AdditionalInfoProvider>(context, listen: false)
-            .clearSelectedInfo();
-        SocietyListFunctions.instance
-            .getSocietyList(doublelat, doublelong, context);
+        Provider.of<AdditionalInfoProvider>(context, listen: false).clearSelectedInfo();
+        SocietyListFunctions.instance.getSocietyList(doublelat, doublelong, context);
         selectedFormatNotifier.value = '';
         selectedItems.value = {0};
 
-        Navigator.pushAndRemoveUntil(
-          context,
-          Approutes().assignedscreen,
+        Navigator.pushAndRemoveUntil(context, Approutes().assignedscreen,
           (Route<dynamic> route) => false, // Remove all previous routes
         );
       }
@@ -1095,15 +1162,11 @@ class _ScreenQueryState extends State<ScreenQuery> {
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                 ),
                 onPressed: () {
-                  Provider.of<AdditionalInfoProvider>(context, listen: false)
-                      .clearSelectedInfo();
+                  Provider.of<AdditionalInfoProvider>(context, listen: false).clearSelectedInfo();
                   selectedFormatNotifier.value = '';
                   selectedItems.value = {0};
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    Approutes().assignedscreen,
-                    (Route<dynamic> route) =>
-                        false, // Remove all previous routes
+                  Navigator.pushAndRemoveUntil(context,Approutes().assignedscreen,
+                    (Route<dynamic> route) =>false, // Remove all previous routes
                   );
                 },
                 child: Text('YES',
@@ -1135,14 +1198,14 @@ class _ScreenQueryState extends State<ScreenQuery> {
                       backgroundColor: Theme.of(context).colorScheme.secondary,
                     ),
                     onPressed: () async {
-                      Provider.of<AdditionalInfoProvider>(context,
-                              listen: false)
-                          .clearSelectedInfo();
+                      Provider.of<AdditionalInfoProvider>(context,listen: false).clearSelectedInfo();
 
-                      questval = await QuestionsFunctions.instance
-                          .fetchQueUpdt(val, context);
-                      _namecontroller.clear();
+                      questval = await QuestionsFunctions.instance.fetchQueUpdt(val, context);
+                      _amountcontroller.clear();
                       _nocontroller.clear();
+                      _amount = '';
+                      _memberDetails = [];
+                      loanbonddet={};
                       if (questval == null || questval == []) {
                         Fluttertoast.showToast(
                             msg: "No Data Found",
@@ -1162,8 +1225,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                           if (!context.mounted) return;
 
                           queSubmit(context);
-                        } else if (questval?.single.questatus ==
-                            'PARTIALLY_COMPLETED') {
+                        } else if (questval?.single.questatus =='PARTIALLY_COMPLETED') {
                           final status = questval!.single.questatus;
                           log('$status');
                           if (!context.mounted) return;
@@ -1224,13 +1286,11 @@ class _ScreenQueryState extends State<ScreenQuery> {
                       backgroundColor: Theme.of(context).colorScheme.secondary,
                     ),
                     onPressed: () async {
-                      Provider.of<AdditionalInfoProvider>(context,
-                              listen: false)
-                          .clearSelectedInfo();
+                      Provider.of<AdditionalInfoProvider>(context,listen: false).clearSelectedInfo();
 
                       try {
-                        questval = await QuestionsFunctions.instance
-                            .fetchQueUpdt(val, context);
+                        questval = await QuestionsFunctions.instance.fetchQueUpdt(val, context);
+                        _amount = '';
                         if (questval == null || questval == []) {
                           Fluttertoast.showToast(
                               msg: "No Data Found",
@@ -1244,8 +1304,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                           if (!context.mounted) return;
                           selectedFormatNotifier.value = '';
                           queSubmit(context);
-                        } else if (questval?.single.questatus ==
-                            'PARTIALLY_COMPLETED') {
+                        } else if (questval?.single.questatus =='PARTIALLY_COMPLETED') {
                           if (!context.mounted) return;
                           selectedFormatNotifier.value = '';
                           partialComp(context);
@@ -1296,7 +1355,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                   data: MyTheme.buttonStyleTheme,
                   child: ElevatedButton(
                     onPressed: () async {
-                      getNextQue(context, cmpltdNxt, [], '');
+                      getNextQue(context, cmpltdNxt, [], '',{});
                     },
                     child: Text(
                       'Submit',
@@ -1316,8 +1375,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
           child: AlertDialog(
             backgroundColor: Theme.of(context).colorScheme.primaryFixed,
             title: Center(
-                child: Text(
-                    "Inspection not completed,Please answer all questions",
+                child: Text("Inspection not completed,Please answer all questions",
                     style: Theme.of(context).textTheme.displaySmall)),
             actions: [
               Container(
@@ -1338,8 +1396,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                   data: MyTheme.buttonStyleTheme,
                   child: ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      'OK',
+                    child: Text('OK',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),

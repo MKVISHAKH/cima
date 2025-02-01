@@ -25,6 +25,15 @@ QuestionReq _$QuestionReqFromJson(Map<String, dynamic> json) => QuestionReq(
               .toList() ??
           const [],
       amount: json['amount'] as String?,
+      loanbond: (json['loanbond_details'] as Map<String, dynamic>?)?.map(
+            (key, value) => MapEntry(
+              key,
+              (value as List<dynamic>)
+                  .map((e) => Map<String, String>.from(e as Map<String, dynamic>))
+                  .toList(),
+            ),
+          ) ??
+          {},
     );
 
 Map<String, dynamic> _$QuestionReqToJson(QuestionReq instance) =>
@@ -42,4 +51,5 @@ Map<String, dynamic> _$QuestionReqToJson(QuestionReq instance) =>
       'addField': instance.addField,
       'mem_details': instance.memberdet,
       'amount': instance.amount,
+      'loanbond_details': instance.loanbond
     };

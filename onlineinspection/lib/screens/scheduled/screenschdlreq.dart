@@ -604,11 +604,10 @@ class _ScreenSchdlReqState extends State<ScreenSchdlReq> {
             fontSize: 15.0);
         if (!context.mounted) return;
 
-       SchedulelistFun.instance.getScheduleList(context);
+        SchedulelistFun.instance.getScheduleList(context);
 
         if (!context.mounted) return;
-        Navigator.pushReplacement(
-            context, Approutes().schdleTabScreen);
+        Navigator.pushReplacement(context, Approutes().schdleTabScreen);
 
         //showLoginerror(_scaffoldKey.currentContext!);
       } else if (loginval.status == 'failure') {

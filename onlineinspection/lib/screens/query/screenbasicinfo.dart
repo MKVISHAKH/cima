@@ -128,7 +128,7 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
                                 ),
                                 child: ListTile(
                                   title: Text(
-                                    society.socName ?? 'User',
+                                    society.socName ?? '',
                                     style:
                                         Theme.of(context).textTheme.labelMedium,
                                   ),
@@ -138,25 +138,25 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
                                     children: [
                                       const SizedBox(height: 10),
                                       Text(
-                                        'Branch: ${society.branchName ?? 'Branch'}',
+                                        'Branch: ${society.branchName ?? ''}',
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall,
                                       ),
                                       Text(
-                                        'Reg.No: ${society.regNo ?? 'RegNo'}',
+                                        'Reg.No: ${society.regNo ?? ''}',
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall,
                                       ),
                                       Text(
-                                        'Circle/District: ${society.circleName ?? 'circle'}/${society.districtName ?? 'dist'}',
+                                        'Circle/District: ${society.circleName ?? ''}/${society.districtName ?? ''}',
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall,
                                       ),
                                       Text(
-                                        'Class(Rule 182): ${society.socClass ?? 'class'}',
+                                        'Class(Rule 182): ${society.socClass ?? ''}',
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall,

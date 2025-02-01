@@ -2,8 +2,10 @@ import 'dart:developer';
 import 'package:onlineinspection/core/hook/hook.dart';
 
 class ScreenAddLocation extends StatefulWidget {
-  const ScreenAddLocation({super.key,});
-  
+  const ScreenAddLocation({
+    super.key,
+  });
+
   @override
   State<ScreenAddLocation> createState() => _ScreenAddLocationState();
 }
@@ -26,8 +28,8 @@ class _ScreenAddLocationState extends State<ScreenAddLocation> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-     // fetchSociety();
-      
+      // fetchSociety();
+
       Livelocationfun.instance.startTracking(
           context: context,
           onLocationUpdate: (position) {
@@ -42,34 +44,6 @@ class _ScreenAddLocationState extends State<ScreenAddLocation> {
     });
     //fetchBusregistraionList();
   }
-
-  // fetchSociety() async {
-  //   soclist = await SocietyListFunctions.instance.getSocietyUser(context);
-
-  //   setState(() {
-  //     societylst = soclist!.map((bus) {
-  //       String societyname = bus.societyName ?? "";
-  //       return {
-  //         'socid': bus.socId!, // routeId as int
-  //         'socname': societyname, // Display label
-  //       };
-  //     }).toList();
-  //   });
-  // }
-
-  // fetchbranch(int? socid, BuildContext context) async {
-  //   //print(socid);
-  //   branchlst = await SocietyListFunctions.instance.fetchBranch(socid, context);
-  //   setState(() {
-  //     branchlist = branchlst!.map((branch) {
-  //       String branchname = branch.branchName ?? "";
-  //       return {
-  //         'branch_id': branch.branchId!, // routeId as int
-  //         'branch_name': branchname, // Display label
-  //       };
-  //     }).toList();
-  //   });
-  // }
 
   Future<bool?> popscreen(BuildContext context) async {
     Navigator.push(context, Approutes().homescreen);
@@ -107,12 +81,12 @@ class _ScreenAddLocationState extends State<ScreenAddLocation> {
                   ),
                   title: Text(
                     "Map Geolocation",
-                    style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary),
                   )),
               body: Column(
                 children: [
-                 // inputfiledDisplay(),
+                  // inputfiledDisplay(),
                   Expanded(child: ScrollableWidget(child: buildScheduledTab())),
                 ],
               )),
@@ -379,12 +353,8 @@ class _ScreenAddLocationState extends State<ScreenAddLocation> {
                     headingRowHeight: 35,
                     headingRowColor:
                         WidgetStateProperty.all(const Color(0xff1569C7)),
-                    columns: getColumns(columns = [
-                      'SI.No',
-                      'Society Name',
-                      'Branch',
-                      ''
-                    ]),
+                    columns: getColumns(
+                        columns = ['SI.No', 'Society Name', 'Branch', '']),
                     rows: getRows(newList),
                   ),
                 ),
@@ -488,19 +458,21 @@ class _ScreenAddLocationState extends State<ScreenAddLocation> {
                 child: ElevatedButton(
                   onPressed: () async {
                     // final inspId = task.inspId;
-                      addGeoloc(task, context);
+                    addGeoloc(task, context);
                     // openFile(task,context);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      
                       Text(
                         'MAP',
                         style: Theme.of(context).textTheme.displayMedium,
                       ),
-                    
-                      const Icon(Icons.location_on_sharp,size: 20,color: Colors.white,),
+                      const Icon(
+                        Icons.location_on_sharp,
+                        size: 20,
+                        color: Colors.white,
+                      ),
                     ],
                   ),
                 ),
@@ -512,7 +484,7 @@ class _ScreenAddLocationState extends State<ScreenAddLocation> {
     }).toList();
   }
 
-  addGeoloc(DatumValue task,BuildContext context) async {
+  addGeoloc(DatumValue task, BuildContext context) async {
     if (doublelat != 0 && doublelong != 0) {
       final userval = await SharedPrefManager.instance.getSharedData();
 
@@ -523,9 +495,8 @@ class _ScreenAddLocationState extends State<ScreenAddLocation> {
         lattitude: doublelat,
         longitude: doublelong,
       );
-        if (!context.mounted) return;
-      Livelocationfun.instance.updateLocation(locReq, context,scAddLoc);
-      
+      if (!context.mounted) return;
+      Livelocationfun.instance.updateLocation(locReq, context, scAddLoc);
     } else {
       Livelocationfun.instance.startTracking(
         context: context,

@@ -418,8 +418,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
         /**************************/
         if (!context.mounted) return;
 
-        Navigator.pushReplacement(
-            context, Approutes().homescreen);
+        Navigator.pushReplacement(context, Approutes().homescreen);
 
         //showLoginerror(_scaffoldKey.currentContext!);
       } else if (loginval.status == 'failure') {

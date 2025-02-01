@@ -25,6 +25,8 @@ class QuestionReq {
   @JsonKey(name: 'mem_details')
   List<Map<String, String>> memberdet;
   String? amount;
+  @JsonKey(name: 'loanbond_details')
+  Map<String, List<Map<String, String>>>? loanbond;
 
   QuestionReq(
       {this.inspectionId,
@@ -39,7 +41,8 @@ class QuestionReq {
       this.skip,
       this.addField,
       this.memberdet = const [],
-      this.amount});
+      this.amount,
+      this.loanbond});
 
   factory QuestionReq.fromJson(Map<String, dynamic> json) {
     return _$QuestionReqFromJson(json);

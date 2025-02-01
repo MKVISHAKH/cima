@@ -1,6 +1,4 @@
 import 'package:onlineinspection/core/hook/hook.dart';
-import 'package:onlineinspection/model/query/questions/questionresp/additional_info.dart';
-import 'package:onlineinspection/provider/additional_info/additional_info_provider.dart';
 
 ValueNotifier<String> selectedFormatNotifier = ValueNotifier<String>('');
 

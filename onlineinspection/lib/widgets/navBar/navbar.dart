@@ -68,10 +68,12 @@ class _NavbarState extends State<Navbar> {
                 '$usrNm',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleMedium,
+                textScaler: TextScaler.noScaling,
               ),
               accountEmail: Text(
                 'PEN No: $pen',
                 style: Theme.of(context).textTheme.labelMedium,
+                textScaler: TextScaler.noScaling,
               ),
               // currentAccountPicture: CircleAvatar(
               //   child: ClipOval(
@@ -124,11 +126,15 @@ class _NavbarState extends State<Navbar> {
             //       Navigator.push(context, Approutes().changeMobScreen);
             //     }),
             ListTile(
-                leading:const Icon(Icons.location_on_sharp,size: 20,color: Colors.white,),
-
+                leading: const Icon(
+                  Icons.location_on_sharp,
+                  size: 20,
+                  color: Colors.white,
+                ),
                 title: Text(
                   "Location Mapping",
                   style: Theme.of(context).textTheme.displaySmall,
+                  textScaler: TextScaler.noScaling,
                 ),
                 onTap: () {
                   Livelocationfun.instance.locationUpdtLst(context);
@@ -136,12 +142,13 @@ class _NavbarState extends State<Navbar> {
                 }),
             ListTile(
                 leading: const Icon(
-                  Icons.lock,size: 20,color: Colors.white,
+                  Icons.lock, size: 20, color: Colors.white,
                   //color: Appcolors.labelclr,
                 ),
                 title: Text(
                   "Change Password",
                   style: Theme.of(context).textTheme.displaySmall,
+                  textScaler: TextScaler.noScaling,
                 ),
                 onTap: () {
                   Navigator.push(context, Approutes().changepswrdScreen);
@@ -151,12 +158,13 @@ class _NavbarState extends State<Navbar> {
             ),
             ListTile(
                 leading: const Icon(
-                  Icons.logout_outlined,size: 20,color: Colors.white,
+                  Icons.logout_outlined, size: 20, color: Colors.white,
                   //color: Appcolors.labelclr,
                 ),
                 title: Text(
                   "Sign Out",
                   style: Theme.of(context).textTheme.displaySmall,
+                  textScaler: TextScaler.noScaling,
                 ),
                 onTap: () {
                   signout(context);

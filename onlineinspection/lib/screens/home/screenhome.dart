@@ -131,8 +131,8 @@ class _ScreenhomeState extends State<Screenhome> {
                   ),
                   Positioned(
                     top: MediaQuery.of(context).size.height * 0.14,
-                    left: MediaQuery.of(context).size.width * 0.1,
-                    right: MediaQuery.of(context).size.width * 0.1,
+                    left: MediaQuery.of(context).size.width * 0.04,
+                    right: MediaQuery.of(context).size.width * 0.04,
                     child: Container(
                       height: 40,
                       alignment: Alignment.center,
@@ -148,12 +148,13 @@ class _ScreenhomeState extends State<Screenhome> {
                         ],
                       ),
                       child: Text(
-                        "CO-OPERATIVE INSPECTION APP", // Replace with your dynamic name
+                        "CO-OPERATIVE INSPECTION MOBILE APP", // Replace with your dynamic name
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).colorScheme.primary,
                         ),
+                        textScaler: TextScaler.noScaling,
                       ),
                     ),
                   ),
@@ -269,6 +270,7 @@ class _ScreenhomeState extends State<Screenhome> {
                                               color: Colors.black,
                                               fontSize: 16,
                                               fontFamily: 'Poppins-Medium'),
+                                          textScaler: TextScaler.noScaling,
                                         ),
                                       ],
                                     ),
@@ -279,7 +281,8 @@ class _ScreenhomeState extends State<Screenhome> {
                                       .colorScheme
                                       .secondaryFixed,
                                   onTap: () {
-                                    SchedulelistFun.instance.getScheduleList(context);
+                                    SchedulelistFun.instance
+                                        .getScheduleList(context);
                                     Navigator.pushReplacement(
                                         context, Approutes().scheduleScreen);
                                   },
@@ -303,11 +306,14 @@ class _ScreenhomeState extends State<Screenhome> {
                                             height: 60,
                                           ),
                                         ),
-                                        const Text('My Schedule',
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                fontFamily: 'Poppins-Medium')),
+                                        const Text(
+                                          'My Schedule',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                              fontFamily: 'Poppins-Medium'),
+                                          textScaler: TextScaler.noScaling,
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -317,7 +323,8 @@ class _ScreenhomeState extends State<Screenhome> {
                                       .colorScheme
                                       .secondaryFixed,
                                   onTap: () {
-                                    SchedulelistFun.instance.getSchdlcmpltLst(context);
+                                    SchedulelistFun.instance
+                                        .getSchdlcmpltLst(context);
                                     Navigator.pushReplacement(
                                         context, Approutes().cmpltRprtScreen);
                                   },
@@ -341,11 +348,14 @@ class _ScreenhomeState extends State<Screenhome> {
                                             height: 60,
                                           ),
                                         ),
-                                        const Text('Reports',
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                fontFamily: 'Poppins-Medium')),
+                                        const Text(
+                                          'Reports',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                              fontFamily: 'Poppins-Medium'),
+                                          textScaler: TextScaler.noScaling,
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -380,11 +390,14 @@ class _ScreenhomeState extends State<Screenhome> {
                                             height: 60,
                                           ),
                                         ),
-                                        const Text('Actions',
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                fontFamily: 'Poppins-Medium')),
+                                        const Text(
+                                          'Actions',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 16,
+                                              fontFamily: 'Poppins-Medium'),
+                                          textScaler: TextScaler.noScaling,
+                                        ),
                                       ],
                                     ),
                                   ),
