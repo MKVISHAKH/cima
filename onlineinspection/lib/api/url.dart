@@ -32,4 +32,6 @@ class Url {
   String rschdlReqUrl = '/api/v1/schedule/resform';
   String loctnupdtLstUrl = '/api/v1/societies/location/update/list';
   String loctnUpdtUrl = '/api/v1/societies/location/update';
+  String deviceInfoUrl ='/api/v1/deviceinfo';
+  String dashboardUrl ='/api/v1/dashboard';
 }

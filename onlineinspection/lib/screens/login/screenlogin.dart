@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:onlineinspection/core/hook/hook.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -380,11 +381,31 @@ class _ScreenLoginState extends State<ScreenLogin> {
   Future getlogin(BuildContext context) async {
     try {
       final loadingProvider = context.read<LoadingProvider>();
-
+      FirebaseMessaging messaging=FirebaseMessaging.instance;
+      String? deviceTkn;
       loadingProvider.toggleLoading();
+    final value = await SharedPrefManager.instance.getdeviceinfo();
+    final val = await SharedPrefManager.instance.getdeviceTkn();
+    final tkn=val.devicetoken;
+    if((tkn??"").isEmpty){
+    String? token=await messaging.getToken();
+        deviceTkn=token;
+    }else{
+      deviceTkn=val.devicetoken;
+    }
       final username = _usercontroller.text;
       final password = _passcontroller.text;
-      final logreq = Loginreq(pen: username, password: password);
+      final logreq = Loginreq(
+        pen: username,
+       password: password,
+       phone: value.phone,
+       deviceid: value.deviceid,
+       devicetoken: deviceTkn,
+       phoneos: value.phoneos,
+       androidid: value.androidid,
+       appversion: value.appversion,
+       buildnumber: value.buildnumber
+       );
 
       final loginResponse = await Ciadata().login(logreq);
       final resultAsjson = jsonDecode(loginResponse.toString());
@@ -412,8 +433,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
             roleName: loginval.data!.roleName,
             active: loginval.data!.active,
             accesstoken: loginval.data!.accessToken);
-        addLoginShareddata(sharedPrefLogin);
+       // addLoginShareddata(sharedPrefLogin);
         /*wklycollection function */
+    await SharedPrefManager.instance.addSharedData(sharedPrefLogin);
 
         /**************************/
         if (!context.mounted) return;
@@ -451,7 +473,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
     }
   }
 
-  addLoginShareddata(Sharedpref value) async {
-    await SharedPrefManager.instance.addSharedData(value);
-  }
+  // addLoginShareddata(Sharedpref value) async {
+  //   await SharedPrefManager.instance.addSharedData(value);
+  // }
 }

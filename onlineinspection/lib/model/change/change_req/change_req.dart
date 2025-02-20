@@ -6,7 +6,7 @@ part 'change_req.g.dart';
 class ChangeReq {
   String? pen;
   @JsonKey(name: 'user_id')
-  String? userId;
+  dynamic userId;
   @JsonKey(name: 'ref_id')
   int? refId;
   String? otp;

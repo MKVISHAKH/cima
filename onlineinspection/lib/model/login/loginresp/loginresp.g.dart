@@ -10,7 +10,7 @@ Loginresp _$LoginrespFromJson(Map<String, dynamic> json) => Loginresp(
       status: json['status'] as String?,
       data: json['data'] == null
           ? null
-          : Data.fromJson(json['data'] as Map<String, dynamic>),
+          : DataCount.fromJson(json['data'] as Map<String, dynamic>),
       message: json['message'] as String?,
     );
 

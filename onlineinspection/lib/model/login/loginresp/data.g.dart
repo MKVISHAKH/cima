@@ -6,9 +6,11 @@ part of 'data.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Data _$DataFromJson(Map<String, dynamic> json) => Data(
+DataCount _$DataCountFromJson(Map<String, dynamic> json) => DataCount(
       userId: (json['user_id'] as num?)?.toInt(),
       pen: (json['pen'] as num?)?.toInt(),
+      inspectionCount: (json['inspections'] as num?)?.toInt(),
+      scheduleCount: (json['schedules'] as num?)?.toInt(),
       name: json['name'] as String?,
       mobile: json['mobile'] as String?,
       email: json['email'] as String?,
@@ -33,9 +35,11 @@ Data _$DataFromJson(Map<String, dynamic> json) => Data(
       accessToken: json['access_token'] as String?,
     );
 
-Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
+Map<String, dynamic> _$DataCountToJson(DataCount instance) => <String, dynamic>{
       'user_id': instance.userId,
       'pen': instance.pen,
+      'inspections':instance.inspectionCount,
+      'schedules':instance.scheduleCount,
       'name': instance.name,
       'mobile': instance.mobile,
       'email': instance.email,

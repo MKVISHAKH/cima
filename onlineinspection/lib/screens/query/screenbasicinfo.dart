@@ -29,7 +29,7 @@ class _ScreenBasicInfoState extends State<ScreenBasicInfo> {
 
   Future<void> getShareddata() async {
     final sharedValue = await SharedPrefManager.instance.getSharedData();
-    usrName = sharedValue?.name?.toUpperCase() ?? 'User';
+    usrName = sharedValue?.name?.toUpperCase() ?? '';
   }
 
   List<int> getSelectedActivityIds() {

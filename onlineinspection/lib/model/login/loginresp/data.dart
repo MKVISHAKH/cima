@@ -3,10 +3,12 @@ import 'package:json_annotation/json_annotation.dart';
 part 'data.g.dart';
 
 @JsonSerializable()
-class Data {
+class DataCount {
   @JsonKey(name: 'user_id')
   int? userId;
   int? pen;
+  int? inspectionCount;
+  int? scheduleCount;
   String? name;
   String? mobile;
   String? email;
@@ -40,9 +42,11 @@ class Data {
   @JsonKey(name: 'access_token')
   String? accessToken;
 
-  Data({
+  DataCount({
     this.userId,
     this.pen,
+    this.inspectionCount,
+    this.scheduleCount,
     this.name,
     this.mobile,
     this.email,
@@ -63,7 +67,7 @@ class Data {
     this.accessToken,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
+  factory DataCount.fromJson(Map<String, dynamic> json) => _$DataCountFromJson(json);
 
-  Map<String, dynamic> toJson() => _$DataToJson(this);
+  Map<String, dynamic> toJson() => _$DataCountToJson(this);
 }

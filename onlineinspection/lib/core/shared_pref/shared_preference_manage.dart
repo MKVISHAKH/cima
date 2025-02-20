@@ -120,11 +120,15 @@ class SharedPrefManager {
     await sharedprefes.setBool(savedeviceinfo, true);
     await sharedprefes.setString('DEVICE', value.phone ?? '');
     await sharedprefes.setString('DEVICEOS', value.phoneos ?? '');
-    await sharedprefes.setString(
-        'SCREENRESOLUTION', value.screenresolution ?? '');
+    await sharedprefes.setString('DEVICEID', value.deviceid ?? '');
+    // await sharedprefes.setString('DEVICETOKEN', value.devicetoken ?? '');
+    await sharedprefes.setString('PLATFORMID', value.androidid ?? '');
+    await sharedprefes.setString('SCREENRESOLUTION', value.screenresolution ?? '');
     await sharedprefes.setString('DEVICEVERSION', value.osversion ?? '');
     await sharedprefes.setString('PACKAGENAME', value.packagename ?? '');
     await sharedprefes.setString('APPVERSION', value.appversion ?? '');
+    await sharedprefes.setString('BUILDNUMBER', value.buildnumber ?? '');
+
   }
 
   Future<Deviceinfo> getdeviceinfo() async {
@@ -133,19 +137,42 @@ class SharedPrefManager {
     log('$checkValue');
     final device = sharedprefs.getString('DEVICE') ?? '';
     final deviceos = sharedprefs.getString('DEVICEOS') ?? '';
+    final deviceid = sharedprefs.getString('DEVICEID') ?? '';
+    // final devicetkn = sharedprefs.getString('DEVICETOKEN') ?? '';
+    final platformid = sharedprefs.getString('PLATFORMID') ?? '';
     final screenres = sharedprefs.getString('SCREENRESOLUTION') ?? '';
     final deviceversion = sharedprefs.getString('DEVICEVERSION') ?? '';
     final packagename = sharedprefs.getString('PACKAGENAME') ?? '';
     final appversion = sharedprefs.getString('APPVERSION') ?? '';
-
+    final buildno = sharedprefs.getString('BUILDNUMBER') ?? '';
+    
     final infoshared = Deviceinfo(
         phone: device,
         phoneos: deviceos,
+        deviceid: deviceid,
+        // devicetoken: devicetkn,
+        androidid: platformid,
         screenresolution: screenres,
         osversion: deviceversion,
         packagename: packagename,
-        appversion: appversion);
+        appversion: appversion,
+        buildnumber: buildno);
 
     return infoshared;
+  }
+
+  Future<void> setdeviceTkn(Deviceinfo value) async {
+    final sharedprefes = await SharedPreferences.getInstance();
+    await sharedprefes.setBool(savedevicetkn, true);
+    await sharedprefes.setString('DEVICETOKEN', value.devicetoken ?? '');
+  }
+
+  Future<Deviceinfo> getdeviceTkn() async {
+    final sharedprefs = await SharedPreferences.getInstance();
+    final devicetkn = sharedprefs.getString('DEVICETOKEN') ?? '';   
+    final tkn = Deviceinfo(
+        devicetoken: devicetkn,
+      );
+    return tkn;
   }
 }

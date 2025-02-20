@@ -7,7 +7,7 @@ part 'loginresp.g.dart';
 @JsonSerializable()
 class Loginresp {
   String? status;
-  Data? data;
+  DataCount? data;
   String? message;
 
   Loginresp({this.status, this.data, this.message});

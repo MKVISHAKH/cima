@@ -35,7 +35,7 @@ DatumVal _$DatumValFromJson(Map<String, dynamic> json) => DatumVal(
       sno: (json['sno'] as num?)?.toInt(),
       noticeId: (json['notice_id'] as num?)?.toInt(),
       reason: json['reason'] as String?,
-      notice: (json['notice'] as List<dynamic>?)
+      notice: (json['notices'] as List<dynamic>?)
               ?.map((e) => Notice.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
@@ -71,6 +71,6 @@ Map<String, dynamic> _$DatumValToJson(DatumVal instance) => <String, dynamic>{
       'sno': instance.sno,
       'notice_id': instance.noticeId,
       'reason': instance.reason,
-      'notice': instance.notice,
+      'notices': instance.notice,
       'geo_location_update': instance.geoLocationupdt,
     };

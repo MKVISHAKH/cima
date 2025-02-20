@@ -300,7 +300,7 @@ class _ScreenScheduledState extends State<ScreenScheduled> {
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.red[600]))),
-                    SizedBox(
+                  const  SizedBox(
                       height: 10,
                     ),
                     Center(

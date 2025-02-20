@@ -10,7 +10,7 @@ ChangeReq _$ChangeReqFromJson(Map<String, dynamic> json) => ChangeReq(
       pen: json['pen'] as String?,
       refId: (json['ref_id'] as num?)?.toInt(),
       otp: json['otp'] as String?,
-      userId: json['user_id'] as String?,
+      userId: json['user_id'] as dynamic,
       password: json['password'] as String?,
       newPassword: json['new_password'] as String?,
       retypePassword: json['retype_password'] as String?,

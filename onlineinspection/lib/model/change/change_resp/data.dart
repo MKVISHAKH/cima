@@ -26,7 +26,7 @@ class Data {
   @JsonKey(name: 'created_by')
   String? createdBy;
   @JsonKey(name: 'updated_by')
-  String? updatedBy;
+  dynamic updatedBy;
   @JsonKey(name: 'created_at')
   DateTime? createdAt;
   @JsonKey(name: 'updated_at')

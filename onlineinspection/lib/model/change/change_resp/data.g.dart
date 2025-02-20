@@ -20,7 +20,7 @@ Data _$DataFromJson(Map<String, dynamic> json) => Data(
       roleId: (json['role_id'] as num?)?.toInt(),
       active: (json['active'] as num?)?.toInt(),
       createdBy: json['created_by'] as String?,
-      updatedBy: json['updated_by'] as String?,
+      updatedBy: json['updated_by'] as dynamic,
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),

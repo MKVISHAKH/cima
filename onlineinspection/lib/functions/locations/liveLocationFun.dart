@@ -88,7 +88,7 @@ class Livelocationfun {
 
   void _startLocationCheckTimer(BuildContext context) {
     _locationCheckTimer =
-        Timer.periodic(const Duration(seconds: 5), (timer) async {
+        Timer.periodic(const Duration(seconds: 10), (timer) async {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         log("Location service disabled. Stopping stream...");
@@ -96,7 +96,7 @@ class Livelocationfun {
         if (context.mounted) await _showLocationSettingsDialog(context);
       } else if (_positionSubscription == null ||_positionSubscription!.isPaused) {
         log("Restarting location service...");
-            _showErrorToast("Restarting location service...");
+           // _showErrorToast("Restarting location service...");
 
         if (!context.mounted) return;
         _startLiveLocationStream(context, (position) => {});
@@ -249,8 +249,7 @@ class Livelocationfun {
     }
   }
 
-  Future updateLocation(
-      QuestionReq val, BuildContext context, String? screen) async {
+  Future updateLocation(QuestionReq val, BuildContext context, String? screen) async {
     try {
       final loadingProvider = context.read<LoadingProvider>();
       String? message;
@@ -269,7 +268,7 @@ class Livelocationfun {
         CommonFun.instance.showApierror(context, "Something went wrong");
       } else if (loginResponse.statusCode == 200 &&
           loginval.status == 'success') {
-        final msg = loginval.message;
+        //final msg = loginval.message;
         if (!context.mounted) return;
 
         screen == scAddLoc
@@ -284,13 +283,13 @@ class Livelocationfun {
         //     backgroundColor: Colors.black,
         //     textColor: Colors.white,
         //     fontSize: 15.0);
-        CommonFun.instance.showApierror(context, msg);
+        CommonFun.instance.showApierror(context, "Geolocation Updated Successfully");
         //showLoginerror(_scaffoldKey.currentContext!);
       } else if (loginval.status == 'failure') {
-        final msg = loginval.message;
+       // final msg = loginval.message;
 
         if (!context.mounted) return;
-        CommonFun.instance.showApierror(context, msg);
+        CommonFun.instance.showApierror(context, "Could not Update Geolocation");
       } else if (message == 'Unauthenticated' ||
           loginResponse.statusCode == 401) {
         if (!context.mounted) return;

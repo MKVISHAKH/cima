@@ -1,6 +1,9 @@
 import 'dart:developer';
 
 import 'package:onlineinspection/core/hook/hook.dart';
+import 'package:onlineinspection/model/login/loginresp/data.dart';
+
+
 
 class Screenhome extends StatefulWidget {
   const Screenhome({super.key});
@@ -14,6 +17,9 @@ class _ScreenhomeState extends State<Screenhome> {
   Timer? locationTimer;
   double doublelat = 0;
   double doublelong = 0;
+  DataCount? count;
+  int inspcount=0;
+  int schdlcount=0;
   @override
   void initState() {
     super.initState();
@@ -29,8 +35,57 @@ class _ScreenhomeState extends State<Screenhome> {
               log("homescreen init:$locationMessage");
             });
           });
-    });
+          Future.delayed(const Duration(seconds: 2), () {
+              getdashboardcount();
+            });
+          });
+
+
   }
+  getdashboardcount()async{
+   
+   try{
+    final userval = await SharedPrefManager.instance.getSharedData();
+   final dashreq=ChangeReq(userId: userval!.userId);
+    final dashboardresp=await Ciadata().dashboardCount(dashreq);
+    final resultAsjson = jsonDecode(dashboardresp.toString());
+      final dashbrdcount = Loginresp.fromJson(resultAsjson as Map<String, dynamic>);
+        if (dashboardresp == null) {
+          log("Dashboard response is null");
+        } else if(dashbrdcount.status=='success'){
+              count=dashbrdcount.data;
+            if(count==null){
+                  if (mounted) {
+                setState(() {
+                  inspcount=0;
+                  schdlcount=0;
+                });
+              }
+            }else{
+              
+                if (mounted) {
+                setState(() {
+                  inspcount=count!.inspectionCount??0;
+                  schdlcount=count!.scheduleCount??0;
+                });
+              }
+            }       
+        }else if(dashbrdcount.status=='failure'){
+          log("Dashboard response is failure");
+          
+        }else{
+          log("Dashboard response is ${dashboardresp.statusCode}");
+            }
+      }catch(e){
+         if (mounted) {
+                setState(() {
+                  inspcount=0;
+                  schdlcount=0;
+                });
+              }
+          log("Dashboard response is failure");
+      }
+    }
 
   Future<bool?> showWarning(BuildContext context) async => showDialog<bool>(
       barrierDismissible: false,
@@ -188,7 +243,7 @@ class _ScreenhomeState extends State<Screenhome> {
                         //crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(
-                            width: MediaQuery.of(context).size.width / 1.4,
+                            width: MediaQuery.of(context).size.width / 1.3,
                             height: MediaQuery.of(context).size.height / 2.7,
                             child: GridView(
                               physics: const NeverScrollableScrollPhysics(),
@@ -199,124 +254,192 @@ class _ScreenhomeState extends State<Screenhome> {
                                 mainAxisExtent: 120,
                               ),
                               children: [
-                                InkWell(
-                                  splashColor: Theme.of(context)
-                                      .colorScheme
-                                      .secondaryFixed,
-                                  onTap: () async {
-                                    //_startLocationCheckTimer();
-
-                                    if (doublelat != 0 && doublelong != 0) {
-                                      try {
-                                        SocietyListFunctions.instance
-                                            .getSocietyList(
-                                                doublelat, doublelong, context);
-                                        Navigator.pushReplacement(context,
-                                            Approutes().assignedscreen);
-                                      } catch (e) {
-                                        // Handle parsing error, e.g., show a message to the user
-                                        print(
-                                            "Failed to parse coordinates: $e");
-                                      }
-                                    } else {
-                                      // Show an error message if coordinates are unavailable
-                                      Livelocationfun.instance.startTracking(
-                                          context: context,
-                                          onLocationUpdate: (position) {
-                                            setState(() {
-                                              doublelat = position.latitude;
-                                              doublelong = position.longitude;
-                                              locationMessage =
-                                                  'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
-                                              log("homescreen notready:$locationMessage");
-                                            });
-                                          });
-                                      Fluttertoast.showToast(
-                                          msg: "Location are not ready yet.",
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor: Colors.white,
-                                          textColor: Colors.black,
-                                          fontSize: 15.0);
-
-                                      print(
-                                          "Location coordinates are not ready yet.");
-                                    }
-                                  },
-                                  child: Card(
-                                    color: Colors.white,
-                                    elevation: 5,
-                                    margin: const EdgeInsets.all(5),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Image.asset(
-                                            "assets/home/inspection.jpg",
-                                            fit: BoxFit.contain,
-                                            width: 60,
-                                            height: 60,
+                                Stack(
+                                  children: [
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width / 1.4,
+                                      height: MediaQuery.of(context).size.height / 2.7,
+                                      child: InkWell(
+                                        splashColor: Theme.of(context)
+                                            .colorScheme
+                                            .secondaryFixed,
+                                        onTap: () async {
+                                          //_startLocationCheckTimer();
+                                      
+                                          if (doublelat != 0 && doublelong != 0) {
+                                            try {
+                                              SocietyListFunctions.instance
+                                                  .getSocietyList(
+                                                      doublelat, doublelong, context);
+                                              Navigator.pushReplacement(context,
+                                                  Approutes().assignedscreen);
+                                            } catch (e) {
+                                              // Handle parsing error, e.g., show a message to the user
+                                              print(
+                                                  "Failed to parse coordinates: $e");
+                                            }
+                                          } else {
+                                            // Show an error message if coordinates are unavailable
+                                            Livelocationfun.instance.startTracking(
+                                                context: context,
+                                                onLocationUpdate: (position) {
+                                                  setState(() {
+                                                    doublelat = position.latitude;
+                                                    doublelong = position.longitude;
+                                                    locationMessage =
+                                                        'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+                                                    log("homescreen notready:$locationMessage");
+                                                  });
+                                                });
+                                            Fluttertoast.showToast(
+                                                msg: "Location are not ready yet.",
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity.CENTER,
+                                                timeInSecForIosWeb: 1,
+                                                backgroundColor: Colors.white,
+                                                textColor: Colors.black,
+                                                fontSize: 15.0);
+                                      
+                                            print(
+                                                "Location coordinates are not ready yet.");
+                                          }
+                                        },
+                                        child: Card(
+                                          color: Colors.white,
+                                          elevation: 5,
+                                          margin: const EdgeInsets.all(5),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(15),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(10.0),
+                                                child: Image.asset(
+                                                  "assets/home/inspection.jpg",
+                                                  fit: BoxFit.contain,
+                                                  width: 60,
+                                                  height: 60,
+                                                ),
+                                              ),
+                                              const Text(
+                                                "Inspection",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16,
+                                                    fontFamily: 'Poppins-Medium'),
+                                                textScaler: TextScaler.noScaling,
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        const Text(
-                                          "Inspection",
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16,
-                                              fontFamily: 'Poppins-Medium'),
-                                          textScaler: TextScaler.noScaling,
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                     inspcount!=0?   Positioned(
+                                          right: 3,
+                                          top: -1,
+                                          child: Container(
+                                            padding:const EdgeInsets.all(2),
+                                            decoration:const BoxDecoration(
+                                              color: Colors.red,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            constraints:const BoxConstraints(
+                                              minWidth: 20,
+                                              minHeight: 20,
+                                            ),
+                                            child: Center(
+                                              child: Text('$inspcount', // Replace with dynamic count or leave blank for just a dot
+                                                style:const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Poppins-Medium'
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ),
+                                        ):Container()
+                                  ],
                                 ),
-                                InkWell(
-                                  splashColor: Theme.of(context)
-                                      .colorScheme
-                                      .secondaryFixed,
-                                  onTap: () {
-                                    SchedulelistFun.instance
-                                        .getScheduleList(context);
-                                    Navigator.pushReplacement(
-                                        context, Approutes().scheduleScreen);
-                                  },
-                                  child: Card(
-                                    color: Colors.white,
-                                    elevation: 5,
-                                    margin: const EdgeInsets.all(5),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Image.asset(
-                                            "assets/home/schedule.jpg",
-                                            fit: BoxFit.contain,
-                                            width: 60,
-                                            height: 60,
+                                Stack(
+                                  children: [
+                                    SizedBox(
+                                    width: MediaQuery.of(context).size.width / 1.4,
+                                    height: MediaQuery.of(context).size.height / 2.7,
+                                      child: InkWell(
+                                        splashColor: Theme.of(context)
+                                            .colorScheme
+                                            .secondaryFixed,
+                                        onTap: () {
+                                          SchedulelistFun.instance
+                                              .getScheduleList(context);
+                                          Navigator.pushReplacement(
+                                              context, Approutes().scheduleScreen);
+                                        },
+                                        child: Card(
+                                          color: Colors.white,
+                                          elevation: 5,
+                                          margin: const EdgeInsets.all(5),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(15),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(10.0),
+                                                child: Image.asset(
+                                                  "assets/home/schedule.jpg",
+                                                  fit: BoxFit.contain,
+                                                  width: 60,
+                                                  height: 60,
+                                                ),
+                                              ),
+                                              const Text(
+                                                'My Schedule',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16,
+                                                    fontFamily: 'Poppins-Medium'),
+                                                textScaler: TextScaler.noScaling,
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        const Text(
-                                          'My Schedule',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16,
-                                              fontFamily: 'Poppins-Medium'),
-                                          textScaler: TextScaler.noScaling,
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
+                                   schdlcount!=0? Positioned(
+                                          right: 3,
+                                          top: -1,
+                                          child: Container(
+                                            padding:const EdgeInsets.all(2),
+                                            decoration:const BoxDecoration(
+                                              color: Colors.red,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            constraints:const BoxConstraints(
+                                              minWidth: 20,
+                                              minHeight: 20,
+                                            ),
+                                            child:Center(
+                                              child: Text('$schdlcount', // Replace with dynamic count or leave blank for just a dot
+                                                style:const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Poppins-Medium'
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          ),
+                                        ):Container()
+                                  ],
                                 ),
                                 InkWell(
                                   splashColor: Theme.of(context)

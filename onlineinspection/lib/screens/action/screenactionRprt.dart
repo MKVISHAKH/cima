@@ -26,23 +26,14 @@ class _ScreenCmpltdRprtState extends State<ScreenActionRprt> {
   String apprvDt = '';
   String notDt = '';
   //Map<String, int> socIdMap = {};
-
+  String? extractedString;
   final TextEditingController _dateToController = TextEditingController();
   final TextEditingController _dateFromController = TextEditingController();
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // fetchRouteList();
       soclist = await SocietyListFunctions.instance.getSocietyUser(context);
-      // setState(() {
-      //   societylst =
-      //       soclist!.map((soc) => soc.societyName ?? "").toList();
-      //       socIdMap = {
-      //   for (var soc in soclist!) soc.societyName!: soc.socId!
-      // };
-
-      // });
       setState(() {
         societylst = soclist!.map((bus) {
           String societyname = bus.societyName ?? "";
@@ -495,7 +486,7 @@ class _ScreenCmpltdRprtState extends State<ScreenActionRprt> {
       ];
       final reasonColors = {
         'Approved': const Color.fromARGB(255, 8, 92, 238),
-        'Notice Generated': Colors.green,
+        'Notice Generated': const Color.fromARGB(255, 7, 106, 10),
       };
       Color rowColor = index % 2 == 0
           ? const Color.fromARGB(255, 200, 227, 245) // Light grey for even rows
@@ -541,10 +532,10 @@ class _ScreenCmpltdRprtState extends State<ScreenActionRprt> {
                               .noticeViewList(task.inspId, context);
 
                           showModalBottomSheet(
-                              enableDrag: false,
+                              enableDrag: true,
                               isDismissible: false,
                               isScrollControlled: true,
-                              backgroundColor: Colors.white,
+                              backgroundColor: const Color(0xff98c1d9),
                               shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.vertical(
                                 top: Radius.circular(20),
@@ -613,465 +604,465 @@ class _ScreenCmpltdRprtState extends State<ScreenActionRprt> {
     // width: MediaQuery.of(context).size.width,
     //height: MediaQuery.of(context).size.height/2,
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-      child: ValueListenableBuilder(
-          valueListenable: SchedulelistFun.instance.noticeListNotifierNotifier,
-          builder:
-              (BuildContext context, List<DatumVal> noticeList, Widget? _) {
-            return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: noticeList.length,
-                itemBuilder: (context, index) {
-                  final inspdet = noticeList[index];
-                  final inspdate = inspdet.inspecDate;
-                  final apprvDate = inspdet.approveDate;
-                  final notDate = inspdet.noticeDate;
-                  if (inspdate == null) {
-                    inspecDt = '';
-                  } else {
-                    DateTime parseDate =
-                        DateFormat("yyyy-MM-dd HH:mm:ss").parse(inspdate);
-                    var inputDate = DateTime.parse(parseDate.toString());
-                    var outputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
-                    inspecDt = outputFormat.format(inputDate);
-                    print(inspecDt);
-                  }
-                  if (apprvDate == null) {
-                    apprvDt = '';
-                  } else {
-                    DateTime parseDate =
-                        DateFormat("yyyy-MM-dd HH:mm:ss").parse(apprvDate);
-                    var inputDate = DateTime.parse(parseDate.toString());
-                    var outputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
-                    apprvDt = outputFormat.format(inputDate);
-                    print(apprvDt);
-                  }
-                  if (notDate == null) {
-                    notDt = '';
-                  } else {
-                    DateTime parseDate =
-                        DateFormat("yyyy-MM-dd HH:mm:ss").parse(notDate);
-                    var inputDate = DateTime.parse(parseDate.toString());
-                    var outputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
-                    notDt = outputFormat.format(inputDate);
-                    print(notDt);
-                  }
-                  return Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                            color: Theme.of(context).colorScheme.onSecondary),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(0.0),
-                        child: Column(
-                          //mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const SizedBox(height: 10),
-                            Text('INSPECTION REPORT',
-                                style: Theme.of(context).textTheme.bodyLarge),
-                            const SizedBox(height: 10),
-                            Card(
-                              elevation: 3,
-                              margin: const EdgeInsets.symmetric(
-                                vertical: 2,
-                                horizontal: 2,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                  color: Colors.white, // White background
-                                  borderRadius: BorderRadius.circular(
-                                      12), // Rounded corners
-                                  border: Border.all(
-                                    // Thin black border
-                                    color: Colors.black,
-                                    width: 1,
-                                  ),
-                                ),
-                                padding: const EdgeInsets.all(
-                                    10), // Optional padding
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment
-                                      .start, // Align text to the start
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "Society Name : ",
-                                          // maxLines: 2, // Or any number you want
-                                          // overflow: TextOverflow.visible,
-                                          // softWrap: true,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                                fontSize: 14,
-                                              ),
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            '${noticeList.first.socName}',
-                                            // maxLines: 2, // Or any number you want
-                                            overflow: TextOverflow.visible,
-                                            softWrap: true,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "Branch : ",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                                fontSize: 14,
-                                              ),
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            "${noticeList.first.branchName}",
-                                            overflow: TextOverflow.visible,
-                                            softWrap: true,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "Inspected By : ",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                                fontSize: 14,
-                                              ),
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            "${noticeList.first.inspectedBy}",
-                                            overflow: TextOverflow.visible,
-                                            softWrap: true,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "Inspected Date : ",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                                fontSize: 14,
-                                              ),
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            inspecDt,
-                                            overflow: TextOverflow.visible,
-                                            softWrap: true,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "Approved By : ",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                                fontSize: 14,
-                                              ),
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            noticeList.first.approveBy ?? '',
-                                            overflow: TextOverflow.visible,
-                                            softWrap: true,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "Approved Date : ",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                                fontSize: 14,
-                                              ),
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            apprvDt,
-                                            overflow: TextOverflow.visible,
-                                            softWrap: true,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "Remarks : ",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                                fontSize: 14,
-                                              ),
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            "${noticeList.first.remarks}",
-                                            overflow: TextOverflow.visible,
-                                            softWrap: true,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "Notice Generated By : ",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                                fontSize: 14,
-                                              ),
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            noticeList.first.noticeGenBy ?? '',
-                                            overflow: TextOverflow.visible,
-                                            softWrap: true,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          "Notice Generated Date : ",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                                fontSize: 14,
-                                              ),
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            notDt,
-                                            overflow: TextOverflow.visible,
-                                            softWrap: true,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            // ScrollableWidget(child: inputfiledDisplay()),
-                            const SizedBox(height: 5),
-                            ScrollableWidget(
-                              child: Card(
-                                elevation: 3,
-                                margin: const EdgeInsets.symmetric(
-                                  vertical: 2,
-                                  horizontal: 2,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Container(
-                                  //width: MediaQuery.of(context).size.width,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white, // White background
-                                    borderRadius: BorderRadius.circular(
-                                        12), // Rounded corners
-                                    border: Border.all(
-                                      // Thin black border
-                                      color: Colors.black,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.all(10),
-                                  child: Column(
-                                    children: [
-                                      DataTable(
-                                        headingRowHeight: 35,
-                                        dataRowMaxHeight: 35,
-                                        dataRowMinHeight: 35,
-                                        headingRowColor:
-                                            WidgetStateProperty.all(
-                                                const Color(0xff1569C7)),
-                                        columns: getColumns(columns = [
-                                          'SI.No',
-                                          'Reason',
-                                          'Description',
-                                          ''
-                                        ]),
-                                        rows: getRowsList(noticeList, context),
-                                      ),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      Container(
-                                        height: 30,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                              Theme.of(context)
-                                                  .colorScheme
-                                                  .primary
-                                            ],
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(12.0),
-                                        ),
-                                        child: Theme(
-                                          data: MyTheme.buttonStyleTheme,
-                                          child: ElevatedButton(
-                                            onPressed: () async {
-                                              // final inspId = task.inspId;
-                                              Navigator.pop(context);
-                                              // Navigator.push(context, Approutes().screensActionRprt);
-
-                                              //openFile(task,context);
-                                            },
-                                            child: Text(
-                                              'Back',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .displayMedium,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ));
-                }
-
-                //socdet=noticeList.single,
-
-                );
-          }),
-    );
+     borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+     child: ValueListenableBuilder(
+         valueListenable: SchedulelistFun.instance.noticeListNotifierNotifier,
+         builder:
+             (BuildContext context, List<DatumVal> noticeList, Widget? _) {
+           return ListView.builder(
+               shrinkWrap: true,
+               physics: const NeverScrollableScrollPhysics(),
+               itemCount: noticeList.length,
+               itemBuilder: (context, index) {
+                 final inspdet = noticeList[index];
+                 final inspdate = inspdet.inspecDate;
+                 final apprvDate = inspdet.approveDate;
+                 final notDate = inspdet.noticeDate;
+                 if (inspdate == null) {
+                   inspecDt = '';
+                 } else {
+                   DateTime parseDate =
+                       DateFormat("yyyy-MM-dd HH:mm:ss").parse(inspdate);
+                   var inputDate = DateTime.parse(parseDate.toString());
+                   var outputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
+                   inspecDt = outputFormat.format(inputDate);
+                   print(inspecDt);
+                 }
+                 if (apprvDate == null) {
+                   apprvDt = '';
+                 } else {
+                   DateTime parseDate =
+                       DateFormat("yyyy-MM-dd HH:mm:ss").parse(apprvDate);
+                   var inputDate = DateTime.parse(parseDate.toString());
+                   var outputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
+                   apprvDt = outputFormat.format(inputDate);
+                   print(apprvDt);
+                 }
+                 if (notDate == null) {
+                   notDt = '';
+                 } else {
+                   DateTime parseDate =
+                       DateFormat("yyyy-MM-dd HH:mm:ss").parse(notDate);
+                   var inputDate = DateTime.parse(parseDate.toString());
+                   var outputFormat = DateFormat('dd-MM-yyyy HH:mm:ss');
+                   notDt = outputFormat.format(inputDate);
+                   print(notDt);
+                 }
+                 return Container(
+                     decoration: BoxDecoration(
+                       color: Colors.white,
+                       border: Border.all(
+                           color: Theme.of(context).colorScheme.onSecondary),
+                     ),
+                     child: Padding(
+                       padding: const EdgeInsets.all(0.0),
+                       child: Column(
+                         //mainAxisSize: MainAxisSize.min,
+                         children: [
+                           const SizedBox(height: 10),
+                           Text('INSPECTION REPORT',
+                               style: Theme.of(context).textTheme.bodyLarge),
+                           const SizedBox(height: 10),
+                           Card(
+                             elevation: 3,
+                             margin: const EdgeInsets.symmetric(
+                               vertical: 2,
+                               horizontal: 2,
+                             ),
+                             shape: RoundedRectangleBorder(
+                               borderRadius: BorderRadius.circular(12),
+                             ),
+                             child: Container(
+                               width: MediaQuery.of(context).size.width,
+                               decoration: BoxDecoration(
+                                 color: Colors.white, // White background
+                                 borderRadius: BorderRadius.circular(
+                                     12), // Rounded corners
+                                 border: Border.all(
+                                   // Thin black border
+                                   color: Colors.black,
+                                   width: 1,
+                                 ),
+                               ),
+                               padding: const EdgeInsets.all(
+                                   10), // Optional padding
+                               child: Column(
+                                 crossAxisAlignment: CrossAxisAlignment
+                                     .start, // Align text to the start
+                                 children: [
+                                   Row(
+                                     children: [
+                                       Text(
+                                         "Society Name : ",
+                                         // maxLines: 2, // Or any number you want
+                                         // overflow: TextOverflow.visible,
+                                         // softWrap: true,
+                                         style: Theme.of(context)
+                                             .textTheme
+                                             .bodyLarge
+                                             ?.copyWith(
+                                               fontSize: 14,
+                                             ),
+                                       ),
+                                       Flexible(
+                                         child: Text(
+                                           '${noticeList.first.socName}',
+                                           // maxLines: 2, // Or any number you want
+                                           overflow: TextOverflow.visible,
+                                           softWrap: true,
+                                           style: Theme.of(context)
+                                               .textTheme
+                                               .bodyLarge
+                                               ?.copyWith(
+                                                   fontSize: 14,
+                                                   fontWeight:
+                                                       FontWeight.normal),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                   const SizedBox(
+                                     height: 5,
+                                   ),
+                                   Row(
+                                     children: [
+                                       Text(
+                                         "Branch : ",
+                                         style: Theme.of(context)
+                                             .textTheme
+                                             .bodyLarge
+                                             ?.copyWith(
+                                               fontSize: 14,
+                                             ),
+                                       ),
+                                       Flexible(
+                                         child: Text(
+                                           "${noticeList.first.branchName}",
+                                           overflow: TextOverflow.visible,
+                                           softWrap: true,
+                                           style: Theme.of(context)
+                                               .textTheme
+                                               .bodyLarge
+                                               ?.copyWith(
+                                                   fontSize: 14,
+                                                   fontWeight:
+                                                       FontWeight.normal),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                   const SizedBox(
+                                     height: 5,
+                                   ),
+                                   Row(
+                                     children: [
+                                       Text(
+                                         "Inspected By : ",
+                                         style: Theme.of(context)
+                                             .textTheme
+                                             .bodyLarge
+                                             ?.copyWith(
+                                               fontSize: 14,
+                                             ),
+                                       ),
+                                       Flexible(
+                                         child: Text(
+                                           "${noticeList.first.inspectedBy}",
+                                           overflow: TextOverflow.visible,
+                                           softWrap: true,
+                                           style: Theme.of(context)
+                                               .textTheme
+                                               .bodyLarge
+                                               ?.copyWith(
+                                                   fontSize: 14,
+                                                   fontWeight:
+                                                       FontWeight.normal),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                   const SizedBox(
+                                     height: 5,
+                                   ),
+                                   Row(
+                                     children: [
+                                       Text(
+                                         "Inspected Date : ",
+                                         style: Theme.of(context)
+                                             .textTheme
+                                             .bodyLarge
+                                             ?.copyWith(
+                                               fontSize: 14,
+                                             ),
+                                       ),
+                                       Flexible(
+                                         child: Text(
+                                           inspecDt,
+                                           overflow: TextOverflow.visible,
+                                           softWrap: true,
+                                           style: Theme.of(context)
+                                               .textTheme
+                                               .bodyLarge
+                                               ?.copyWith(
+                                                   fontSize: 14,
+                                                   fontWeight:
+                                                       FontWeight.normal),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                   const SizedBox(
+                                     height: 5,
+                                   ),
+                                   Row(
+                                     children: [
+                                       Text(
+                                         "Approved By : ",
+                                         style: Theme.of(context)
+                                             .textTheme
+                                             .bodyLarge
+                                             ?.copyWith(
+                                               fontSize: 14,
+                                             ),
+                                       ),
+                                       Flexible(
+                                         child: Text(
+                                           noticeList.first.approveBy ?? '',
+                                           overflow: TextOverflow.visible,
+                                           softWrap: true,
+                                           style: Theme.of(context)
+                                               .textTheme
+                                               .bodyLarge
+                                               ?.copyWith(
+                                                   fontSize: 14,
+                                                   fontWeight:
+                                                       FontWeight.normal),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                   const SizedBox(
+                                     height: 5,
+                                   ),
+                                   Row(
+                                     children: [
+                                       Text(
+                                         "Approved Date : ",
+                                         style: Theme.of(context)
+                                             .textTheme
+                                             .bodyLarge
+                                             ?.copyWith(
+                                               fontSize: 14,
+                                             ),
+                                       ),
+                                       Flexible(
+                                         child: Text(
+                                           apprvDt,
+                                           overflow: TextOverflow.visible,
+                                           softWrap: true,
+                                           style: Theme.of(context)
+                                               .textTheme
+                                               .bodyLarge
+                                               ?.copyWith(
+                                                   fontSize: 14,
+                                                   fontWeight:
+                                                       FontWeight.normal),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                   const SizedBox(
+                                     height: 5,
+                                   ),
+                                   Row(
+                                     children: [
+                                       Text(
+                                         "Remarks : ",
+                                         style: Theme.of(context)
+                                             .textTheme
+                                             .bodyLarge
+                                             ?.copyWith(
+                                               fontSize: 14,
+                                             ),
+                                       ),
+                                       Flexible(
+                                         child: Text(
+                                           "${noticeList.first.remarks}",
+                                           overflow: TextOverflow.visible,
+                                           softWrap: true,
+                                           style: Theme.of(context)
+                                               .textTheme
+                                               .bodyLarge
+                                               ?.copyWith(
+                                                   fontSize: 14,
+                                                   fontWeight:
+                                                       FontWeight.normal),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                   const SizedBox(
+                                     height: 5,
+                                   ),
+                                   Row(
+                                     children: [
+                                       Text(
+                                         "Notice Generated By : ",
+                                         style: Theme.of(context)
+                                             .textTheme
+                                             .bodyLarge
+                                             ?.copyWith(
+                                               fontSize: 14,
+                                             ),
+                                       ),
+                                       Flexible(
+                                         child: Text(
+                                           noticeList.first.noticeGenBy ?? '',
+                                           overflow: TextOverflow.visible,
+                                           softWrap: true,
+                                           style: Theme.of(context)
+                                               .textTheme
+                                               .bodyLarge
+                                               ?.copyWith(
+                                                   fontSize: 14,
+                                                   fontWeight:
+                                                       FontWeight.normal),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                   const SizedBox(
+                                     height: 5,
+                                   ),
+                                   Row(
+                                     children: [
+                                       Text(
+                                         "Notice Generated Date : ",
+                                         style: Theme.of(context)
+                                             .textTheme
+                                             .bodyLarge
+                                             ?.copyWith(
+                                               fontSize: 14,
+                                             ),
+                                       ),
+                                       Flexible(
+                                         child: Text(
+                                           notDt,
+                                           overflow: TextOverflow.visible,
+                                           softWrap: true,
+                                           style: Theme.of(context)
+                                               .textTheme
+                                               .bodyLarge
+                                               ?.copyWith(
+                                                   fontSize: 14,
+                                                   fontWeight:
+                                                       FontWeight.normal),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                 ],
+                               ),
+                             ),
+                           ),
+                           // ScrollableWidget(child: inputfiledDisplay()),
+                           const SizedBox(height: 5),
+                           ScrollableWidget(
+                             child: Card(
+                               elevation: 3,
+                               margin: const EdgeInsets.symmetric(
+                                 vertical: 2,
+                                 horizontal: 2,
+                               ),
+                               shape: RoundedRectangleBorder(
+                                 borderRadius: BorderRadius.circular(12),
+                               ),
+                               child: Container(
+                                 //width: MediaQuery.of(context).size.width,
+                                 decoration: BoxDecoration(
+                                   color: Colors.white, // White background
+                                   borderRadius: BorderRadius.circular(
+                                       12), // Rounded corners
+                                   border: Border.all(
+                                     // Thin black border
+                                     color: Colors.black,
+                                     width: 1,
+                                   ),
+                                 ),
+                                 padding: const EdgeInsets.all(10),
+                                 child: Column(
+                                   children: [
+                                     DataTable(
+                                       headingRowHeight: 35,
+                                       dataRowMaxHeight: 35,
+                                       dataRowMinHeight: 35,
+                                       headingRowColor:
+                                           WidgetStateProperty.all(
+                                               const Color(0xff1569C7)),
+                                       columns: getColumns(columns = [
+                                         'SI.No',
+                                         'Type',
+                                         'Notice No',
+                                         ''
+                                       ]),
+                                       rows: getRowsList(noticeList, context),
+                                     ),
+                                     const SizedBox(
+                                       height: 20,
+                                     ),
+                                     Container(
+                                       height: 30,
+                                       width: 100,
+                                       decoration: BoxDecoration(
+                                         gradient: LinearGradient(
+                                           begin: Alignment.topLeft,
+                                           end: Alignment.bottomRight,
+                                           colors: [
+                                             Theme.of(context)
+                                                 .colorScheme
+                                                 .primary,
+                                             Theme.of(context)
+                                                 .colorScheme
+                                                 .primary
+                                           ],
+                                         ),
+                                         borderRadius:
+                                             BorderRadius.circular(12.0),
+                                       ),
+                                       child: Theme(
+                                         data: MyTheme.buttonStyleTheme,
+                                         child: ElevatedButton(
+                                           onPressed: () async {
+                                             // final inspId = task.inspId;
+                                             Navigator.pop(context);
+                                             // Navigator.push(context, Approutes().screensActionRprt);
+          
+                                             //openFile(task,context);
+                                           },
+                                           child: Text(
+                                             'Back',
+                                             style: Theme.of(context)
+                                                 .textTheme
+                                                 .displayMedium,
+                                           ),
+                                         ),
+                                       ),
+                                     ),
+                                   ],
+                                 ),
+                               ),
+                             ),
+                           ),
+                         ],
+                       ),
+                     ));
+               }
+          
+               //socdet=noticeList.single,
+          
+               );
+         }),
+          );
   }
 
   List<DataRow> getRowsList(List<DatumVal> noticeList, BuildContext context) {
@@ -1090,7 +1081,7 @@ class _ScreenCmpltdRprtState extends State<ScreenActionRprt> {
       final reasonColors = {
         'SHO': const Color.fromARGB(255, 174, 15, 3),
         'SERIOUS': const Color.fromARGB(255, 235, 78, 117),
-        'MILD': Colors.green,
+        'MILD': Color.fromARGB(255, 11, 114, 14),
         'MEDIUM': Colors.orange,
         'DEMAND NOTICE': Colors.purple,
       };
@@ -1170,6 +1161,17 @@ class _ScreenCmpltdRprtState extends State<ScreenActionRprt> {
   Future<File?> dwnloadFile(Notice task, BuildContext context) async {
     try {
       final dwnldresp = await Ciadata().dwnldNotice(task.fileurl);
+      RegExp regExp = RegExp(r"/([^/]+)\.pdf$");
+  
+          // Extracting the match
+          Match? match = regExp.firstMatch(task.fileurl??'');
+          //String extractedString;
+          if (match != null) {
+             extractedString = match.group(1)!;
+            print(extractedString); // Output: 52_NOTI_3211_2025
+          } else {
+            print("No match found");
+          }
       if (dwnldresp == null) {
         if (!context.mounted) return null;
         CommonFun.instance.showApierror(context, "No Data Found");
@@ -1179,7 +1181,7 @@ class _ScreenCmpltdRprtState extends State<ScreenActionRprt> {
         var now = DateTime.now();
         DateFormat dateFormat = DateFormat("dd-MM-yyyy");
         String datenow = dateFormat.format(now);
-        String name = "${task.description}_${datenow}_$random3digit.pdf";
+        String name = "${extractedString}_${datenow}_$random3digit.pdf";
 
         final appStorage = await getApplicationDocumentsDirectory();
         final file = File('${appStorage.path}/$name');

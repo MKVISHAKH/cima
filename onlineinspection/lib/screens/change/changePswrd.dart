@@ -299,16 +299,6 @@ class _ScreenChangePswrdState extends State<ScreenChangePswrd> {
                       )
                     : const SizedBox.shrink();
               }),
-              // Consumer<ElevatedBtnProvider>(
-              //   builder: (context, provider, child) {
-              //     if (provider.selectedVal == false) {
-              //       return Container();
-              //     } else if (provider.selectedVal == true) {
-              //       return const OtpFiled();
-              //     }
-              //     return Container();
-              //   },
-              // ),
             ]),
           ),
         ),

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "945546833003",
+    "project_id": "cima-38025",
+    "storage_bucket": "cima-38025.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:945546833003:android:351565ac3ae7123f9c552e",
+        "android_client_info": {
+          "package_name": "com.cimakerala.onlineinspection"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAa63qbWT0zw8nC7YRrGmelQsu9GJH8WXM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

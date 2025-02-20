@@ -1,11 +1,17 @@
 import 'package:onlineinspection/core/hook/hook.dart';
-import 'package:onlineinspection/provider/additional_info/additional_info_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 const savekeyname = 'UserLoggedIn';
 const savesocinfo = '_userSocIn';
 const savedeviceinfo = '_userDeviceIn';
+const savedevicetkn='_userDeviceTkn';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
   runApp(MyApp());
 }
 
@@ -34,13 +40,16 @@ class MyApp extends StatelessWidget {
           create: (context) => ThemeProvider(),
           builder: (context, child) {
             final themeProvider = Provider.of<ThemeProvider>(context);
-            return MaterialApp(
-              navigatorKey: navigatorKey,
-              title: 'CIA',
-              themeMode: themeProvider.themeMode,
-              theme: themeProvider.lightScheme,
-              darkTheme: themeProvider.darkScheme,
-              home: const ScreenSplash(),
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaler:TextScaler.noScaling),
+              child: MaterialApp(
+                navigatorKey: navigatorKey,
+                title: 'CIA',
+                themeMode: themeProvider.themeMode,
+                theme: themeProvider.lightScheme,
+                darkTheme: themeProvider.darkScheme,
+                home: const ScreenSplash(),
+              ),
             );
           },
         ),

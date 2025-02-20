@@ -167,7 +167,7 @@ class _NavbarState extends State<Navbar> {
                   textScaler: TextScaler.noScaling,
                 ),
                 onTap: () {
-                  signout(context);
+                  warningBox(context);
                 }),
           ],
         ),
@@ -179,7 +179,35 @@ class _NavbarState extends State<Navbar> {
   void dispose() {
     super.dispose();
   }
-
+Future warningBox(BuildContext context) async => showDialog<bool>(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => AlertDialog(
+            backgroundColor: Theme.of(context).colorScheme.primaryFixed,
+            title: Center(
+                child: Text("Do You want to Sign Out?",
+                    style: Theme.of(context).textTheme.titleSmall)),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                ),
+                onPressed: () => Navigator.pop(context),
+                child: Text('NO',
+                    style: Theme.of(context).textTheme.displayMedium),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                ),
+                onPressed: () {
+                     signout(context);
+                },
+                child: Text('YES',
+                    style: Theme.of(context).textTheme.displayMedium),
+              ),
+            ],
+          ));
   void signout(BuildContext ctx) async {
     final sharedprf = await SharedPreferences.getInstance();
     await sharedprf.remove(savekeyname);

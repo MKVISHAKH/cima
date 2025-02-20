@@ -674,19 +674,20 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                                                   textColor:Colors.white,
                                                                   fontSize:15.0);
                                                               return "Enter Loan No";
-                                                            } else if (value.contains(' ')) {
-                                                              Fluttertoast.showToast(
-                                                                  msg:"Remove Space from  Loan no",
-                                                                  toastLength: Toast.LENGTH_SHORT,
-                                                                  gravity:ToastGravity.CENTER,
-                                                                  timeInSecForIosWeb:1,
-                                                                  backgroundColor:Colors.black,
-                                                                  textColor:Colors.white,
-                                                                  fontSize:15.0);
-                                                              // showSnackBar(context,
-                                                              //     text: "Remove Space from  Mobile number");
-                                                              return "Remove Space from Loan no";
                                                             }
+                                                            //  else if (value.contains(' ')) {
+                                                            //   Fluttertoast.showToast(
+                                                            //       msg:"Remove Space from  Loan no",
+                                                            //       toastLength: Toast.LENGTH_SHORT,
+                                                            //       gravity:ToastGravity.CENTER,
+                                                            //       timeInSecForIosWeb:1,
+                                                            //       backgroundColor:Colors.black,
+                                                            //       textColor:Colors.white,
+                                                            //       fontSize:15.0);
+                                                            //   // showSnackBar(context,
+                                                            //   //     text: "Remove Space from  Mobile number");
+                                                            //   return "Remove Space from Loan no";
+                                                            // }
                                                             return null;
                                                           });
                                                     }),
@@ -732,19 +733,20 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                                                   textColor:Colors.white,
                                                                   fontSize:15.0);
                                                               return "Enter MSS Ticket No";
-                                                            } else if (value.contains(' ')) {
-                                                              Fluttertoast.showToast(
-                                                                  msg:"Remove Space from  MSS Ticket No",
-                                                                  toastLength: Toast.LENGTH_SHORT,
-                                                                  gravity:ToastGravity.CENTER,
-                                                                  timeInSecForIosWeb:1,
-                                                                  backgroundColor:Colors.black,
-                                                                  textColor:Colors.white,
-                                                                  fontSize:15.0);
-                                                              // showSnackBar(context,
-                                                              //     text: "Remove Space from  Mobile number");
-                                                              return "Remove Space from MSS Ticket No";
                                                             }
+                                                            //  else if (value.contains(' ')) {
+                                                            //   Fluttertoast.showToast(
+                                                            //       msg:"Remove Space from  MSS Ticket No",
+                                                            //       toastLength: Toast.LENGTH_SHORT,
+                                                            //       gravity:ToastGravity.CENTER,
+                                                            //       timeInSecForIosWeb:1,
+                                                            //       backgroundColor:Colors.black,
+                                                            //       textColor:Colors.white,
+                                                            //       fontSize:15.0);
+                                                            //   // showSnackBar(context,
+                                                            //   //     text: "Remove Space from  Mobile number");
+                                                            //   return "Remove Space from MSS Ticket No";
+                                                            // }
                                                             return null;
                                                           });
                                                     }),
@@ -790,20 +792,21 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                                                   textColor:Colors.white,
                                                                   fontSize:15.0);
                                                               return "Enter FD Loan No";
-                                                            } else if (value.contains(' ')) {
-                                                              Fluttertoast.showToast(
-                                                                  msg:"Remove Space from FD Loan No",
-                                                                  toastLength: Toast.LENGTH_SHORT,
-                                                                  gravity:ToastGravity.CENTER,
-                                                                  timeInSecForIosWeb:1,
-                                                                  backgroundColor:Colors.black,
-                                                                  textColor:Colors.white,
-                                                                  fontSize:15.0);
-                                                              return "Remove Space from FD Loan No";
-
-                                                              // showSnackBar(context,
-                                                              //     text: "Remove Space from  Mobile number");
                                                             }
+                                                            //  else if (value.contains(' ')) {
+                                                            //   Fluttertoast.showToast(
+                                                            //       msg:"Remove Space from FD Loan No",
+                                                            //       toastLength: Toast.LENGTH_SHORT,
+                                                            //       gravity:ToastGravity.CENTER,
+                                                            //       timeInSecForIosWeb:1,
+                                                            //       backgroundColor:Colors.black,
+                                                            //       textColor:Colors.white,
+                                                            //       fontSize:15.0);
+                                                            //   return "Remove Space from FD Loan No";
+
+                                                            //   // showSnackBar(context,
+                                                            //   //     text: "Remove Space from  Mobile number");
+                                                            // }
                                                             return null;
                                                           });
                                                     }),
@@ -906,7 +909,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                             }else{
                                               loanbonddet={};
                                             log('Loan and Bond Details: $loanbonddet');
-
+                                              
                                             }
                                            
 
