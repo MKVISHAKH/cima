@@ -6,7 +6,7 @@ import 'package:onlineinspection/core/hook/hook.dart';
 
 class DeviceInformation {
   static final _deviceinfoplugin = DeviceInfoPlugin();
-    static const _androidIdPlugin = AndroidId();
+  static const _androidIdPlugin = AndroidId();
 
   static Future<String> getdeviceinfo() async {
     if (Platform.isAndroid) {

@@ -661,7 +661,8 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                                           hint:'Enter ${infoField.propertyLoan!.label}',
                                                           controller:_propertyLoanDetails[index]['loanno']!,
                                                           onChanged: (value) {
-                                                            _propertyLoanDetails[index]['loanno']!.text = value;
+                                                            
+                                                           _propertyLoanDetails[index]['loanno']!.text = value;
                                                           },
                                                           validator: (value) {
                                                             if (value == null ||value.isEmpty) {
@@ -674,20 +675,20 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                                                   textColor:Colors.white,
                                                                   fontSize:15.0);
                                                               return "Enter Loan No";
-                                                            }
-                                                            //  else if (value.contains(' ')) {
-                                                            //   Fluttertoast.showToast(
-                                                            //       msg:"Remove Space from  Loan no",
-                                                            //       toastLength: Toast.LENGTH_SHORT,
-                                                            //       gravity:ToastGravity.CENTER,
-                                                            //       timeInSecForIosWeb:1,
-                                                            //       backgroundColor:Colors.black,
-                                                            //       textColor:Colors.white,
-                                                            //       fontSize:15.0);
-                                                            //   // showSnackBar(context,
-                                                            //   //     text: "Remove Space from  Mobile number");
-                                                            //   return "Remove Space from Loan no";
-                                                            // }
+                                                            }else if (_propertyLoanDetails.any((element) => element['loanno']!.text == value && element['loanno'] != _propertyLoanDetails[index]['loanno'])) {
+                                                                Fluttertoast.showToast(
+                                                                  msg: "Duplicate Loan No is not allowed",
+                                                                  toastLength: Toast.LENGTH_SHORT,
+                                                                  gravity: ToastGravity.CENTER,
+                                                                  timeInSecForIosWeb: 1,
+                                                                  backgroundColor: Colors.black,
+                                                                  textColor: Colors.white,
+                                                                  fontSize: 15.0,
+                                                                );
+                                                              return "Duplicate Loan No is not allowed";
+
+                                                              }
+                                                            
                                                             return null;
                                                           });
                                                     }),
@@ -720,7 +721,8 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                                           hint:'Enter ${infoField.mssBond!.label}',
                                                           controller:_mssBondDetails[index]['mssno']!,
                                                           onChanged: (value) {
-                                                            _mssBondDetails[index]['mssno']!.text = value;
+                                                            
+                                                           _mssBondDetails[index]['mssno']!.text = value;
                                                           },
                                                           validator: (value) {
                                                             if (value == null ||value.isEmpty) {
@@ -733,20 +735,20 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                                                   textColor:Colors.white,
                                                                   fontSize:15.0);
                                                               return "Enter MSS Ticket No";
+                                                            }else if (_mssBondDetails.any((element) => element['mssno']!.text == value && element['mssno'] != _mssBondDetails[index]['mssno'])) {
+                                                              Fluttertoast.showToast(
+                                                                msg: "Duplicate MSS Ticket No is not allowed",
+                                                                toastLength: Toast.LENGTH_SHORT,
+                                                                gravity: ToastGravity.CENTER,
+                                                                timeInSecForIosWeb: 1,
+                                                                backgroundColor: Colors.black,
+                                                                textColor: Colors.white,
+                                                                fontSize: 15.0,
+                                                              );
+                                                              return "Duplicate MSS Ticket No is not allowed";
+                                                             
                                                             }
-                                                            //  else if (value.contains(' ')) {
-                                                            //   Fluttertoast.showToast(
-                                                            //       msg:"Remove Space from  MSS Ticket No",
-                                                            //       toastLength: Toast.LENGTH_SHORT,
-                                                            //       gravity:ToastGravity.CENTER,
-                                                            //       timeInSecForIosWeb:1,
-                                                            //       backgroundColor:Colors.black,
-                                                            //       textColor:Colors.white,
-                                                            //       fontSize:15.0);
-                                                            //   // showSnackBar(context,
-                                                            //   //     text: "Remove Space from  Mobile number");
-                                                            //   return "Remove Space from MSS Ticket No";
-                                                            // }
+                                                            
                                                             return null;
                                                           });
                                                     }),
@@ -779,6 +781,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                                           hint:'Enter ${infoField.fdloan!.label}',
                                                           controller:_fdloanDetails[index]['fdloanno']!,
                                                           onChanged: (value) {
+                                                            
                                                             _fdloanDetails[index]['fdloanno']!.text = value;
                                                           },
                                                           validator: (value) {
@@ -792,21 +795,20 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                                                   textColor:Colors.white,
                                                                   fontSize:15.0);
                                                               return "Enter FD Loan No";
-                                                            }
-                                                            //  else if (value.contains(' ')) {
-                                                            //   Fluttertoast.showToast(
-                                                            //       msg:"Remove Space from FD Loan No",
-                                                            //       toastLength: Toast.LENGTH_SHORT,
-                                                            //       gravity:ToastGravity.CENTER,
-                                                            //       timeInSecForIosWeb:1,
-                                                            //       backgroundColor:Colors.black,
-                                                            //       textColor:Colors.white,
-                                                            //       fontSize:15.0);
-                                                            //   return "Remove Space from FD Loan No";
+                                                            }else if (_fdloanDetails.any((element) => element['fdloanno']!.text == value && element['fdloanno'] != _fdloanDetails[index]['fdloanno'])) {
+                                                                Fluttertoast.showToast(
+                                                                  msg: "Duplicate FD Loan No is not allowed",
+                                                                  toastLength: Toast.LENGTH_SHORT,
+                                                                  gravity: ToastGravity.CENTER,
+                                                                  timeInSecForIosWeb: 1,
+                                                                  backgroundColor: Colors.black,
+                                                                  textColor: Colors.white,
+                                                                  fontSize: 15.0,
+                                                                );
+                                                               return "Duplicate FD Loan No is not allowed";
 
-                                                            //   // showSnackBar(context,
-                                                            //   //     text: "Remove Space from  Mobile number");
-                                                            // }
+                                                              } 
+                                                            
                                                             return null;
                                                           });
                                                     }),
@@ -882,7 +884,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                       if (formkey.currentState?.validate() ??false) {
                                         // Save valid input data
                                         formkey.currentState!.save();
-
+                                        
                                         if (areAllFieldsFilled()) {
                                           // final loandetails =getProperyLoandet();
                                           // log('Property Details: $loandetails');
@@ -898,7 +900,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                                           final amount = _amount;
                                           log('amount: $amount');
                                             //final loanbond_Det=Loanandbonddet(propertyLoan: loandetails,)
-                                            if(amount.isEmpty&&memberDetails.isEmpty){
+                                            if(additionalInfoProvider.selectedInfo.first.propertyLoan!=null){
                                               loanbonddet = {
                                               'property_loan': getProperyLoandet(), // Property loan details
                                               'mss_bond': getMssNo(),          // MSS bond details
@@ -1007,21 +1009,21 @@ class _ScreenQueryState extends State<ScreenQuery> {
   bool areAllFieldsFilled() {
     // Check if all property loan fields are filled
     for (var loanDetail in _propertyLoanDetails) {
-      if (loanDetail['loanno']!.text.isEmpty ||loanDetail['loanno']!.text.contains(' ')) {
+      if (loanDetail['loanno']!.text.isEmpty) {
         return false;
       }
     }
 
     // Check if all MSS Bond fields are filled
     for (var bondDetail in _mssBondDetails) {
-      if (bondDetail['mssno']!.text.isEmpty ||bondDetail['mssno']!.text.contains(' ')) {
+      if (bondDetail['mssno']!.text.isEmpty) {
         return false;
       }
     }
 
     // Check if all FD Loan fields are filled
     for (var fdDetail in _fdloanDetails) {
-      if (fdDetail['fdloanno']!.text.isEmpty ||fdDetail['fdloanno']!.text.contains(' ')) {
+      if (fdDetail['fdloanno']!.text.isEmpty) {
         return false;
       }
     }

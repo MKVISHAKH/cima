@@ -35,7 +35,7 @@ class _ScreenSplashState extends State<ScreenSplash> {
     final sharedPref = await SharedPreferences.getInstance();
     final userLoggedIn = sharedPref.getBool(savekeyname) ?? false;
     FirebaseMessaging messaging=FirebaseMessaging.instance;
-      String? deviceTokn;
+    String? deviceTokn;
     
     if (!userLoggedIn) {
       gotoLogin();

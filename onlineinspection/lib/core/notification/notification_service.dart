@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:app_settings/app_settings.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:onlineinspection/core/hook/hook.dart';
