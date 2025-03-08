@@ -70,10 +70,18 @@ class _NavbarState extends State<Navbar> {
                 style: Theme.of(context).textTheme.titleMedium,
                 textScaler: TextScaler.noScaling,
               ),
-              accountEmail: Text(
-                'PEN No: $pen',
-                style: Theme.of(context).textTheme.labelMedium,
-                textScaler: TextScaler.noScaling,
+              accountEmail: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'PEN No: $pen',
+                    style: Theme.of(context).textTheme.labelMedium,
+                    textScaler: TextScaler.noScaling,
+                  ),
+                  Text('Version:$version',
+                    style: Theme.of(context).textTheme.labelMedium,
+                    textScaler: TextScaler.noScaling,),
+                ],
               ),
               // currentAccountPicture: CircleAvatar(
               //   child: ClipOval(

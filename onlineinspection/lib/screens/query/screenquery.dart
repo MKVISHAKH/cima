@@ -1217,9 +1217,7 @@ class _ScreenQueryState extends State<ScreenQuery> {
                       _nocontroller.clear();
                       _amount = '';
                       _memberDetails = [];
-                      // _propertyLoanDetails=[];
-                      // _mssBondDetails=[];
-                      // _fdloanDetails=[];
+                      loanbonddet={};
                       loanbonddet.clear();
                       if (questval == null || questval == []) {
                         Fluttertoast.showToast(

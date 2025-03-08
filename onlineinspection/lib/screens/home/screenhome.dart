@@ -268,9 +268,7 @@ class _ScreenhomeState extends State<Screenhome> {
                                       
                                           if (doublelat != 0 && doublelong != 0) {
                                             try {
-                                              SocietyListFunctions.instance
-                                                  .getSocietyList(
-                                                      doublelat, doublelong, context);
+                                              SocietyListFunctions.instance.getSocietyList(doublelat, doublelong, context);
                                               Navigator.pushReplacement(context,
                                                   Approutes().assignedscreen);
                                             } catch (e) {
