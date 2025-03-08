@@ -1,17 +1,8 @@
 class Url {
-  // String baseUrl = 'http://10.140.100.51/cia/public';
 
-  //String baseUrl = 'http://117.251.17.163:665/cia/public';
+  String baseUrl = 'http://localhost/cima/public';
 
-  // String baseUrl = 'http://117.251.17.163:665/cianew/public';
 
-  String baseUrl = 'http://117.251.17.163:665/cima/public';
-
-  // String baseUrl = 'http://117.251.17.163:665/cima_sandbox/public';
-
-  // String baseUrl = 'http://117.251.17.163:665/cima_new/public';
-
-  // String baseUrl = 'http://117.251.17.163:665/cimademo/public';
 
   String loginUrl = '/api/v1/login';
   String societyUrl = '/api/v1/societies';
